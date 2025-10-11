@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Shield, Eye, EyeOff, Lock, Mail, AlertCircle, CheckCircle, ArrowLeft } from 'lucide-react';
 
 interface LoginResponse {
   success: boolean;
@@ -68,7 +69,7 @@ export default function LoginPage() {
         {/* Header */}
         <div className="text-center">
           <div className="mx-auto h-16 w-16 bg-yellow-500 rounded-full flex items-center justify-center mb-4">
-            <span className="text-2xl font-bold text-black">🛡️</span>
+            <Shield className="w-8 h-8 text-black" />
           </div>
           <h2 className="text-3xl font-bold text-white">Accesso Amministratore</h2>
           <p className="mt-2 text-sm text-gray-400">
@@ -153,9 +154,11 @@ export default function LoginPage() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute inset-y-0 right-0 pr-3 flex items-center"
                   >
-                    <span className="text-gray-400 hover:text-white transition-colors">
-                      {showPassword ? '🙈' : '👁️'}
-                    </span>
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5 text-gray-400 hover:text-white transition-colors" />
+                    ) : (
+                      <Eye className="w-5 h-5 text-gray-400 hover:text-white transition-colors" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -187,7 +190,7 @@ export default function LoginPage() {
                     {loading ? (
                       <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
                     ) : (
-                      <span className="text-black">🔐</span>
+                      <Lock className="w-5 h-5 text-black" />
                     )}
                   </span>
                   {loading ? 'Autenticazione in corso...' : 'Accedi al Pannello'}
@@ -224,9 +227,10 @@ export default function LoginPage() {
         <div className="text-center">
           <Link
             href="/"
-            className="text-gray-400 hover:text-white text-sm transition-colors"
+            className="flex items-center justify-center text-gray-400 hover:text-white text-sm transition-colors"
           >
-            ← Torna al Portfolio
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            Torna al Portfolio
           </Link>
         </div>
       </div>

@@ -3,6 +3,17 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { 
+  Shield, 
+  AlertTriangle, 
+  CheckCircle, 
+  Zap, 
+  ArrowRight, 
+  ArrowLeft,
+  Smartphone,
+  Key,
+  Settings
+} from 'lucide-react';
 
 export default function Setup2FAChoice() {
   const [loading, setLoading] = useState(false);
@@ -42,7 +53,7 @@ export default function Setup2FAChoice() {
         {/* Header */}
         <div className="text-center">
           <div className="mx-auto h-16 w-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mb-4">
-            <span className="text-2xl font-bold text-white">🔐</span>
+            <Shield className="w-8 h-8 text-white" />
           </div>
           <h2 className="text-3xl font-bold text-white">Configurazione Sicurezza</h2>
           <p className="mt-2 text-sm text-gray-400">
@@ -54,7 +65,7 @@ export default function Setup2FAChoice() {
         <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-lg p-6">
           <div className="flex items-start space-x-3">
             <div className="w-10 h-10 bg-yellow-500/20 rounded-full flex items-center justify-center flex-shrink-0">
-              <span className="text-yellow-400">⚠️</span>
+              <AlertTriangle className="w-5 h-5 text-yellow-400" />
             </div>
             <div>
               <p className="text-yellow-400 font-semibold text-lg mb-2">Raccomandazione di Sicurezza</p>
@@ -85,7 +96,7 @@ export default function Setup2FAChoice() {
           >
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                <span className="text-2xl">🛡️</span>
+                <Shield className="w-6 h-6 text-white" />
               </div>
               <div className="flex-1 text-left">
                 <h3 className="text-xl font-bold mb-1">Configura 2FA (Raccomandato)</h3>
@@ -93,13 +104,13 @@ export default function Setup2FAChoice() {
                   Massima sicurezza con autenticazione a due fattori
                 </p>
                 <div className="flex items-center space-x-4 mt-2 text-xs text-green-200">
-                  <span>✅ Sicurezza Militare</span>
-                  <span>✅ App Authenticator</span>
-                  <span>✅ Codici Backup</span>
+                  <span className="flex items-center"><CheckCircle className="w-3 h-3 mr-1" />Sicurezza Militare</span>
+                  <span className="flex items-center"><Smartphone className="w-3 h-3 mr-1" />App Authenticator</span>
+                  <span className="flex items-center"><Key className="w-3 h-3 mr-1" />Codici Backup</span>
                 </div>
               </div>
               <div className="text-white/80">
-                <span className="text-2xl">→</span>
+                <ArrowRight className="w-6 h-6" />
               </div>
             </div>
           </button>
@@ -112,7 +123,7 @@ export default function Setup2FAChoice() {
           >
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 bg-yellow-500/20 rounded-full flex items-center justify-center">
-                <span className="text-2xl">⚡</span>
+                <Zap className="w-6 h-6 text-yellow-400" />
               </div>
               <div className="flex-1 text-left">
                 <h3 className="text-lg font-bold mb-1">Accesso Rapido</h3>
@@ -120,15 +131,15 @@ export default function Setup2FAChoice() {
                   Continua senza 2FA (puoi configurarlo dopo)
                 </p>
                 <div className="flex items-center space-x-4 mt-2 text-xs text-gray-400">
-                  <span>⚠️ Sicurezza Standard</span>
-                  <span>🔧 Configurabile dopo</span>
+                  <span className="flex items-center"><AlertTriangle className="w-3 h-3 mr-1" />Sicurezza Standard</span>
+                  <span className="flex items-center"><Settings className="w-3 h-3 mr-1" />Configurabile dopo</span>
                 </div>
               </div>
               <div className="text-gray-400">
                 {loading ? (
                   <div className="w-6 h-6 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
                 ) : (
-                  <span className="text-2xl">→</span>
+                  <ArrowRight className="w-6 h-6" />
                 )}
               </div>
             </div>
@@ -138,12 +149,15 @@ export default function Setup2FAChoice() {
         {/* Additional Info */}
         <div className="bg-gray-800 rounded-lg border border-gray-700 p-4">
           <div className="text-center">
-            <p className="text-sm font-medium text-white mb-2">📱 App Consigliate per 2FA</p>
+            <p className="text-sm font-medium text-white mb-2 flex items-center">
+              <Smartphone className="w-4 h-4 mr-1" />
+              App Consigliate per 2FA
+            </p>
             <div className="grid grid-cols-2 gap-2 text-xs text-gray-400">
-              <div>🔐 Google Authenticator</div>
-              <div>🔐 Microsoft Authenticator</div>
-              <div>⚡ Authy</div>
-              <div>🔑 1Password</div>
+              <div className="flex items-center"><Shield className="w-3 h-3 mr-1" />Google Authenticator</div>
+              <div className="flex items-center"><Shield className="w-3 h-3 mr-1" />Microsoft Authenticator</div>
+              <div className="flex items-center"><Zap className="w-3 h-3 mr-1" />Authy</div>
+              <div className="flex items-center"><Key className="w-3 h-3 mr-1" />1Password</div>
             </div>
             <p className="text-xs text-gray-500 mt-3">
               Puoi sempre configurare o disabilitare 2FA dalle impostazioni
@@ -155,9 +169,10 @@ export default function Setup2FAChoice() {
         <div className="text-center">
           <Link
             href="/"
-            className="text-gray-400 hover:text-white text-sm transition-colors"
+            className="flex items-center justify-center text-gray-400 hover:text-white text-sm transition-colors"
           >
-            ← Torna al Portfolio
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            Torna al Portfolio
           </Link>
         </div>
       </div>

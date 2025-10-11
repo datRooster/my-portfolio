@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { Edit, Trash2 } from 'lucide-react';
 
 interface Project {
   id: string;
@@ -379,15 +380,17 @@ export default function ProjectsManagement() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => openEditModal(project)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition flex items-center space-x-1"
                   >
-                    ✏️ Modifica
+                    <Edit className="w-4 h-4" />
+                    <span>Modifica</span>
                   </button>
                   <button
                     onClick={() => handleDeleteProject(project.id)}
-                    className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition"
+                    className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition flex items-center space-x-1"
                   >
-                    🗑️ Elimina
+                    <Trash2 className="w-4 h-4" />
+                    <span>Elimina</span>
                   </button>
                 </div>
               </div>

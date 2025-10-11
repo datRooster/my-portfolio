@@ -1,5 +1,6 @@
 import Link from "next/link";
 import CoinFlip from "@/components/CoinFlip";
+import { Wrench, Lock, ShoppingCart } from "lucide-react";
 
 export default function Home() {
   return (
@@ -30,19 +31,25 @@ export default function Home() {
       <section className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
         {/* Portfolio */}
         <Link href="/projects" className="block bg-gray-900 rounded-xl p-6 hover:bg-gray-800 transition shadow-lg text-center">
-          <span className="text-3xl mb-2 inline-block">🛠️</span>
+          <div className="flex justify-center mb-4">
+            <Wrench className="w-8 h-8 text-yellow-500" />
+          </div>
           <h2 className="font-bold text-xl mb-1">Progetti</h2>
           <p className="text-gray-400 text-sm">Scopri i progetti più importanti e recenti.</p>
         </Link>
         {/* Bug Bounty */}
         <a href="/bugbounty" className="block bg-gray-900 rounded-xl p-6 hover:bg-gray-800 transition shadow-lg text-center">
-          <span className="text-3xl mb-2 inline-block">🔒</span>
+          <div className="flex justify-center mb-4">
+            <Lock className="w-8 h-8 text-yellow-500" />
+          </div>
           <h2 className="font-bold text-xl mb-1">Bug Bounty</h2>
           <p className="text-gray-400 text-sm">Le mie attività di sicurezza e vulnerabilità scoperte.</p>
         </a>
         {/* Shop */}
         <a href="/shop" className="block bg-gray-900 rounded-xl p-6 hover:bg-gray-800 transition shadow-lg text-center">
-          <span className="text-3xl mb-2 inline-block">🛒</span>
+          <div className="flex justify-center mb-4">
+            <ShoppingCart className="w-8 h-8 text-yellow-500" />
+          </div>
           <h2 className="font-bold text-xl mb-1">Servizi & Shop</h2>
           <p className="text-gray-400 text-sm">Consulenze, corsi, prodotti digitali.</p>
         </a>

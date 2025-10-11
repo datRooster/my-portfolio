@@ -3,6 +3,17 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { 
+  Shield, 
+  BarChart3, 
+  Wrench, 
+  Lock, 
+  TrendingUp, 
+  Settings, 
+  LogOut,
+  AlertTriangle,
+  CheckCircle 
+} from 'lucide-react';
 
 interface User {
   id: string;
@@ -88,7 +99,8 @@ export default function AdminLayout({
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-center h-16 bg-gray-800">
-            <h1 className="text-xl font-bold text-yellow-500">🛡️ Admin Panel</h1>
+            <Shield className="w-6 h-6 text-yellow-500 mr-2" />
+            <h1 className="text-xl font-bold text-yellow-500">Admin Panel</h1>
           </div>
 
           {/* Navigation */}
@@ -97,7 +109,7 @@ export default function AdminLayout({
               href="/admin" 
               className="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white transition"
             >
-              <span className="mr-3">📊</span>
+              <BarChart3 className="w-5 h-5 mr-3" />
               Dashboard
             </Link>
             
@@ -105,7 +117,7 @@ export default function AdminLayout({
               href="/admin/projects" 
               className="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white transition"
             >
-              <span className="mr-3">🛠️</span>
+              <Wrench className="w-5 h-5 mr-3" />
               Progetti
             </Link>
 
@@ -113,7 +125,7 @@ export default function AdminLayout({
               href="/admin/security" 
               className="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white transition"
             >
-              <span className="mr-3">🔒</span>
+              <Lock className="w-5 h-5 mr-3" />
               Sicurezza
             </Link>
 
@@ -121,7 +133,7 @@ export default function AdminLayout({
               href="/admin/analytics" 
               className="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white transition"
             >
-              <span className="mr-3">📈</span>
+              <TrendingUp className="w-5 h-5 mr-3" />
               Analytics
             </Link>
 
@@ -129,7 +141,7 @@ export default function AdminLayout({
               href="/admin/settings" 
               className="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white transition"
             >
-              <span className="mr-3">⚙️</span>
+              <Settings className="w-5 h-5 mr-3" />
               Impostazioni
             </Link>
           </nav>
@@ -151,7 +163,7 @@ export default function AdminLayout({
               onClick={handleLogout}
               className="w-full flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-red-800 hover:text-white transition"
             >
-              <span className="mr-3">🚪</span>
+              <LogOut className="w-5 h-5 mr-3" />
               Logout
             </button>
           </div>
@@ -168,7 +180,7 @@ export default function AdminLayout({
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
-                    <span className="text-yellow-600">⚠️</span>
+                    <AlertTriangle className="w-5 h-5 text-yellow-600" />
                   </div>
                   <div>
                     <p className="text-yellow-800 font-medium">Sicurezza Account</p>
