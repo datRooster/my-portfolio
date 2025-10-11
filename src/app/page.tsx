@@ -1,103 +1,75 @@
-import Image from "next/image";
+import Link from "next/link";
+import CoinFlip from "@/components/CoinFlip";
 
 export default function Home() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <main className="flex flex-col items-center justify-center min-h-screen bg-gray-950 text-gray-100 px-4">
+      {/* Hero Section */}
+      <section className="text-center mt-20 mb-16">
+        {/* Logo/avatar */}
+        <div className="flex flex-col items-center mb-16">
+          {/* Effetto moneta rotante con due facce */}
+          <CoinFlip flipInterval={3000} />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
+        <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
+          theWebRooster
+        </h1>
+        <p className="text-lg md:text-xl text-gray-400 mb-6">
+          Architect, Security Researcher, Web Developer.<br />
+          Portfolio, progetti, bug bounty e servizi di consulenza.
+        </p>
         <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          href="/shop"
+          className="inline-block px-8 py-3 bg-yellow-500 text-gray-900 font-semibold rounded-lg shadow hover:bg-yellow-400 transition"
+        >
+          Scopri i Servizi
+        </a>
+      </section>
+
+      {/* Quick Links Section */}
+      <section className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
+        {/* Portfolio */}
+        <Link href="/projects" className="block bg-gray-900 rounded-xl p-6 hover:bg-gray-800 transition shadow-lg text-center">
+          <span className="text-3xl mb-2 inline-block">🛠️</span>
+          <h2 className="font-bold text-xl mb-1">Progetti</h2>
+          <p className="text-gray-400 text-sm">Scopri i progetti più importanti e recenti.</p>
+        </Link>
+        {/* Bug Bounty */}
+        <a href="/bugbounty" className="block bg-gray-900 rounded-xl p-6 hover:bg-gray-800 transition shadow-lg text-center">
+          <span className="text-3xl mb-2 inline-block">🔒</span>
+          <h2 className="font-bold text-xl mb-1">Bug Bounty</h2>
+          <p className="text-gray-400 text-sm">Le mie attività di sicurezza e vulnerabilità scoperte.</p>
+        </a>
+        {/* Shop */}
+        <a href="/shop" className="block bg-gray-900 rounded-xl p-6 hover:bg-gray-800 transition shadow-lg text-center">
+          <span className="text-3xl mb-2 inline-block">🛒</span>
+          <h2 className="font-bold text-xl mb-1">Servizi & Shop</h2>
+          <p className="text-gray-400 text-sm">Consulenze, corsi, prodotti digitali.</p>
+        </a>
+      </section>
+
+      {/* Social Links */}
+      <section className="flex gap-6 mb-12">
+        <a
+          href="https://github.com/datRooster/"
           target="_blank"
           rel="noopener noreferrer"
+          className="text-gray-400 hover:text-yellow-500 transition"
+          title="GitHub"
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
+          <svg width="30" height="30" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.56v-2c-3.2.7-3.87-1.55-3.87-1.55-.52-1.3-1.28-1.65-1.28-1.65-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.72-1.55-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.45.11-3.01 0 0 .97-.31 3.18 1.18.92-.26 1.91-.39 2.89-.39.98 0 1.97.13 2.89.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.56.23 2.72.11 3.01.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.41-5.27 5.7.41.36.77 1.08.77 2.18v3.24c0 .31.21.67.79.56A11.52 11.52 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z"/></svg>
         </a>
         <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          href="https://www.linkedin.com/in/amedeo-galletta-812835292/"
           target="_blank"
           rel="noopener noreferrer"
+          className="text-gray-400 hover:text-yellow-500 transition"
+          title="LinkedIn"
         >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
+          <svg width="30" height="30" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-9h3v9zm-1.5-10.28c-.97 0-1.75-.78-1.75-1.72s.78-1.72 1.75-1.72 1.75.78 1.75 1.72-.78 1.72-1.75 1.72zm13.5 10.28h-3v-4.5c0-1.08-.02-2.47-1.5-2.47s-1.73 1.18-1.73 2.39v4.58h-3v-9h2.88v1.23h.04c.4-.76 1.37-1.56 2.81-1.56 3.01 0 3.56 1.98 3.56 4.56v5.77z"/></svg>
         </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        {/* Aggiungi altri social se vuoi */}
+      </section>
+    </main>
   );
 }

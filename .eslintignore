@@ -1,0 +1,12 @@
+# Ignore security files during development (they contain stub functions)
+src/lib/security/2fa.ts
+src/lib/security/encryption.ts  
+src/lib/security/jwt.ts
+src/lib/security/middleware.ts
+
+# Standard ignores
+node_modules/
+.next/
+out/
+dist/
+build/

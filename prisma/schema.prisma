@@ -1,0 +1,446 @@
+// Portfolio Database Schema
+// theWebRooster Portfolio Management System
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ================================
+// MODELS PRINCIPALI
+// ================================
+
+model Project {
+  id               String   @id @default(uuid())
+  title            String
+  description      String
+  longDescription  String?
+  
+  // Metadati
+  status           ProjectStatus @default(DRAFT)
+  priority         Int          @default(1)
+  featured         Boolean      @default(false)
+  
+  // Date
+  startDate        DateTime
+  endDate          DateTime?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  
+  // Media
+  featuredImage    String?
+  gallery          String[]     @default([])
+  screenshots      String[]     @default([])
+  
+  // Links
+  demoUrl          String?
+  repositoryUrl    String?
+  caseStudyUrl     String?
+  
+  // SEO e navigazione
+  slug             String       @unique
+  tags             String[]     @default([])
+  
+  // Info progetto
+  role             String?
+  client           String?
+  team             String[]     @default([])
+  
+  // Metriche
+  metrics          Json?        // Flexible metrics storage
+  
+  // Relazioni
+  category         Category     @relation(fields: [categoryId], references: [id])
+  categoryId       String
+  technologies     ProjectTechnology[]
+  skills           ProjectSkill[]
+  
+  @@map("projects")
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  icon        String?   // Emoji o path icona
+  color       String?   // Colore hex per UI
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relazioni
+  projects    Project[]
+  
+  @@map("categories")
+}
+
+model Technology {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  icon        String?   // Logo o icona
+  color       String?   // Colore brand
+  website     String?   // Sito ufficiale
+  category    String?   // Frontend, Backend, Database, etc.
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relazioni
+  projects    ProjectTechnology[]
+  
+  @@map("technologies")
+}
+
+model Skill {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  category    String?   // Technical, Soft, etc.
+  level       SkillLevel @default(INTERMEDIATE)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relazioni
+  projects    ProjectSkill[]
+  
+  @@map("skills")
+}
+
+// ================================
+// TABELLE DI RELAZIONE
+// ================================
+
+model ProjectTechnology {
+  id           String     @id @default(uuid())
+  project      Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId    String
+  technology   Technology @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+  technologyId String
+  importance   Int        @default(1) // 1-5 per ordinamento
+  createdAt    DateTime   @default(now())
+  
+  @@unique([projectId, technologyId])
+  @@map("project_technologies")
+}
+
+model ProjectSkill {
+  id        String   @id @default(uuid())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+  skill     Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  skillId   String
+  level     SkillLevel @default(INTERMEDIATE)
+  createdAt DateTime @default(now())
+  
+  @@unique([projectId, skillId])
+  @@map("project_skills")
+}
+
+// ================================
+// MODELS PER FUTURE ESTENSIONI
+// ================================
+
+model BlogPost {
+  id          String      @id @default(uuid())
+  title       String
+  content     String
+  excerpt     String?
+  slug        String      @unique
+  status      PostStatus  @default(DRAFT)
+  featured    Boolean     @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+  featuredImage   String?
+  
+  // Categorizzazione
+  tags        String[]  @default([])
+  category    String?
+  
+  @@map("blog_posts")
+}
+
+model Service {
+  id          String        @id @default(uuid())
+  name        String
+  description String
+  price       Decimal?
+  currency    String        @default("EUR")
+  status      ServiceStatus @default(ACTIVE)
+  featured    Boolean       @default(false)
+  order       Int           @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  
+  // Dettagli
+  features    String[]      @default([])
+  duration    String?       // "1 settimana", "3 mesi", etc.
+  deliverables String[]     @default([])
+  
+  @@map("services")
+}
+
+// ================================
+// ENUMS
+// ================================
+
+enum ProjectStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
+  ARCHIVED
+}
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ServiceStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+// ================================
+// SECURITY & AUTHENTICATION MODELS
+// ================================
+
+model User {
+  id                String       @id @default(uuid())
+  email             String       @unique
+  username          String       @unique
+  passwordHash      String       // bcrypt + salt + pepper
+  passwordSalt      String       // Unique salt per user
+  
+  // 2FA Configuration
+  twoFactorEnabled  Boolean      @default(false)
+  twoFactorSecret   String?      // TOTP secret (encrypted)
+  backupCodes       String[]     @default([]) // Encrypted backup codes
+  
+  // Account Security
+  role              UserRole     @default(USER)
+  status            UserStatus   @default(ACTIVE)
+  emailVerified     Boolean      @default(false)
+  emailVerifyToken  String?
+  
+  // Password Security
+  passwordResetToken     String?
+  passwordResetExpires   DateTime?
+  passwordChangedAt      DateTime?
+  failedLoginAttempts    Int      @default(0)
+  lockoutUntil          DateTime?
+  
+  // Session Management
+  lastLoginAt       DateTime?
+  lastLoginIP       String?
+  lastLoginLocation String?
+  currentSessionId  String?
+  
+  // Security Metadata
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  createdIP         String?
+  
+  // Relations
+  sessions          UserSession[]
+  auditLogs         AuditLog[]
+  loginAttempts     LoginAttempt[]
+  
+  @@map("users")
+}
+
+model UserSession {
+  id                String       @id @default(uuid())
+  userId            String
+  user              User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Session Data
+  sessionToken      String       @unique // JWT ID
+  refreshToken      String       @unique // Refresh token
+  
+  // Security Info
+  ipAddress         String
+  userAgent         String
+  location          String?      // Geo-location
+  deviceFingerprint String?      // Device identification
+  
+  // Session Lifecycle
+  createdAt         DateTime     @default(now())
+  lastAccessedAt    DateTime     @default(now())
+  expiresAt         DateTime
+  isActive          Boolean      @default(true)
+  revokedAt         DateTime?
+  revokedReason     String?
+  
+  @@map("user_sessions")
+}
+
+model LoginAttempt {
+  id                String           @id @default(uuid())
+  userId            String?          // Null for failed attempts
+  user              User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Attempt Details
+  email             String
+  ipAddress         String
+  userAgent         String
+  location          String?
+  deviceFingerprint String?
+  
+  // Attempt Result
+  success           Boolean
+  failureReason     LoginFailureReason?
+  twoFactorUsed     Boolean          @default(false)
+  
+  // Metadata
+  createdAt         DateTime         @default(now())
+  
+  @@map("login_attempts")
+}
+
+model AuditLog {
+  id          String       @id @default(uuid())
+  userId      String?
+  user        User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  // Event Details
+  action      String       // CREATE_PROJECT, DELETE_USER, etc.
+  resource    String       // projects, users, etc.
+  resourceId  String?      // ID of affected resource
+  
+  // Request Context
+  ipAddress   String
+  userAgent   String
+  method      String       // GET, POST, etc.
+  endpoint    String       // /api/admin/projects
+  
+  // Change Details
+  oldValues   Json?        // Previous state
+  newValues   Json?        // New state
+  
+  // Metadata
+  createdAt   DateTime     @default(now())
+  severity    AuditSeverity @default(INFO)
+  
+  @@map("audit_logs")
+}
+
+model SecurityEvent {
+  id              String             @id @default(uuid())
+  type            SecurityEventType
+  severity        SecuritySeverity
+  
+  // Event Details
+  description     String
+  ipAddress       String
+  userAgent       String?
+  userId          String?
+  
+  // Threat Intelligence
+  isBlocked       Boolean            @default(false)
+  riskScore       Int                @default(0) // 0-100
+  geoLocation     String?
+  
+  // Response
+  actionTaken     String?
+  resolvedAt      DateTime?
+  
+  // Metadata
+  createdAt       DateTime           @default(now())
+  metadata        Json?              // Additional context
+  
+  @@map("security_events")
+}
+
+model IPWhitelist {
+  id          String       @id @default(uuid())
+  ipAddress   String       @unique
+  description String?
+  isActive    Boolean      @default(true)
+  createdBy   String       // User ID
+  createdAt   DateTime     @default(now())
+  expiresAt   DateTime?    // Optional expiration
+  
+  @@map("ip_whitelist")
+}
+
+model RateLimitBucket {
+  id          String       @id @default(uuid())
+  identifier  String       // IP or user ID
+  bucket      String       // endpoint or global
+  tokens      Int          // Current tokens
+  lastRefill  DateTime     @default(now())
+  
+  @@unique([identifier, bucket])
+  @@map("rate_limit_buckets")
+}
+
+// ================================
+// SECURITY ENUMS
+// ================================
+
+enum UserRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DEACTIVATED
+  PENDING_VERIFICATION
+}
+
+enum LoginFailureReason {
+  INVALID_CREDENTIALS
+  ACCOUNT_LOCKED
+  ACCOUNT_SUSPENDED
+  TWO_FACTOR_REQUIRED
+  TWO_FACTOR_INVALID
+  IP_BLOCKED
+  RATE_LIMITED
+}
+
+enum AuditSeverity {
+  INFO
+  WARNING
+  ERROR
+  CRITICAL
+}
+
+enum SecurityEventType {
+  BRUTE_FORCE_ATTEMPT
+  SUSPICIOUS_LOGIN
+  UNAUTHORIZED_ACCESS
+  SQL_INJECTION_ATTEMPT
+  XSS_ATTEMPT
+  CSRF_ATTACK
+  DDoS_ATTEMPT
+  PRIVILEGE_ESCALATION
+  DATA_EXFILTRATION
+}
+
+enum SecuritySeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
