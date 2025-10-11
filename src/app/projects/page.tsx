@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { Project, ProjectFilters } from '@/types/project';
-import ProjectGrid from '@/components/ProjectGrid';
-import ProjectFiltersComponent from '@/components/ProjectFilters';
+import ProjectGrid from '@/components/portfolio/ProjectGrid';
+import ProjectFiltersComponent from '@/components/portfolio/ProjectFilters';
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);

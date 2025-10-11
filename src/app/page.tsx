@@ -1,5 +1,5 @@
 import Link from "next/link";
-import CoinFlip from "@/components/CoinFlip";
+import CoinFlip from "@/components/layout/CoinFlip";
 import { Wrench, Lock, ShoppingCart } from "lucide-react";
 
 export default function Home() {

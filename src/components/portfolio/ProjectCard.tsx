@@ -1,12 +1,28 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Project } from '@/types/project';
+import { useEffect, useState } from 'react';
+import { isUserAdmin } from '@/lib/auth-client';
+import { Edit } from 'lucide-react';
 
 interface ProjectCardProps {
   project: Project;
 }
 
 export default function ProjectCard({ project }: ProjectCardProps) {
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      const adminStatus = await isUserAdmin();
+      setIsAdmin(adminStatus);
+    };
+    
+    checkAdmin();
+  }, []);
+
   const statusColors = {
     completed: 'bg-green-500/10 text-green-400',
     'in-progress': 'bg-yellow-500/10 text-yellow-400',
@@ -119,13 +135,26 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             )}
           </div>
           
-          {/* Link dettagli */}
-          <Link
-            href={`/projects/${project.slug}`}
-            className="text-yellow-500 hover:text-yellow-400 text-sm font-medium transition-colors"
-          >
-            Dettagli →
-          </Link>
+          {/* Link dettagli e modifica admin */}
+          <div className="flex items-center gap-3">
+            <Link
+              href={`/projects/${project.slug}`}
+              className="text-yellow-500 hover:text-yellow-400 text-sm font-medium transition-colors"
+            >
+              Dettagli →
+            </Link>
+            
+            {isAdmin && (
+              <Link
+                href={`/admin/projects/edit/${project.slug}`}
+                className="flex items-center gap-1 text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors"
+                title="Modifica progetto"
+              >
+                <Edit size={14} />
+                Modifica
+              </Link>
+            )}
+          </div>
         </div>
 
         {/* Data */}

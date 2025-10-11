@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
       id: '1',
       email: 'admin@example.com',
       name: 'Amministratore',
-      role: 'ADMIN',
+      role: 'admin',
       lastLogin: new Date().toISOString(),
       twoFactorEnabled: has2FA
     };
