@@ -9,14 +9,24 @@ interface ProjectPageProps {
 
 async function getProject(slug: string): Promise<Project | null> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/projects/${slug}`, {
-      cache: 'no-store' // Per development, in production usa cache appropriata
+    // Importa direttamente la logica API invece di fare fetch
+    const { PrismaClient } = await import('@prisma/client');
+    const prisma = new PrismaClient();
+    
+    const project = await prisma.project.findUnique({
+      where: { slug },
+      include: {
+        category: true,
+        technologies: {
+          include: {
+            technology: true
+          }
+        }
+      }
     });
     
-    if (!response.ok) return null;
-    
-    const data = await response.json();
-    return data.project;
+    await prisma.$disconnect();
+    return project;
   } catch (error) {
     console.error('Errore caricamento progetto:', error);
     return null;
