@@ -14,20 +14,8 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
     "db:reset": "prisma migrate reset --force",
-    "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down",
-    "build:static": "echo 'Static export disabled - use hosting with Node.js support'",
-    "deploy:static": "./scripts/deploy.sh static",
-    "deploy:server": "./scripts/deploy.sh server",
-    "deploy:prod": "NODE_ENV=production npm run build && npm run db:migrate:deploy",
-    "deploy:vercel": "vercel --prod",
     "db:migrate:deploy": "prisma migrate deploy",
-    "vercel:env": "vercel env add",
-    "pm2:start": "pm2 start scripts/ecosystem.config.js",
-    "pm2:stop": "pm2 stop portfolio-therooster",
-    "pm2:restart": "pm2 restart portfolio-therooster",
-    "pm2:logs": "pm2 logs portfolio-therooster",
-    "backup:db": "pg_dump $DATABASE_URL > backup_$(date +%Y%m%d_%H%M%S).sql"
+    "generate-secrets": "./scripts/generate-secrets.sh"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -41,19 +29,15 @@
     "bcryptjs": "^3.0.2",
     "crypto-js": "^4.2.0",
     "express-rate-limit": "^8.1.0",
-    "express-validator": "^7.2.1",
-    "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.545.0",
     "next": "15.5.4",
-    "node-fetch": "^3.3.2",
     "otplib": "^12.0.1",
     "prisma": "^6.17.1",
     "qrcode": "^1.5.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "speakeasy": "^2.0.0",
-    "uuid": "^13.0.0"
+    "speakeasy": "^2.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
