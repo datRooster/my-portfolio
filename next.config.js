@@ -13,6 +13,24 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
 
+  // Configurazione immagini per supportare Vercel Blob Storage
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.public.blob.vercel-storage.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com',
+        port: '',
+        pathname: '/**',
+      }
+    ],
+  },
+
   // Headers di sicurezza globali
   async headers() {
     return [

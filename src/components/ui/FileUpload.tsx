@@ -149,6 +149,13 @@ export default function FileUpload({
                 alt="Preview"
                 fill
                 className="object-cover"
+                unoptimized={value.includes('blob.vercel-storage.com')}
+                onError={(e) => {
+                  console.error('Image load error:', value);
+                  // Fallback: prova a caricare come immagine normale
+                  const img = e.target as HTMLImageElement;
+                  img.style.display = 'none';
+                }}
               />
             </div>
             
