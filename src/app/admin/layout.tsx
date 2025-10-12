@@ -37,6 +37,14 @@ export default function AdminLayout({
 
   useEffect(() => {
     checkAuth();
+    
+    // Override body background for admin pages
+    document.body.style.backgroundColor = '#111827'; // bg-gray-900
+    
+    return () => {
+      // Restore original background on cleanup
+      document.body.style.backgroundColor = '';
+    };
   }, []);
 
   const checkAuth = async () => {
@@ -93,7 +101,7 @@ export default function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100">
+    <div className="min-h-screen bg-gray-900 text-gray-100" style={{backgroundColor: '#111827'}}>
       {/* Sidebar */}
       <div className="fixed inset-y-0 left-0 w-64 bg-gray-900 shadow-xl">
         <div className="flex flex-col h-full">

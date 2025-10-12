@@ -46,6 +46,24 @@ export async function POST(request: NextRequest) {
     const filename = generateSecureFilename(file.name, file.type);
 
     console.log('☁️ Uploading to Vercel Blob...');
+    
+    // Check if BLOB_READ_WRITE_TOKEN is available
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      console.warn('⚠️ BLOB_READ_WRITE_TOKEN not found - using development fallback');
+      // In development, return a placeholder URL
+      if (process.env.NODE_ENV === 'development') {
+        const placeholderUrl = `https://via.placeholder.com/800x600/4F46E5/ffffff?text=${encodeURIComponent(filename)}`;
+        return NextResponse.json({
+          success: true,
+          url: placeholderUrl,
+          filename: filename,
+          size: file.size,
+          type: file.type,
+          note: 'Development mode - using placeholder image'
+        });
+      }
+    }
+    
     const blob = await put(`projects/${filename}`, file, {
       access: 'public'
     });
