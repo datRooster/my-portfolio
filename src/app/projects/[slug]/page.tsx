@@ -13,7 +13,7 @@ async function getProject(slug: string): Promise<Project | null> {
     const { PrismaClient } = await import('@prisma/client');
     const prisma = new PrismaClient();
     
-    const project = await prisma.project.findUnique({
+    const projectData = await prisma.project.findUnique({
       where: { slug },
       include: {
         category: true,
@@ -21,11 +21,47 @@ async function getProject(slug: string): Promise<Project | null> {
           include: {
             technology: true
           }
+        },
+        skills: {
+          include: {
+            skill: true
+          }
         }
       }
     });
     
     await prisma.$disconnect();
+    
+    if (!projectData) return null;
+    
+    // Trasforma i dati Prisma nel formato Project
+    const project: Project = {
+      id: projectData.id,
+      title: projectData.title,
+      description: projectData.description,
+      longDescription: projectData.longDescription || undefined,
+      status: projectData.status as 'completed' | 'in-progress' | 'archived' | 'draft',
+      category: projectData.category.name,
+      priority: projectData.priority,
+      startDate: projectData.startDate.toISOString(),
+      endDate: projectData.endDate?.toISOString(),
+      createdAt: projectData.createdAt.toISOString(),
+      updatedAt: projectData.updatedAt.toISOString(),
+      featuredImage: projectData.featuredImage || undefined,
+      gallery: projectData.gallery,
+      screenshots: projectData.screenshots,
+      technologies: projectData.technologies.map(pt => pt.technology.name),
+      skills: projectData.skills.map(ps => ps.skill.name),
+      demoUrl: projectData.demoUrl || undefined,
+      repositoryUrl: projectData.repositoryUrl || undefined,
+      caseStudyUrl: projectData.caseStudyUrl || undefined,
+      slug: projectData.slug,
+      tags: projectData.tags,
+      role: projectData.role || undefined,
+      client: projectData.client || undefined,
+      featured: projectData.featured
+    };
+    
     return project;
   } catch (error) {
     console.error('Errore caricamento progetto:', error);
