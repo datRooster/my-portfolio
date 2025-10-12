@@ -173,7 +173,7 @@ export default function AdminLayout({
       {/* Main Content */}
       <div className="ml-64">
                 {/* Main Content */}
-        <main className="flex-1 overflow-y-auto bg-gray-50">
+        <main className="flex-1 overflow-y-auto bg-gray-900">
           {/* 2FA Reminder Banner */}
           {user && !user.twoFactorEnabled && (
             <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-400 p-4 m-6 rounded-r-lg">
