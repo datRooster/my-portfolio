@@ -45,11 +45,12 @@ export const config = {
     /*
      * Match all request paths except for the ones starting with:
      * - api/public (public API routes)
+     * - api/analytics (analytics API routes - skip for now)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public folder
      */
-    '/((?!api/public|_next/static|_next/image|favicon.ico|public).*)',
+    '/((?!api/public|api/analytics|_next/static|_next/image|favicon.ico|public).*)',
   ],
 };

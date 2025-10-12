@@ -1,82 +1,265 @@
 import Link from "next/link";
 import CoinFlip from "@/components/layout/CoinFlip";
-import { Wrench, Lock, ShoppingCart } from "lucide-react";
+import Navigation from "@/components/ui/Navigation";
+import { 
+  Code2, 
+  Shield, 
+  Zap, 
+  ArrowRight, 
+  Mail,
+  Sparkles,
+  Trophy,
+  Globe,
+  User
+} from "lucide-react";
 
 export default function Home() {
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen bg-gray-950 text-gray-100 px-4">
-      {/* Hero Section */}
-      <section className="text-center mt-20 mb-16">
-        {/* Logo/avatar */}
-        <div className="flex flex-col items-center mb-16">
-          {/* Effetto moneta rotante con due facce */}
-          <CoinFlip flipInterval={3000} />
-        </div>
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
-          theWebRooster
-        </h1>
-        <p className="text-lg md:text-xl text-gray-400 mb-6">
-          Architect, Security Researcher, Web Developer.<br />
-          Portfolio, progetti, bug bounty e servizi di consulenza.
-        </p>
-        <a
-          href="/shop"
-          className="inline-block px-8 py-3 bg-yellow-500 text-gray-900 font-semibold rounded-lg shadow hover:bg-yellow-400 transition"
-        >
-          Scopri i Servizi
-        </a>
-      </section>
+    <>
+      <Navigation />
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-950 text-gray-100 px-4">
+        {/* Hero Section Moderna */}
+        <section className="relative text-center mt-20 mb-20 max-w-6xl mx-auto">
+          {/* Background Effects */}
+          <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 via-transparent to-orange-500/5 rounded-3xl"></div>
+          <div className="absolute top-20 -left-20 w-40 h-40 bg-yellow-500/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute -bottom-10 -right-20 w-52 h-52 bg-orange-500/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+          
+          <div className="relative">
+            {/* Avatar con effetto coin flip */}
+            <div className="flex flex-col items-center mb-12 animate-fadeInUp">
+              <div className="relative mb-8 mt-8">
+                <CoinFlip flipInterval={3000} />
+                {/* Glow effect intorno al coin flip */}
+                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-orange-500/20 rounded-full blur-2xl scale-150 animate-pulse"></div>
+              </div>
+              
+              {/* Status badge */}
+              <div className="flex items-center gap-2 px-4 py-2 bg-green-500/20 border border-green-500/30 rounded-full mb-8">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span className="text-green-400 text-sm font-medium">Disponibile per nuovi progetti</span>
+              </div>
+            </div>
 
-      {/* Quick Links Section */}
-      <section className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
-        {/* Portfolio */}
-        <Link href="/projects" className="block bg-gray-900 rounded-xl p-6 hover:bg-gray-800 transition shadow-lg text-center">
-          <div className="flex justify-center mb-4">
-            <Wrench className="w-8 h-8 text-yellow-500" />
-          </div>
-          <h2 className="font-bold text-xl mb-1">Progetti</h2>
-          <p className="text-gray-400 text-sm">Scopri i progetti più importanti e recenti.</p>
-        </Link>
-        {/* Bug Bounty */}
-        <a href="/bugbounty" className="block bg-gray-900 rounded-xl p-6 hover:bg-gray-800 transition shadow-lg text-center">
-          <div className="flex justify-center mb-4">
-            <Lock className="w-8 h-8 text-yellow-500" />
-          </div>
-          <h2 className="font-bold text-xl mb-1">Bug Bounty</h2>
-          <p className="text-gray-400 text-sm">Le mie attività di sicurezza e vulnerabilità scoperte.</p>
-        </a>
-        {/* Shop */}
-        <a href="/shop" className="block bg-gray-900 rounded-xl p-6 hover:bg-gray-800 transition shadow-lg text-center">
-          <div className="flex justify-center mb-4">
-            <ShoppingCart className="w-8 h-8 text-yellow-500" />
-          </div>
-          <h2 className="font-bold text-xl mb-1">Servizi & Shop</h2>
-          <p className="text-gray-400 text-sm">Consulenze, corsi, prodotti digitali.</p>
-        </a>
-      </section>
+            {/* Main Title */}
+            <div className="mb-12 animate-fadeInUp" style={{animationDelay: '0.2s'}}>
+              <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
+                theWeb
+                <span className="block bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                  Rooster
+                </span>
+              </h1>
+              
+              {/* Animated subtitle */}
+              <div className="space-y-3 mb-8">
+                <p className="text-2xl md:text-3xl text-gray-300 font-light">
+                  <span className="text-yellow-400">Architect</span> • <span className="text-orange-400">Security Researcher</span> • <span className="text-blue-400">Developer</span>
+                </p>
+                <p className="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                  Creo soluzioni digitali innovative che uniscono <span className="text-yellow-400">performance</span>, 
+                  <span className="text-red-400"> sicurezza</span> e <span className="text-green-400">design elegante</span>.
+                  Dalla ricerca di vulnerabilità alle architetture scalabili.
+                </p>
+              </div>
+            </div>
 
-      {/* Social Links */}
-      <section className="flex gap-6 mb-12">
-        <a
-          href="https://github.com/datRooster/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-gray-400 hover:text-yellow-500 transition"
-          title="GitHub"
-        >
-          <svg width="30" height="30" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.56v-2c-3.2.7-3.87-1.55-3.87-1.55-.52-1.3-1.28-1.65-1.28-1.65-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.72-1.55-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.45.11-3.01 0 0 .97-.31 3.18 1.18.92-.26 1.91-.39 2.89-.39.98 0 1.97.13 2.89.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.56.23 2.72.11 3.01.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.41-5.27 5.7.41.36.77 1.08.77 2.18v3.24c0 .31.21.67.79.56A11.52 11.52 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z"/></svg>
-        </a>
-        <a
-          href="https://www.linkedin.com/in/amedeo-galletta-812835292/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-gray-400 hover:text-yellow-500 transition"
-          title="LinkedIn"
-        >
-          <svg width="30" height="30" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-9h3v9zm-1.5-10.28c-.97 0-1.75-.78-1.75-1.72s.78-1.72 1.75-1.72 1.75.78 1.75 1.72-.78 1.72-1.75 1.72zm13.5 10.28h-3v-4.5c0-1.08-.02-2.47-1.5-2.47s-1.73 1.18-1.73 2.39v4.58h-3v-9h2.88v1.23h.04c.4-.76 1.37-1.56 2.81-1.56 3.01 0 3.56 1.98 3.56 4.56v5.77z"/></svg>
-        </a>
-        {/* Aggiungi altri social se vuoi */}
-      </section>
-    </main>
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-fadeInUp" style={{animationDelay: '0.4s'}}>
+              <Link
+                href="/projects"
+                className="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-gray-900 font-semibold rounded-xl shadow-2xl shadow-yellow-500/25 hover:shadow-yellow-500/40 transition-all duration-300 hover:scale-105"
+              >
+                <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                Esplora i Progetti
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              
+              <Link
+                href="/about"
+                className="group flex items-center gap-3 px-8 py-4 bg-gray-800/50 border border-gray-700 text-white font-semibold rounded-xl hover:bg-gray-700/50 hover:border-gray-600 transition-all duration-300 hover:scale-105"
+              >
+                <User className="w-5 h-5" />
+                Chi Sono
+              </Link>
+            </div>
+
+            {/* Stats Row */}
+            <div className="flex flex-wrap justify-center gap-6 mb-16 animate-fadeInUp" style={{animationDelay: '0.6s'}}>
+              <div className="flex items-center gap-2 px-4 py-2 bg-gray-800/30 border border-gray-700 rounded-full">
+                <Code2 className="w-4 h-4 text-blue-400" />
+                <span className="text-sm text-gray-300">10+ Progetti</span>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-gray-800/30 border border-gray-700 rounded-full">
+                <Shield className="w-4 h-4 text-red-400" />
+                <span className="text-sm text-gray-300">Security Expert</span>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-gray-800/30 border border-gray-700 rounded-full">
+                <Trophy className="w-4 h-4 text-yellow-400" />
+                <span className="text-sm text-gray-300">Bug Bounty Hunter</span>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-gray-800/30 border border-gray-700 rounded-full">
+                <Globe className="w-4 h-4 text-green-400" />
+                <span className="text-sm text-gray-300">Remote Worldwide</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Services Section Moderna */}
+        <section className="w-full max-w-6xl mb-20">
+          {/* Section Header */}
+          <div className="text-center mb-12 animate-fadeInUp" style={{animationDelay: '0.8s'}}>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Cosa Posso Fare Per Te
+            </h2>
+            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+              Dalla concezione all'implementazione, creo soluzioni digitali complete e sicure
+            </p>
+          </div>
+
+          {/* Services Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Portfolio Card */}
+            <Link 
+              href="/projects" 
+              className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-8 hover:border-yellow-500/50 hover:bg-gray-800/50 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-yellow-500/10 animate-fadeInScale"
+              style={{animationDelay: '1s'}}
+            >
+              {/* Background gradient effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 via-transparent to-orange-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              
+              <div className="relative">
+                {/* Icon container */}
+                <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <Code2 className="w-8 h-8 text-gray-900" />
+                </div>
+                
+                {/* Content */}
+                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-yellow-400 transition-colors">
+                  Portfolio Progetti
+                </h3>
+                <p className="text-gray-400 text-sm leading-relaxed mb-4">
+                  Esplora i progetti più significativi che ho sviluppato, dalle web app alle ricerche di sicurezza.
+                </p>
+                
+                {/* Tags */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <span className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded-md text-xs">React</span>
+                  <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded-md text-xs">Next.js</span>
+                  <span className="px-2 py-1 bg-purple-500/20 text-purple-400 rounded-md text-xs">TypeScript</span>
+                </div>
+                
+                {/* Arrow */}
+                <div className="flex items-center justify-between">
+                  <span className="text-yellow-500 text-sm font-medium">Scopri Ora</span>
+                  <ArrowRight className="w-4 h-4 text-yellow-500 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </Link>
+
+            {/* Security Card */}
+            <a 
+              href="/bugbounty" 
+              className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-8 hover:border-red-500/50 hover:bg-gray-800/50 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-red-500/10 animate-fadeInScale"
+              style={{animationDelay: '1.1s'}}
+            >
+              {/* Background gradient effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-orange-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              
+              <div className="relative">
+                {/* Icon container */}
+                <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-orange-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <Shield className="w-8 h-8 text-white" />
+                </div>
+                
+                {/* Content */}
+                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-red-400 transition-colors">
+                  Security Research
+                </h3>
+                <p className="text-gray-400 text-sm leading-relaxed mb-4">
+                  Ricerca e scoperta di vulnerabilità, bug bounty hunting e consulenze di sicurezza informatica.
+                </p>
+                
+                {/* Tags */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <span className="px-2 py-1 bg-red-500/20 text-red-400 rounded-md text-xs">Penetration Testing</span>
+                  <span className="px-2 py-1 bg-orange-500/20 text-orange-400 rounded-md text-xs">Bug Bounty</span>
+                </div>
+                
+                {/* Arrow */}
+                <div className="flex items-center justify-between">
+                  <span className="text-red-500 text-sm font-medium">Esplora</span>
+                  <ArrowRight className="w-4 h-4 text-red-500 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </a>
+
+            {/* Services Card */}
+            <a 
+              href="/shop" 
+              className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-8 hover:border-green-500/50 hover:bg-gray-800/50 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-green-500/10 animate-fadeInScale"
+              style={{animationDelay: '1.2s'}}
+            >
+              {/* Background gradient effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 via-transparent to-blue-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              
+              <div className="relative">
+                {/* Icon container */}
+                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <Zap className="w-8 h-8 text-white" />
+                </div>
+                
+                {/* Content */}
+                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-green-400 transition-colors">
+                  Servizi & Consulenze
+                </h3>
+                <p className="text-gray-400 text-sm leading-relaxed mb-4">
+                  Consulenze tecniche, sviluppo custom, audit di sicurezza e formazione specializzata.
+                </p>
+                
+                {/* Tags */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded-md text-xs">Consulting</span>
+                  <span className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded-md text-xs">Development</span>
+                </div>
+                
+                {/* Arrow */}
+                <div className="flex items-center justify-between">
+                  <span className="text-green-500 text-sm font-medium">Scopri Servizi</span>
+                  <ArrowRight className="w-4 h-4 text-green-500 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </a>
+          </div>
+        </section>
+
+        {/* Contact & Social Section */}
+        <section className="w-full max-w-4xl text-center animate-fadeInUp" style={{animationDelay: '1.4s'}}>
+          {/* Contact CTA */}
+          <div className="bg-gradient-to-r from-gray-900/50 to-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-8">
+            <h3 className="text-2xl font-bold text-white mb-4">
+              Hai un Progetto in Mente?
+            </h3>
+            <p className="text-gray-400 mb-6 max-w-2xl mx-auto">
+              Sono sempre alla ricerca di nuove sfide e collaborazioni interessanti. 
+              Parliamo del tuo prossimo progetto!
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                href="/contatti"
+                className="group flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-gray-900 font-semibold rounded-lg hover:shadow-lg hover:shadow-yellow-500/25 transition-all duration-300 hover:scale-105"
+              >
+                <Mail className="w-5 h-5" />
+                Iniziamo a Parlare
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <span className="text-gray-500 text-sm">Rispondo entro 24 ore</span>
+            </div>
+          </div>
+
+
+        </section>
+    </div>
+    </>
   );
 }

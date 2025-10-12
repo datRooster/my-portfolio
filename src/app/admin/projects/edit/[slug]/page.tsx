@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Save, ArrowLeft, Upload, ExternalLink, Github } from 'lucide-react';
+import { Save, ArrowLeft, Upload, ExternalLink, Github, ImageIcon, FileText, Tag, Calendar, Settings, User, Building, Zap, CheckCircle, Clock, Archive, FileX, Code, Wrench, Hash } from 'lucide-react';
 import FileUpload from '@/components/ui/FileUpload';
+import GalleryUpload from '@/components/ui/GalleryUpload';
 
 // Utility function per validare URL
 const isValidUrl = (string: string): boolean => {
@@ -30,6 +31,7 @@ interface Project {
   demoUrl?: string;
   repositoryUrl?: string;
   featuredImage?: string;
+  gallery: string[];
   caseStudyUrl?: string;
   role?: string;
   client?: string;
@@ -51,12 +53,57 @@ export default function EditProject() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
+
+  // Configurazione status con icone e colori
+  const statusConfig = {
+    draft: {
+      label: 'Bozza',
+      icon: FileX,
+      color: 'text-gray-400',
+      bg: 'bg-gray-500/10',
+      border: 'border-gray-500/20'
+    },
+    active: {
+      label: 'Attivo',
+      icon: Zap,
+      color: 'text-blue-400',
+      bg: 'bg-blue-500/10',
+      border: 'border-blue-500/20'
+    },
+    completed: {
+      label: 'Completato',
+      icon: CheckCircle,
+      color: 'text-green-400',
+      bg: 'bg-green-500/10',
+      border: 'border-green-500/20'
+    },
+    archived: {
+      label: 'Archiviato',
+      icon: Archive,
+      color: 'text-orange-400',
+      bg: 'bg-orange-500/10',
+      border: 'border-orange-500/20'
+    }
+  };
 
   useEffect(() => {
     if (slug) {
       fetchProject();
     }
   }, [slug]);
+
+  // Chiudi dropdown quando si clicca fuori
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (statusDropdownOpen && !(event.target as Element).closest('.status-dropdown')) {
+        setStatusDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [statusDropdownOpen]);
 
   const fetchProject = async () => {
     try {
@@ -77,7 +124,8 @@ export default function EditProject() {
           ...projectData,
           technologies: projectData.technologies || [],
           skills: projectData.skills || [],
-          tags: projectData.tags || []
+          tags: projectData.tags || [],
+          gallery: projectData.gallery || []
         };
         console.log('✅ Normalized project data:', normalizedProject);
         setProject(normalizedProject);
@@ -179,6 +227,7 @@ export default function EditProject() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <FileText size={16} className="inline mr-2" />
                   Titolo *
                 </label>
                 <input
@@ -192,6 +241,7 @@ export default function EditProject() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <Tag size={16} className="inline mr-2" />
                   Categoria
                 </label>
                 <input
@@ -202,24 +252,89 @@ export default function EditProject() {
                 />
               </div>
 
-              <div>
+              <div className="relative status-dropdown">
                 <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <Settings size={16} className="inline mr-2" />
                   Status
                 </label>
-                <select
-                  value={project.status}
-                  onChange={(e) => setProject({...project, status: e.target.value as Project['status']})}
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg text-white focus:border-yellow-500 focus:outline-none"
-                >
-                  <option value="draft">Bozza</option>
-                  <option value="active">Attivo</option>
-                  <option value="completed">Completato</option>
-                  <option value="archived">Archiviato</option>
-                </select>
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}
+                    className={`
+                      w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:border-yellow-500 focus:outline-none
+                      flex items-center justify-between transition-all duration-200 hover:bg-gray-800
+                      ${statusConfig[project.status].border}
+                    `}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`p-1.5 rounded-full ${statusConfig[project.status].bg}`}>
+                        {React.createElement(statusConfig[project.status].icon, {
+                          size: 16,
+                          className: statusConfig[project.status].color
+                        })}
+                      </div>
+                      <span className="font-medium">
+                        {statusConfig[project.status].label}
+                      </span>
+                    </div>
+                    <svg
+                      className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
+                        statusDropdownOpen ? 'rotate-180' : ''
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+
+                  {/* Dropdown Options */}
+                  {statusDropdownOpen && (
+                    <div className="absolute z-50 w-full mt-2 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden">
+                      {Object.entries(statusConfig).map(([key, config]) => (
+                        <button
+                          key={key}
+                          type="button"
+                          onClick={() => {
+                            setProject({...project, status: key as Project['status']});
+                            setStatusDropdownOpen(false);
+                          }}
+                          className={`
+                            w-full px-4 py-3 text-left hover:bg-gray-700 transition-colors duration-150
+                            flex items-center gap-3 ${config.border} border-l-4
+                            ${project.status === key ? 'bg-gray-700/50' : ''}
+                          `}
+                        >
+                          <div className={`p-1.5 rounded-full ${config.bg}`}>
+                            {React.createElement(config.icon, {
+                              size: 16,
+                              className: config.color
+                            })}
+                          </div>
+                          <div>
+                            <div className="font-medium text-white">{config.label}</div>
+                            <div className="text-xs text-gray-400">
+                              {key === 'draft' && 'Progetto in fase di sviluppo'}
+                              {key === 'active' && 'Progetto attivo e visibile'}
+                              {key === 'completed' && 'Progetto terminato con successo'}
+                              {key === 'archived' && 'Progetto archiviato'}
+                            </div>
+                          </div>
+                          {project.status === key && (
+                            <CheckCircle size={16} className="text-yellow-500 ml-auto" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <Zap size={16} className="inline mr-2" />
                   Priorità (1-5)
                 </label>
                 <input
@@ -235,6 +350,7 @@ export default function EditProject() {
 
             <div className="mt-6">
               <label className="block text-sm font-medium text-gray-300 mb-2">
+                <FileText size={16} className="inline mr-2" />
                 Descrizione Breve *
               </label>
               <textarea
@@ -248,6 +364,7 @@ export default function EditProject() {
 
             <div className="mt-6">
               <label className="block text-sm font-medium text-gray-300 mb-2">
+                <FileText size={16} className="inline mr-2" />
                 Descrizione Dettagliata
               </label>
               <textarea
@@ -353,6 +470,21 @@ export default function EditProject() {
                 maxSize={5}
               />
             </div>
+
+            {/* Gallery Upload */}
+            <div className="mt-6">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                <ImageIcon size={16} className="inline mr-2" />
+                Gallery Progetto
+              </label>
+              <GalleryUpload
+                value={project.gallery}
+                onChange={(urls) => setProject({...project, gallery: urls})}
+                placeholder="Carica le immagini per la gallery del progetto"
+                maxImages={10}
+                maxSize={5}
+              />
+            </div>
           </div>
 
           {/* Tecnologie */}
@@ -362,6 +494,7 @@ export default function EditProject() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <Code size={16} className="inline mr-2" />
                   Tecnologie (separate da virgola)
                 </label>
                 <textarea
@@ -374,6 +507,7 @@ export default function EditProject() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <Wrench size={16} className="inline mr-2" />
                   Skills (separate da virgola)
                 </label>
                 <textarea
@@ -386,6 +520,7 @@ export default function EditProject() {
 
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <Hash size={16} className="inline mr-2" />
                   Tags (separate da virgola)
                 </label>
                 <textarea
@@ -405,6 +540,7 @@ export default function EditProject() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <User size={16} className="inline mr-2" />
                   Ruolo
                 </label>
                 <input
@@ -417,6 +553,7 @@ export default function EditProject() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <Building size={16} className="inline mr-2" />
                   Cliente
                 </label>
                 <input

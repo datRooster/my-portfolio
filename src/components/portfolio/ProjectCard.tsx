@@ -5,7 +5,22 @@ import Link from 'next/link';
 import { Project } from '@/types/project';
 import { useEffect, useState } from 'react';
 import { isUserAdmin } from '@/lib/auth-client';
-import { Edit } from 'lucide-react';
+import { 
+  Edit, 
+  ExternalLink, 
+  Github, 
+  Star, 
+  Calendar, 
+  Tag, 
+  Zap, 
+  Award,
+  Eye,
+  ArrowRight,
+  Sparkles,
+  Shield,
+  Code,
+  Layers
+} from 'lucide-react';
 
 interface ProjectCardProps {
   project: Project;
@@ -38,86 +53,140 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   };
 
   return (
-    <div className="bg-gray-900 rounded-xl overflow-hidden hover:bg-gray-800 transition-all duration-300 hover:scale-105 hover:shadow-2xl group">
-      {/* Immagine */}
-      {project.featuredImage && (
+    <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700 rounded-2xl overflow-hidden hover:border-yellow-500/50 hover:bg-gray-800/50 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-yellow-500/10 animate-fadeInScale">
+      {/* Background Gradient Effect */}
+      <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 via-transparent to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+      
+      {/* Immagine con Overlay Moderno */}
+      {project.featuredImage ? (
         <div className="relative h-48 overflow-hidden">
           <Image
             src={project.featuredImage}
             alt={project.title}
             fill
-            className="object-cover group-hover:scale-110 transition-transform duration-300"
+            className="object-cover group-hover:scale-110 transition-transform duration-700"
           />
+          {/* Overlay sfumato */}
+          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent"></div>
+          
+          {/* Badge Featured */}
           {project.featured && (
-            <div className="absolute top-3 left-3">
-              <span className="bg-yellow-500 text-gray-900 px-2 py-1 rounded-full text-xs font-semibold">
-                ⭐ In Evidenza
-              </span>
+            <div className="absolute top-4 left-4">
+              <div className="flex items-center gap-1 bg-yellow-500/90 backdrop-blur-sm text-gray-900 px-3 py-1.5 rounded-full text-xs font-semibold">
+                <Star className="w-3 h-3" fill="currentColor" />
+                In Evidenza
+              </div>
             </div>
           )}
-          <div className="absolute top-3 right-3">
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[project.status]}`}>
+          
+          {/* Badge Status */}
+          <div className="absolute top-4 right-4">
+            <div className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium backdrop-blur-sm ${statusColors[project.status]}`}>
+              {project.status === 'completed' && <Award className="w-3 h-3" />}
+              {project.status === 'in-progress' && <Zap className="w-3 h-3" />}
+              {project.status === 'archived' && <Shield className="w-3 h-3" />}
+              {project.status === 'draft' && <Edit className="w-3 h-3" />}
               {statusLabels[project.status]}
-            </span>
+            </div>
+          </div>
+        </div>
+      ) : (
+        /* Placeholder moderno quando non c'è immagine */
+        <div className="relative h-48 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+          <div className="w-16 h-16 bg-gray-700/50 rounded-xl flex items-center justify-center">
+            <Code className="w-8 h-8 text-gray-400" />
+          </div>
+          
+          {/* Badge Featured */}
+          {project.featured && (
+            <div className="absolute top-4 left-4">
+              <div className="flex items-center gap-1 bg-yellow-500/90 backdrop-blur-sm text-gray-900 px-3 py-1.5 rounded-full text-xs font-semibold">
+                <Star className="w-3 h-3" fill="currentColor" />
+                In Evidenza
+              </div>
+            </div>
+          )}
+          
+          {/* Badge Status */}
+          <div className="absolute top-4 right-4">
+            <div className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium backdrop-blur-sm ${statusColors[project.status]}`}>
+              {project.status === 'completed' && <Award className="w-3 h-3" />}
+              {project.status === 'in-progress' && <Zap className="w-3 h-3" />}
+              {project.status === 'archived' && <Shield className="w-3 h-3" />}
+              {project.status === 'draft' && <Edit className="w-3 h-3" />}
+              {statusLabels[project.status]}
+            </div>
           </div>
         </div>
       )}
 
-      {/* Contenuto */}
-      <div className="p-6">
-        {/* Header */}
-        <div className="mb-4">
-          <div className="flex items-start justify-between mb-2">
-            <h3 className="font-bold text-xl text-white group-hover:text-yellow-400 transition-colors">
+      {/* Contenuto Moderno */}
+      <div className="relative p-6">
+        {/* Header con Priority Stars */}
+        <div className="mb-5">
+          <div className="flex items-start justify-between mb-3">
+            <h3 className="font-bold text-xl text-white group-hover:text-yellow-400 transition-colors duration-300 line-clamp-2">
               {project.title}
             </h3>
             {project.priority > 3 && (
-              <div className="text-yellow-500 text-sm font-medium">
-                {'★'.repeat(project.priority)}
+              <div className="flex items-center gap-1 ml-2 flex-shrink-0">
+                {[...Array(project.priority)].map((_, i) => (
+                  <Star key={i} className="w-3 h-3 text-yellow-500" fill="currentColor" />
+                ))}
               </div>
             )}
           </div>
-          <p className="text-sm text-yellow-500 font-medium mb-2">
-            {project.category}
-          </p>
-          <p className="text-gray-400 text-sm line-clamp-3">
+          
+          {/* Categoria con icona */}
+          <div className="flex items-center gap-2 mb-3">
+            <Tag className="w-4 h-4 text-yellow-500" />
+            <span className="text-sm text-yellow-500 font-medium">
+              {project.category}
+            </span>
+          </div>
+          
+          {/* Descrizione */}
+          <p className="text-gray-300 text-sm leading-relaxed line-clamp-3">
             {project.description}
           </p>
         </div>
 
-        {/* Tecnologie */}
-        <div className="mb-4">
+        {/* Tecnologie Moderne */}
+        <div className="mb-5">
+          <div className="flex items-center gap-2 mb-2">
+            <Layers className="w-4 h-4 text-gray-400" />
+            <span className="text-xs text-gray-400 font-medium">STACK TECNOLOGICO</span>
+          </div>
           <div className="flex flex-wrap gap-2">
-            {project.technologies.slice(0, 4).map((tech) => (
-              <span
+            {project.technologies.slice(0, 3).map((tech, index) => (
+              <div
                 key={tech}
-                className="px-2 py-1 bg-gray-800 text-gray-300 rounded-md text-xs"
+                className="px-3 py-1.5 bg-gray-800/80 border border-gray-700 text-gray-300 rounded-lg text-xs font-medium hover:border-yellow-500/50 hover:text-yellow-400 transition-all duration-300"
+                style={{animationDelay: `${index * 0.1}s`}}
               >
                 {tech}
-              </span>
+              </div>
             ))}
-            {project.technologies.length > 4 && (
-              <span className="px-2 py-1 bg-gray-700 text-gray-400 rounded-md text-xs">
-                +{project.technologies.length - 4}
-              </span>
+            {project.technologies.length > 3 && (
+              <div className="px-3 py-1.5 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 text-yellow-400 rounded-lg text-xs font-medium">
+                +{project.technologies.length - 3} altri
+              </div>
             )}
           </div>
         </div>
 
-        {/* Links */}
-        <div className="flex items-center justify-between">
-          <div className="flex gap-3">
+        {/* Links Azioni con Design Moderno */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex gap-2">
             {project.demoUrl && (
               <a
                 href={project.demoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-yellow-500 transition-colors"
+                className="flex items-center justify-center w-9 h-9 bg-green-500/20 border border-green-500/30 text-green-400 rounded-lg hover:bg-green-500/30 hover:border-green-500/50 transition-all duration-300 group/btn"
                 title="Demo Live"
               >
-                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                </svg>
+                <ExternalLink className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
               </a>
             )}
             {project.repositoryUrl && (
@@ -125,47 +194,51 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                 href={project.repositoryUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-yellow-500 transition-colors"
+                className="flex items-center justify-center w-9 h-9 bg-gray-700/50 border border-gray-600 text-gray-400 rounded-lg hover:bg-gray-600/50 hover:border-gray-500 hover:text-white transition-all duration-300 group/btn"
                 title="Repository"
               >
-                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.56v-2c-3.2.7-3.87-1.55-3.87-1.55-.52-1.3-1.28-1.65-1.28-1.65-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.72-1.55-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.45.11-3.01 0 0 .97-.31 3.18 1.18.92-.26 1.91-.39 2.89-.39.98 0 1.97.13 2.89.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.56.23 2.72.11 3.01.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.41-5.27 5.7.41.36.77 1.08.77 2.18v3.24c0 .31.21.67.79.56A11.52 11.52 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z"/>
-                </svg>
+                <Github className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
               </a>
             )}
           </div>
           
-          {/* Link dettagli e modifica admin */}
-          <div className="flex items-center gap-3">
-            <Link
-              href={`/projects/${project.slug}`}
-              className="text-yellow-500 hover:text-yellow-400 text-sm font-medium transition-colors"
-            >
-              Dettagli →
-            </Link>
-            
-            {isAdmin && (
-              <Link
-                href={`/admin/projects/edit/${project.slug}`}
-                className="flex items-center gap-1 text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors"
-                title="Modifica progetto"
-              >
-                <Edit size={14} />
-                Modifica
-              </Link>
-            )}
-          </div>
+          {/* Link dettagli principale */}
+          <Link
+            href={`/projects/${project.slug}`}
+            className="flex items-center gap-2 px-4 py-2 bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 rounded-lg hover:bg-yellow-500/30 hover:border-yellow-500/50 transition-all duration-300 group/main"
+          >
+            <Eye className="w-4 h-4" />
+            <span className="text-sm font-medium">Scopri</span>
+            <ArrowRight className="w-3 h-3 group-hover/main:translate-x-1 transition-transform" />
+          </Link>
         </div>
 
-        {/* Data */}
-        <div className="mt-4 pt-4 border-t border-gray-800">
-          <p className="text-xs text-gray-500">
-            {new Date(project.createdAt).toLocaleDateString('it-IT', {
-              year: 'numeric',
-              month: 'long'
-            })}
-          </p>
+        {/* Footer con Data e Admin */}
+        <div className="flex items-center justify-between pt-4 border-t border-gray-700/50">
+          <div className="flex items-center gap-2 text-gray-500">
+            <Calendar className="w-3 h-3" />
+            <span className="text-xs">
+              {new Date(project.createdAt).toLocaleDateString('it-IT', {
+                year: 'numeric',
+                month: 'short'
+              })}
+            </span>
+          </div>
+          
+          {isAdmin && (
+            <Link
+              href={`/admin/projects/edit/${project.slug}`}
+              className="flex items-center gap-1 text-blue-400 hover:text-blue-300 text-xs font-medium transition-colors opacity-0 group-hover:opacity-100"
+              title="Modifica progetto"
+            >
+              <Edit className="w-3 h-3" />
+              Modifica
+            </Link>
+          )}
         </div>
+        
+        {/* Effetto glow bottom */}
+        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-yellow-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
       </div>
     </div>
   );

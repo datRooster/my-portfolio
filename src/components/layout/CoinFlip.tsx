@@ -35,7 +35,8 @@ export default function CoinFlip({
             width={width}
             height={height}
             alt="theWebRooster Avatar"
-            className="rounded-full border-2 border-yellow-500"
+            className="rounded-full border-2 border-yellow-500 object-cover"
+            style={{ width: `${width}px`, height: `${height}px` }}
           />
         </div>
         <div className="coin-side coin-back">
@@ -44,7 +45,8 @@ export default function CoinFlip({
             width={width}
             height={height}
             alt="theWebRooster Logo"
-            className="rounded-full border-2 border-yellow-500"
+            className="rounded-full border-2 border-yellow-500 object-cover"
+            style={{ width: `${width}px`, height: `${height}px` }}
           />
         </div>
       </div>
@@ -52,6 +54,11 @@ export default function CoinFlip({
       <style jsx>{`
         .coin-container {
           perspective: 1000px;
+          width: ${width}px;
+          height: ${height}px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         
         .coin {
@@ -68,10 +75,14 @@ export default function CoinFlip({
         
         .coin-side {
           position: absolute;
-          width: 100%;
-          height: 100%;
+          width: ${width}px;
+          height: ${height}px;
           backface-visibility: hidden;
           border-radius: 50%;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         
         .coin-front {

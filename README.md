@@ -433,4 +433,273 @@ npm run docker:up     # Avvia servizi Docker (PostgreSQL, pgAdmin)
 
 ---
 
+## 🚀 Deployment e Produzione
+
+### 📦 File di Deployment
+
+Tutti i file e script di deployment sono organizzati nella directory `/scripts`:
+
+```
+scripts/
+├── deploy.sh              # Script deployment automatico
+├── ecosystem.config.js     # Configurazione PM2
+├── .env.production.example # Template environment produzione
+└── .htaccess.example      # Configurazione Apache per hosting statico
+```
+
+### 🌐 Opzioni di Deployment
+
+#### **1. Hosting Linux Condiviso** (~€30/anno)
+Per hosting condiviso Aruba senza Node.js:
+
+```bash
+# Prepara export statico
+npm run build:static
+```
+
+**Configurazione Next.js per statico:**
+```javascript
+// next.config.ts
+const nextConfig = {
+  output: 'export',
+  trailingSlash: true,
+  images: { unoptimized: true }
+};
+```
+
+**Steps:**
+1. Build + export statico con `npm run build:static`
+2. Upload cartella `out/` nella directory `public_html/` via FTP
+3. Copia `scripts/.htaccess.example` come `.htaccess` nella root
+4. Configura domini dal pannello Aruba
+
+**⚠️ Limitazioni:** Solo showcase statico, no database, no autenticazione admin
+
+#### **2. Hosting Linux con Node.js** (~€100/anno)
+Per hosting Aruba con supporto Node.js:
+
+```bash
+# Upload progetto via SSH
+ssh username@your-domain.com
+cd public_html
+git clone https://github.com/datRooster/my-portfolio.git
+cd my-portfolio
+
+# Setup ambiente
+npm ci --only=production
+cp scripts/.env.production.example .env.production
+nano .env.production  # Configura le tue variabili
+
+# Database (MySQL su Aruba)
+mysql -u username -p
+CREATE DATABASE portfolio_prod;
+
+# Build e deploy
+npm run build
+npx prisma migrate deploy
+npm start
+```
+
+#### **3. VPS Linux** (~€200+/anno)
+Setup completo con controllo totale server:
+
+```bash
+# Esegui script deployment automatico
+chmod +x scripts/deploy.sh
+./scripts/deploy.sh
+
+# O manualmente:
+npm ci --only=production
+npm run build
+pm2 start scripts/ecosystem.config.js
+pm2 startup && pm2 save
+```
+
+### ⚙️ Script e Configurazioni
+
+#### **Script Deployment (`scripts/deploy.sh`)**
+Script automatico per deployment su VPS con:
+- Backup database automatico
+- Git pull e aggiornamento codice
+- Installazione dipendenze
+- Build applicazione
+- Restart processo PM2
+- Logging completo operazioni
+
+```bash
+chmod +x scripts/deploy.sh
+./scripts/deploy.sh
+```
+
+#### **PM2 Configuration (`scripts/ecosystem.config.js`)**
+Configurazione per process manager PM2:
+- Gestione processo Node.js
+- Auto-restart su crash
+- Monitoring memoria e CPU
+- Logging errori e output
+- Cluster mode per performance
+
+#### **Environment Produzione (`scripts/.env.production.example`)**
+Template completo per variabili ambiente produzione:
+- Database URL PostgreSQL/MySQL
+- Secrets JWT e encryption
+- Configurazione upload files
+- URL pubblico applicazione
+- Credenziali admin
+
+#### **Apache Configuration (`scripts/.htaccess.example`)**
+Configurazione per hosting condiviso:
+- URL rewriting per SPA
+- Compressione gzip
+- Cache headers ottimizzati
+- Security headers
+- Redirect HTTPS
+
+### 🏗️ Server Setup (VPS)
+
+#### **1. Installazione Sistema**
+```bash
+# Update sistema
+sudo apt update && sudo apt upgrade -y
+
+# Node.js 18+
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# PM2 Process Manager
+sudo npm install -g pm2
+
+# Nginx Reverse Proxy
+sudo apt install nginx -y
+
+# PostgreSQL Database
+sudo apt install postgresql postgresql-contrib -y
+```
+
+#### **2. Database Setup**
+```bash
+# Crea database e utente
+sudo -u postgres psql
+CREATE DATABASE portfolio_prod;
+CREATE USER portfolio_user WITH PASSWORD 'secure_password_here';
+GRANT ALL PRIVILEGES ON DATABASE portfolio_prod TO portfolio_user;
+\q
+```
+
+#### **3. Nginx Configuration**
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.com www.yourdomain.com;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name yourdomain.com www.yourdomain.com;
+    
+    # SSL certificato
+    ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
+    
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+#### **4. SSL con Let's Encrypt**
+```bash
+sudo apt install certbot python3-certbot-nginx -y
+sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
+```
+
+### 🔧 Comandi Deployment
+
+```bash
+# Sviluppo
+npm run dev              # Server sviluppo
+npm run build           # Build produzione
+npm run start           # Server produzione
+
+# Deployment
+npm run build:static    # Build + export statico
+npm run deploy:prod     # Deploy completo con migrations
+npm run backup:db       # Backup database
+
+# Database
+npm run db:migrate      # Applica migrations
+npm run db:seed         # Popola dati esempio
+npm run db:studio       # Prisma Studio
+
+# Utilità
+npm run clean           # Pulisce cache e temp files
+```
+
+### 📊 Monitoring e Backup
+
+#### **Backup Automatico**
+```bash
+# Crontab per backup giornaliero (2:00 AM)
+0 2 * * * /path/to/scripts/backup.sh
+```
+
+#### **Monitoring PM2**  
+```bash
+pm2 status              # Status processi
+pm2 logs portfolio      # Logs applicazione
+pm2 monit              # Monitor real-time
+pm2 restart portfolio   # Restart applicazione
+```
+
+### 🆘 Troubleshooting
+
+#### **Errori Comuni**
+- **Port in uso**: `sudo lsof -i :3000 && sudo kill -9 PID`
+- **Database connection**: Verifica `DATABASE_URL` in `.env.production`
+- **File permissions**: `sudo chown -R www-data:www-data /var/www/my-portfolio`
+- **PM2 non avvia**: `pm2 delete all && pm2 start scripts/ecosystem.config.js`
+
+#### **Log Files**
+```bash
+# Applicazione
+pm2 logs portfolio
+
+# Nginx
+sudo tail -f /var/log/nginx/error.log
+sudo tail -f /var/log/nginx/access.log
+
+# PostgreSQL
+sudo tail -f /var/log/postgresql/postgresql-*.log
+```
+
+#### **Health Check**
+```bash
+# Testa applicazione
+curl http://localhost:3000/api/projects
+
+# Testa database
+psql $DATABASE_URL -c "SELECT COUNT(*) FROM Project;"
+
+# Testa SSL
+curl -I https://yourdomain.com
+```
+
+### 🎯 Raccomandazioni per Tipo di Hosting
+
+| **Tipo Hosting** | **Ideale per** | **Caratteristiche** | **Costo/Anno** |
+|------------------|----------------|---------------------|----------------|
+| **Condiviso** | Portfolio showcase | Solo file statici, no DB | ~€30 |
+| **Node.js** | Portfolio completo | Admin panel, database | ~€100 |
+| **VPS** | Massime performance | Controllo totale, scalabilità | €200+ |
+
+**Il portfolio è pronto per qualsiasi opzione di deployment! 🚀**
+
+---
+
 **Sviluppato con ❤️ da theWebRooster** 🐓

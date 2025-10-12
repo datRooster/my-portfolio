@@ -205,6 +205,7 @@ export async function PUT(
           demoUrl: body.liveUrl || body.demoUrl,
           repositoryUrl: body.githubUrl || body.repositoryUrl,
           featuredImage: body.imageUrl || body.featuredImage,
+          gallery: body.gallery || existingProject.gallery,
           caseStudyUrl: body.caseStudyUrl,
           role: body.role,
           client: body.client,

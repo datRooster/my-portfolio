@@ -1,14 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Edit, Trash2, Search, Filter, Plus, ExternalLink, Github } from 'lucide-react';
+import { Edit, Trash2, Search, Filter, Plus, ExternalLink, Github, FileX, Zap, CheckCircle, Archive, Settings, Tag, Calendar, Eye, Code, Building, FileText, User, Wrench, Hash, Upload, ImageIcon, Save, X } from 'lucide-react';
+import FileUpload from '@/components/ui/FileUpload';
+import GalleryUpload from '@/components/ui/GalleryUpload';
 
 interface Project {
   id: string;
   title: string;
-  slug: string;
+  slug: string; 
   description: string;
   shortDescription?: string;
   longDescription?: string;
@@ -53,8 +55,9 @@ interface NewProject {
   caseStudyUrl: string;
   featuredImage: string;
   imageUrl: string;
+  gallery: string[];
   featured: boolean;
-  status: 'draft' | 'active' | 'completed' | 'archived';
+  status: 'draft' | 'active' | 'completed' | 'archived' | 'in_development';
   priority: number;
   technologies: string[];
   skills: string[];
@@ -64,10 +67,10 @@ interface NewProject {
 }
 
 const statusColors = {
-  draft: 'bg-orange-500/80',
-  active: 'bg-blue-500/80',
-  completed: 'bg-emerald-500/80',
-  archived: 'bg-gray-500/80'
+  draft: 'bg-gray-500/20 border-gray-500/30 text-gray-300',
+  active: 'bg-blue-500/20 border-blue-500/30 text-blue-300',
+  completed: 'bg-green-500/20 border-green-500/30 text-green-300',
+  archived: 'bg-orange-500/20 border-orange-500/30 text-orange-300'
 };
 
 const statusLabels = {
@@ -78,10 +81,10 @@ const statusLabels = {
 };
 
 const statusIcons = {
-  draft: '📝',
-  active: '🚀',
-  completed: '✅',
-  archived: '📦'
+  draft: FileX,
+  active: Zap,
+  completed: CheckCircle,
+  archived: Archive
 };
 
 export default function ProjectsManagement() {
@@ -91,6 +94,40 @@ export default function ProjectsManagement() {
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+
+  // Configurazione status per dropdown
+  const statusConfig = {
+    active: { 
+      label: 'Attivo', 
+      icon: CheckCircle, 
+      color: 'text-green-600', 
+      bgColor: 'bg-green-50',
+      borderColor: 'border-green-200'
+    },
+    in_development: { 
+      label: 'In Sviluppo', 
+      icon: Zap, 
+      color: 'text-yellow-600', 
+      bgColor: 'bg-yellow-50',
+      borderColor: 'border-yellow-200'
+    },
+    draft: { 
+      label: 'Bozza', 
+      icon: FileText, 
+      color: 'text-gray-600', 
+      bgColor: 'bg-gray-50',
+      borderColor: 'border-gray-200'
+    },
+    archived: { 
+      label: 'Archiviato', 
+      icon: Archive, 
+      color: 'text-gray-600', 
+      bgColor: 'bg-gray-50',
+      borderColor: 'border-gray-200'
+    }
+  };
+
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
 
   const [newProject, setNewProject] = useState<NewProject>({
     title: '',
@@ -106,6 +143,7 @@ export default function ProjectsManagement() {
     caseStudyUrl: '',
     featuredImage: '',
     imageUrl: '',
+    gallery: [],
     featured: false,
     status: 'draft',
     priority: 1,
@@ -224,6 +262,7 @@ export default function ProjectsManagement() {
       caseStudyUrl: '',
       featuredImage: '',
       imageUrl: '',
+      gallery: [],
       featured: false,
       status: 'draft',
       priority: 1,
@@ -233,6 +272,7 @@ export default function ProjectsManagement() {
       role: '',
       client: ''
     });
+    setShowStatusDropdown(false);
   };
 
   const addTag = (type: 'categories' | 'technologies' | 'skills' | 'tags', tag: string) => {
@@ -289,7 +329,12 @@ export default function ProjectsManagement() {
             return (
               <div key={status} className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700/50">
                 <div className="flex items-center gap-3">
-                  <span className="text-2xl">{statusIcons[status as keyof typeof statusIcons]}</span>
+                  <div className="p-2 rounded-full bg-gray-700/50">
+                    {React.createElement(statusIcons[status as keyof typeof statusIcons], {
+                      size: 24,
+                      className: "text-white"
+                    })}
+                  </div>
                   <div>
                     <p className="text-2xl font-bold text-white">{count}</p>
                     <p className="text-sm text-gray-400">{label}</p>
@@ -321,10 +366,10 @@ export default function ProjectsManagement() {
                 className="appearance-none bg-gray-900/50 border border-gray-600/50 rounded-xl pl-10 pr-10 py-3 text-white focus:outline-none focus:border-yellow-500/50 focus:ring-2 focus:ring-yellow-500/20 transition-all duration-200 cursor-pointer min-w-[200px]"
               >
                 <option value="all" className="bg-gray-800 text-white">Tutti gli stati</option>
-                <option value="draft" className="bg-gray-800 text-white">📝 Bozza</option>
-                <option value="active" className="bg-gray-800 text-white">🚀 Attivo</option>
-                <option value="completed" className="bg-gray-800 text-white">✅ Completato</option>
-                <option value="archived" className="bg-gray-800 text-white">📦 Archiviato</option>
+                <option value="draft" className="bg-gray-800 text-white">• Bozza</option>
+                <option value="active" className="bg-gray-800 text-white">• Attivo</option>
+                <option value="completed" className="bg-gray-800 text-white">• Completato</option>
+                <option value="archived" className="bg-gray-800 text-white">• Archiviato</option>
               </select>
               <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                 <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -352,16 +397,20 @@ export default function ProjectsManagement() {
                   
                   {/* Status Badge */}
                   <div className="absolute top-4 right-4">
-                    <span className={`${statusColors[project.status]} text-white px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm border border-white/20`}>
-                      {statusIcons[project.status]} {statusLabels[project.status]}
+                    <span className={`${statusColors[project.status]} px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm border flex items-center gap-1`}>
+                      {React.createElement(statusIcons[project.status], {
+                        size: 12
+                      })}
+                      {statusLabels[project.status]}
                     </span>
                   </div>
 
                   {/* Featured Badge */}
                   {project.featured && (
                     <div className="absolute top-4 left-4">
-                      <span className="bg-yellow-500 text-gray-900 px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm">
-                        ⭐ In evidenza
+                      <span className="bg-yellow-500 text-gray-900 px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm flex items-center gap-1">
+                        <Zap size={12} className="text-gray-900" />
+                        In evidenza
                       </span>
                     </div>
                   )}
@@ -388,10 +437,14 @@ export default function ProjectsManagement() {
                 <div className="space-y-3 mb-6">
                   {project.categories && project.categories.length > 0 && (
                     <div>
-                      <p className="text-xs text-gray-400 mb-2 font-medium uppercase tracking-wide">Categorie</p>
+                      <p className="text-xs text-gray-400 mb-2 font-medium uppercase tracking-wide flex items-center gap-1">
+                        <Tag size={12} />
+                        Categorie
+                      </p>
                       <div className="flex flex-wrap gap-2">
                         {project.categories.map((category: string, index: number) => (
-                          <span key={index} className="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-xs font-medium border border-blue-500/30">
+                          <span key={index} className="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-xs font-medium border border-blue-500/30 flex items-center gap-1">
+                            <Building size={10} />
                             {category}
                           </span>
                         ))}
@@ -401,10 +454,14 @@ export default function ProjectsManagement() {
                   
                   {project.technologies && project.technologies.length > 0 && (
                     <div>  
-                      <p className="text-xs text-gray-400 mb-2 font-medium uppercase tracking-wide">Tecnologie</p>
+                      <p className="text-xs text-gray-400 mb-2 font-medium uppercase tracking-wide flex items-center gap-1">
+                        <Code size={12} />
+                        Tecnologie
+                      </p>
                       <div className="flex flex-wrap gap-2">
                         {project.technologies.slice(0, 4).map((tech: string, index: number) => (
-                          <span key={index} className="bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full text-xs font-medium border border-emerald-500/30">
+                          <span key={index} className="bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full text-xs font-medium border border-emerald-500/30 flex items-center gap-1">
+                            <Code size={10} />
                             {tech}
                           </span>
                         ))}
@@ -446,7 +503,8 @@ export default function ProjectsManagement() {
 
                 {/* Actions */}
                 <div className="flex justify-between items-center pt-4 border-t border-gray-700/50">
-                  <div className="text-xs text-gray-400">
+                  <div className="text-xs text-gray-400 flex items-center gap-1">
+                    <Calendar size={12} />
                     Aggiornato: {new Date(project.updatedAt).toLocaleDateString('it-IT')}
                   </div>
                   <div className="flex gap-2">
@@ -494,55 +552,438 @@ export default function ProjectsManagement() {
         )}
       </div>
 
-      {/* Modal placeholder - We'll add the full form next */}
+      {/* Modale Nuovo Progetto */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-700">
-            <div className="p-6 border-b border-gray-700">
-              <h2 className="text-2xl font-bold text-white">
+          <div className="bg-gray-800 rounded-xl max-w-5xl w-full max-h-[95vh] overflow-y-auto border border-gray-700">
+            <div className="p-6 border-b border-gray-700 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+                <Plus className="w-7 h-7 text-yellow-500" />
                 Nuovo Progetto
               </h2>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowModal(false);
+                  resetForm();
+                }}
+                className="text-gray-400 hover:text-white transition-colors p-2 hover:bg-gray-700 rounded-lg"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
             
-            <form onSubmit={handleCreateProject} className="p-6 space-y-6">
-              {/* Basic Form Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-white mb-2">Titolo*</label>
-                  <input
-                    type="text"
+            <form onSubmit={handleCreateProject} className="p-6 space-y-8">
+              {/* Informazioni di Base */}
+              <div className="bg-gray-900/50 rounded-xl p-6 border border-gray-700">
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-yellow-500" />
+                  Informazioni di Base
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2 flex items-center gap-2">
+                      <Hash className="w-4 h-4 text-yellow-500" />
+                      Titolo*
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={newProject.title}
+                      onChange={(e) => setNewProject(prev => ({ ...prev, title: e.target.value }))}
+                      className="w-full bg-gray-900/70 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-colors"
+                      placeholder="Nome del progetto"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2 flex items-center gap-2">
+                      <Settings className="w-4 h-4 text-yellow-500" />
+                      Stato
+                    </label>
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setShowStatusDropdown(!showStatusDropdown)}
+                        className={`w-full ${statusConfig[newProject.status as keyof typeof statusConfig]?.bgColor} ${statusConfig[newProject.status as keyof typeof statusConfig]?.borderColor} border rounded-lg px-4 py-3 text-left focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200 backdrop-blur-sm`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            {React.createElement(statusConfig[newProject.status as keyof typeof statusConfig]?.icon || FileText, {
+                              className: `w-4 h-4 ${statusConfig[newProject.status as keyof typeof statusConfig]?.color}`
+                            })}
+                            <span className={`font-medium ${statusConfig[newProject.status as keyof typeof statusConfig]?.color}`}>
+                              {statusConfig[newProject.status as keyof typeof statusConfig]?.label}
+                            </span>
+                          </div>
+                          <svg
+                            className={`w-4 h-4 transition-transform ${showStatusDropdown ? 'rotate-180' : ''} ${statusConfig[newProject.status as keyof typeof statusConfig]?.color}`}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
+                      </button>
+                      
+                      {showStatusDropdown && (
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-gray-800 border border-gray-600 rounded-lg shadow-xl z-10 overflow-hidden">
+                          {Object.entries(statusConfig).map(([status, config]) => (
+                            <button
+                              key={status}
+                              type="button"
+                              onClick={() => {
+                                setNewProject(prev => ({ ...prev, status: status as any }));
+                                setShowStatusDropdown(false);
+                              }}
+                              className={`w-full px-4 py-3 text-left hover:bg-gray-700 transition-colors border-b border-gray-700 last:border-b-0 ${
+                                newProject.status === status ? 'bg-gray-700' : ''
+                              }`}
+                            >
+                              <div className="flex items-center gap-2">
+                                {React.createElement(config.icon, {
+                                  className: `w-4 h-4 ${config.color}`
+                                })}
+                                <span className={`font-medium ${config.color}`}>
+                                  {config.label}
+                                </span>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6">
+                  <label className="block text-sm font-medium text-white mb-2 flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-yellow-500" />
+                    Descrizione Breve*
+                  </label>
+                  <textarea
                     required
-                    value={newProject.title}
-                    onChange={(e) => setNewProject(prev => ({ ...prev, title: e.target.value }))}
-                    className="w-full bg-gray-900/50 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-yellow-500"
+                    rows={3}
+                    value={newProject.shortDescription}
+                    onChange={(e) => setNewProject(prev => ({ ...prev, shortDescription: e.target.value }))}
+                    className="w-full bg-gray-900/70 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-colors resize-none"
+                    placeholder="Breve descrizione del progetto (max 2-3 righe)"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-white mb-2">Stato</label>
-                  <select
-                    value={newProject.status}
-                    onChange={(e) => setNewProject(prev => ({ ...prev, status: e.target.value as any }))}
-                    className="w-full bg-gray-900/50 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-yellow-500"
-                  >
-                    <option value="draft">Bozza</option>
-                    <option value="active">Attivo</option>
-                    <option value="completed">Completato</option>
-                    <option value="archived">Archiviato</option>
-                  </select>
+
+                <div className="mt-6">
+                  <label className="block text-sm font-medium text-white mb-2 flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-yellow-500" />
+                    Descrizione Completa*
+                  </label>
+                  <textarea
+                    required
+                    rows={6}
+                    value={newProject.description}
+                    onChange={(e) => setNewProject(prev => ({ ...prev, description: e.target.value }))}
+                    className="w-full bg-gray-900/70 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-colors resize-none"
+                    placeholder="Descrizione dettagliata del progetto, obiettivi, sfide e soluzioni implementate"
+                  />
+                </div>
+
+                <div className="mt-6">
+                  <label className="block text-sm font-medium text-white mb-2 flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-yellow-500" />
+                    Descrizione Estesa
+                  </label>
+                  <textarea
+                    rows={8}
+                    value={newProject.longDescription}
+                    onChange={(e) => setNewProject(prev => ({ ...prev, longDescription: e.target.value }))}
+                    className="w-full bg-gray-900/70 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-colors resize-none"
+                    placeholder="Descrizione approfondita per case study, processo di sviluppo, tecnologie utilizzate, risultati ottenuti"
+                  />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-white mb-2">Descrizione*</label>
-                <textarea
-                  required
-                  rows={4}
-                  value={newProject.description}
-                  onChange={(e) => setNewProject(prev => ({ ...prev, description: e.target.value }))}
-                  className="w-full bg-gray-900/50 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-yellow-500"
-                />
+              {/* Dettagli Progetto */}
+              <div className="bg-gray-900/50 rounded-xl p-6 border border-gray-700">
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                  <User className="w-5 h-5 text-yellow-500" />
+                  Dettagli Progetto
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2 flex items-center gap-2">
+                      <Building className="w-4 h-4 text-yellow-500" />
+                      Cliente
+                    </label>
+                    <input
+                      type="text"
+                      value={newProject.client}
+                      onChange={(e) => setNewProject(prev => ({ ...prev, client: e.target.value }))}
+                      className="w-full bg-gray-900/70 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-colors"
+                      placeholder="Nome del cliente o azienda"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2 flex items-center gap-2">
+                      <Wrench className="w-4 h-4 text-yellow-500" />
+                      Ruolo
+                    </label>
+                    <input
+                      type="text"
+                      value={newProject.role}
+                      onChange={(e) => setNewProject(prev => ({ ...prev, role: e.target.value }))}
+                      className="w-full bg-gray-900/70 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-colors"
+                      placeholder="Il tuo ruolo nel progetto"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2 flex items-center gap-2">
+                      <Tag className="w-4 h-4 text-yellow-500" />
+                      Categoria
+                    </label>
+                    <input
+                      type="text"
+                      value={newProject.category}
+                      onChange={(e) => setNewProject(prev => ({ ...prev, category: e.target.value }))}
+                      className="w-full bg-gray-900/70 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-colors"
+                      placeholder="Categoria principale del progetto"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2 flex items-center gap-2">
+                      <Hash className="w-4 h-4 text-yellow-500" />
+                      Priorità
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="10"
+                      value={newProject.priority}
+                      onChange={(e) => setNewProject(prev => ({ ...prev, priority: parseInt(e.target.value) || 1 }))}
+                      className="w-full bg-gray-900/70 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-colors"
+                      placeholder="1-10"
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-6">
+                  <label className="flex items-center gap-2 text-sm font-medium text-white cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={newProject.featured}
+                      onChange={(e) => setNewProject(prev => ({ ...prev, featured: e.target.checked }))}
+                      className="rounded border-gray-600 bg-gray-900/70 text-yellow-500 focus:ring-yellow-500 focus:ring-offset-0"
+                    />
+                    <Zap className="w-4 h-4 text-yellow-500" />
+                    Progetto in Evidenza
+                  </label>
+                </div>
+              </div>
+
+              {/* Link e URL */}
+              <div className="bg-gray-900/50 rounded-xl p-6 border border-gray-700">
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                  <ExternalLink className="w-5 h-5 text-yellow-500" />
+                  Link e URL
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2 flex items-center gap-2">
+                      <Eye className="w-4 h-4 text-yellow-500" />
+                      URL Demo
+                    </label>
+                    <input
+                      type="url"
+                      value={newProject.demoUrl}
+                      onChange={(e) => setNewProject(prev => ({ ...prev, demoUrl: e.target.value }))}
+                      className="w-full bg-gray-900/70 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-colors"
+                      placeholder="https://demo.example.com"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2 flex items-center gap-2">
+                      <ExternalLink className="w-4 h-4 text-yellow-500" />
+                      URL Live
+                    </label>
+                    <input
+                      type="url"
+                      value={newProject.liveUrl}
+                      onChange={(e) => setNewProject(prev => ({ ...prev, liveUrl: e.target.value }))}
+                      className="w-full bg-gray-900/70 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-colors"
+                      placeholder="https://live.example.com"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2 flex items-center gap-2">
+                      <Github className="w-4 h-4 text-yellow-500" />
+                      Repository GitHub
+                    </label>
+                    <input
+                      type="url"
+                      value={newProject.githubUrl}
+                      onChange={(e) => setNewProject(prev => ({ ...prev, githubUrl: e.target.value }))}
+                      className="w-full bg-gray-900/70 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-colors"
+                      placeholder="https://github.com/username/repository"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2 flex items-center gap-2">
+                      <Code className="w-4 h-4 text-yellow-500" />
+                      Repository URL
+                    </label>
+                    <input
+                      type="url"
+                      value={newProject.repositoryUrl}
+                      onChange={(e) => setNewProject(prev => ({ ...prev, repositoryUrl: e.target.value }))}
+                      className="w-full bg-gray-900/70 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-colors"
+                      placeholder="https://repository.example.com"
+                    />
+                  </div>
+                  
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-white mb-2 flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-yellow-500" />
+                      Case Study URL
+                    </label>
+                    <input
+                      type="url"
+                      value={newProject.caseStudyUrl}
+                      onChange={(e) => setNewProject(prev => ({ ...prev, caseStudyUrl: e.target.value }))}
+                      className="w-full bg-gray-900/70 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-colors"
+                      placeholder="https://casestudy.example.com"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Immagini */}
+              <div className="bg-gray-900/50 rounded-xl p-6 border border-gray-700">
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                  <ImageIcon className="w-5 h-5 text-yellow-500" />
+                  Immagini
+                </h3>
+                
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2 flex items-center gap-2">
+                      <Upload className="w-4 h-4 text-yellow-500" />
+                      Immagine Principale
+                    </label>
+                    <FileUpload
+                      value={newProject.featuredImage}
+                      onChange={(url: string) => setNewProject(prev => ({ ...prev, featuredImage: url }))}
+                      className="w-full"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2 flex items-center gap-2">
+                      <ImageIcon className="w-4 h-4 text-yellow-500" />
+                      Galleria Immagini
+                    </label>
+                    <GalleryUpload
+                      value={newProject.gallery}
+                      onChange={(urls: string[]) => setNewProject(prev => ({ ...prev, gallery: urls }))}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2 flex items-center gap-2">
+                      <Upload className="w-4 h-4 text-yellow-500" />
+                      URL Immagine Alternativa
+                    </label>
+                    <input
+                      type="url"
+                      value={newProject.imageUrl}
+                      onChange={(e) => setNewProject(prev => ({ ...prev, imageUrl: e.target.value }))}
+                      className="w-full bg-gray-900/70 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-colors"
+                      placeholder="https://example.com/image.jpg"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Tags e Categorie */}
+              <div className="bg-gray-900/50 rounded-xl p-6 border border-gray-700">
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                  <Tag className="w-5 h-5 text-yellow-500" />
+                  Tags e Categorie
+                </h3>
+                
+                <div className="space-y-6">
+                  {(['categories', 'technologies', 'skills', 'tags'] as const).map((tagType) => {
+                    const inputId = `input-${tagType}`;
+                    return (
+                      <div key={tagType}>
+                        <label className="block text-sm font-medium text-white mb-2 capitalize flex items-center gap-2">
+                          <Tag className="w-4 h-4 text-yellow-500" />
+                          {tagType === 'categories' ? 'Categorie' : 
+                           tagType === 'technologies' ? 'Tecnologie' :
+                           tagType === 'skills' ? 'Competenze' : 'Tags'}
+                        </label>
+                        <div className="flex gap-2 mb-2">
+                          <input
+                            id={inputId}
+                            type="text"
+                            placeholder={`Aggiungi ${tagType === 'categories' ? 'categoria' : 
+                                                     tagType === 'technologies' ? 'tecnologia' :
+                                                     tagType === 'skills' ? 'competenza' : 'tag'}`}
+                            className="flex-1 bg-gray-900/70 border border-gray-600 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-colors"
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                                const input = e.target as HTMLInputElement;
+                                addTag(tagType, input.value);
+                                input.value = '';
+                              }
+                            }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const input = document.getElementById(inputId) as HTMLInputElement;
+                              if (input && input.value) {
+                                addTag(tagType, input.value);
+                                input.value = '';
+                              }
+                            }}
+                            className="bg-yellow-500 hover:bg-yellow-400 text-gray-900 px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+                          >
+                            <Plus className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {newProject[tagType].map((tag: string, index: number) => (
+                            <span
+                              key={index}
+                              className="bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full text-sm font-medium border border-yellow-500/30 flex items-center gap-2"
+                            >
+                              {tag}
+                              <button
+                                type="button"
+                                onClick={() => removeTag(tagType, index)}
+                                className="text-yellow-300 hover:text-red-400 transition-colors"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
               
+              {/* Azioni */}
               <div className="flex justify-end gap-4 pt-6 border-t border-gray-700">
                 <button
                   type="button"
@@ -550,14 +991,16 @@ export default function ProjectsManagement() {
                     setShowModal(false);
                     resetForm();
                   }}
-                  className="px-6 py-2 border border-gray-600 text-gray-400 rounded-lg hover:bg-gray-700 transition"
+                  className="px-6 py-3 border border-gray-600 text-gray-400 rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2 font-medium"
                 >
+                  <X className="w-4 h-4" />
                   Annulla
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 text-gray-900 rounded-lg font-medium transition hover:from-yellow-400 hover:to-orange-400"
+                  className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-gray-900 rounded-lg font-medium transition-colors hover:from-yellow-400 hover:to-orange-400 flex items-center gap-2"
                 >
+                  <Save className="w-4 h-4" />
                   Crea Progetto
                 </button>
               </div>

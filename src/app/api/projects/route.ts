@@ -204,15 +204,46 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Trova o crea categoria (per semplicità assumiamo che esista)
-      let categoryId = '1'; // Default category ID come stringa
-      if (body.category) {
-        const category = await prisma.category.findFirst({
-          where: { name: body.category }
+      // Trova o crea categoria
+      let categoryId: string;
+      
+      if (body.category && body.category.trim()) {
+        // Cerca categoria esistente per nome
+        let category = await prisma.category.findFirst({
+          where: { name: body.category.trim() }
         });
-        if (category) {
-          categoryId = category.id;
+        
+        // Se non esiste, creala
+        if (!category) {
+          category = await prisma.category.create({
+            data: {
+              name: body.category.trim(),
+              description: `Categoria creata automaticamente: ${body.category}`,
+              order: 0
+            }
+          });
         }
+        
+        categoryId = category.id;
+      } else {
+        // Usa o crea categoria "Generale" come default
+        let defaultCategory = await prisma.category.findFirst({
+          where: { name: 'Generale' }
+        });
+        
+        if (!defaultCategory) {
+          defaultCategory = await prisma.category.create({
+            data: {
+              name: 'Generale',
+              description: 'Categoria generale per progetti non classificati',
+              icon: '📂',
+              color: '#6B7280',
+              order: 999
+            }
+          });
+        }
+        
+        categoryId = defaultCategory.id;
       }
 
       // Crea il progetto
@@ -253,8 +284,86 @@ export async function POST(request: NextRequest) {
         }
       });
 
+      // Gestisci le tecnologie
+      if (body.technologies && body.technologies.length > 0) {
+        for (const techName of body.technologies) {
+          if (techName && techName.trim()) {
+            // Trova o crea la tecnologia
+            let technology = await prisma.technology.findFirst({
+              where: { name: techName.trim() }
+            });
+            
+            if (!technology) {
+              technology = await prisma.technology.create({
+                data: {
+                  name: techName.trim(),
+                  description: `Tecnologia aggiunta automaticamente: ${techName}`,
+                  category: 'General'
+                }
+              });
+            }
+            
+            // Crea la relazione progetto-tecnologia
+            await prisma.projectTechnology.create({
+              data: {
+                projectId: newProject.id,
+                technologyId: technology.id
+              }
+            });
+          }
+        }
+      }
+
+      // Gestisci le competenze/skills
+      if (body.skills && body.skills.length > 0) {
+        for (const skillName of body.skills) {
+          if (skillName && skillName.trim()) {
+            // Trova o crea la competenza
+            let skill = await prisma.skill.findFirst({
+              where: { name: skillName.trim() }
+            });
+            
+            if (!skill) {
+              skill = await prisma.skill.create({
+                data: {
+                  name: skillName.trim(),
+                  description: `Competenza aggiunta automaticamente: ${skillName}`,
+                  category: 'General'
+                }
+              });
+            }
+            
+            // Crea la relazione progetto-competenza
+            await prisma.projectSkill.create({
+              data: {
+                projectId: newProject.id,
+                skillId: skill.id
+              }
+            });
+          }
+        }
+      }
+
+      // Ricarica il progetto con tutte le relazioni
+      const completeProject = await prisma.project.findUnique({
+        where: { id: newProject.id },
+        include: {
+          category: true,
+          technologies: {
+            include: {
+              technology: true
+            }
+          },
+          skills: {
+            include: {
+              skill: true
+            }
+          }
+        }
+      });
+
       // Formatta il progetto creato
-      const formattedProject = formatProject(newProject);
+      const formattedProject = formatProject(completeProject!);
 
       return NextResponse.json({ 
         message: 'Progetto creato con successo',
