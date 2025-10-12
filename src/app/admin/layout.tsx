@@ -171,9 +171,9 @@ export default function AdminLayout({
       </div>
 
       {/* Main Content */}
-      <div className="ml-64">
+      <div className="ml-64 min-h-screen">
                 {/* Main Content */}
-        <main className="flex-1 overflow-y-auto bg-gray-900">
+        <main className="min-h-screen overflow-y-auto bg-gray-900">
           {/* 2FA Reminder Banner */}
           {user && !user.twoFactorEnabled && (
             <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-400 p-4 m-6 rounded-r-lg">
@@ -219,7 +219,7 @@ export default function AdminLayout({
             </div>
           )}
           
-          <div className="p-6">
+          <div className="p-6 min-h-full">
             {children}
           </div>
         </main>
