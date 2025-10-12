@@ -690,15 +690,44 @@ psql $DATABASE_URL -c "SELECT COUNT(*) FROM Project;"
 curl -I https://yourdomain.com
 ```
 
-### 🎯 Raccomandazioni per Tipo di Hosting
+#### **4. ⭐ Deploy Gratuito su Vercel** (RACCOMANDATO)
+Per deployment gratuito completo con tutte le funzionalità:
+
+```bash
+# Genera secrets di produzione
+chmod +x scripts/generate-secrets.sh
+./scripts/generate-secrets.sh
+
+# Test build locale
+npm run build
+```
+
+**Steps rapidi:**
+1. **GitHub**: Repository pubblico (già fatto ✅)
+2. **Database**: PostgreSQL gratuito su Railway/Supabase
+3. **Vercel**: Import progetto + Environment Variables
+4. **Domain**: Redirect da thewebrooster.dev
+
+**📋 Guida completa**: Vedi `VERCEL-DEPLOY.md`
+
+**✅ Vantaggi:**
+- 🆓 **Completamente gratuito**
+- 🚀 **Deploy automatico da GitHub**
+- � **CDN globale**
+- 🔒 **HTTPS automatico**
+- 📊 **Analytics integrato**
+- 🔄 **Auto-scaling**
+
+### �🎯 Raccomandazioni per Tipo di Hosting
 
 | **Tipo Hosting** | **Ideale per** | **Caratteristiche** | **Costo/Anno** |
 |------------------|----------------|---------------------|----------------|
+| **⭐ Vercel** | **Portfolio completo** | **Tutto gratis, CDN, auto-deploy** | **€0** |
 | **Condiviso** | Portfolio showcase | Solo file statici, no DB | ~€30 |
 | **Node.js** | Portfolio completo | Admin panel, database | ~€100 |
 | **VPS** | Massime performance | Controllo totale, scalabilità | €200+ |
 
-**Il portfolio è pronto per qualsiasi opzione di deployment! 🚀**
+**🏆 La soluzione Vercel è la migliore per il tuo caso! Gratis + completa 🚀**
 
 ---
 
