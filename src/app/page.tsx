@@ -187,6 +187,7 @@ export default function Home() {
                 </div>
                 
                 {/* Arrow */}
+                
                 <div className="flex items-center justify-between">
                   <span className="text-red-500 text-sm font-medium">Esplora</span>
                   <ArrowRight className="w-4 h-4 text-red-500 group-hover:translate-x-1 transition-transform" />
