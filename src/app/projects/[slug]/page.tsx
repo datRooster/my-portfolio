@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Project } from '@/types/project';
+import ProjectGallery  from '@/components/ui/ProjectGallery';
 
 interface ProjectPageProps {
   params: Promise<{ slug: string }>;
@@ -160,21 +161,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
               {/* Gallery */}
               {project.gallery && project.gallery.length > 0 && (
-                <div className="mb-8">
-                  <h2 className="text-2xl font-bold mb-4">Gallery</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {project.gallery.map((image, index) => (
-                      <div key={index} className="relative h-48 rounded-lg overflow-hidden">
-                        <Image
-                          src={image}
-                          alt={`${project.title} - Screenshot ${index + 1}`}
-                          fill
-                          className="object-cover hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <ProjectGallery 
+                  images={project.gallery}
+                  projectTitle={project.title}
+                />
               )}
             </div>
 
