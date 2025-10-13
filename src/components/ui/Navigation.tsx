@@ -11,7 +11,8 @@ import {
   Menu, 
   X,
   ChevronLeft,
-  ExternalLink
+  ExternalLink,
+  Shield
 } from 'lucide-react';
 
 interface NavigationProps {
@@ -28,6 +29,7 @@ export default function Navigation({ showBackButton = false, backUrl = '/', back
   const navigationItems = [
     { name: 'Home', href: '/', icon: Home },
     { name: 'Progetti', href: '/projects', icon: FolderOpen },
+    { name: 'Bug Bounty', href: '/bug-bounty', icon: Shield },
     { name: 'Chi Sono', href: '/about', icon: User },
     { name: 'Contatti', href: '/contatti', icon: Mail },
   ];

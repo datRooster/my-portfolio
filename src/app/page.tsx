@@ -93,10 +93,13 @@ export default function Home() {
                 <Shield className="w-4 h-4 text-red-400" />
                 <span className="text-sm text-gray-300">Security Expert</span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-gray-800/30 border border-gray-700 rounded-full">
-                <Trophy className="w-4 h-4 text-yellow-400" />
-                <span className="text-sm text-gray-300">Bug Bounty Hunter</span>
-              </div>
+              <Link
+                href="/bug-bounty"
+                className="group flex items-center gap-2 px-4 py-2 bg-gray-800/30 border border-gray-700 rounded-full hover:bg-gray-700/50 hover:border-red-500/50 transition-all cursor-pointer"
+              >
+                <Trophy className="w-4 h-4 text-yellow-400 group-hover:text-red-400 transition-colors" />
+                <span className="text-sm text-gray-300 group-hover:text-red-300 transition-colors">Bug Bounty Hunter</span>
+              </Link>
               <div className="flex items-center gap-2 px-4 py-2 bg-gray-800/30 border border-gray-700 rounded-full">
                 <Globe className="w-4 h-4 text-green-400" />
                 <span className="text-sm text-gray-300">Remote Worldwide</span>
@@ -158,7 +161,7 @@ export default function Home() {
             </Link>
 
             {/* Security Card */}
-            <a 
+            <Link 
               href="/bug-bounty" 
               className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-8 hover:border-red-500/50 hover:bg-gray-800/50 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-red-500/10 animate-fadeInScale"
               style={{animationDelay: '1.1s'}}
@@ -187,13 +190,13 @@ export default function Home() {
                 </div>
                 
                 {/* Arrow */}
-                
+
                 <div className="flex items-center justify-between">
                   <span className="text-red-500 text-sm font-medium">Esplora</span>
                   <ArrowRight className="w-4 h-4 text-red-500 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
-            </a>
+            </Link>
 
             {/* Services Card */}
             <a 
