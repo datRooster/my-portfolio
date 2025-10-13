@@ -159,7 +159,7 @@ export default function Home() {
 
             {/* Security Card */}
             <a 
-              href="/bugbounty" 
+              href="/bug-bounty" 
               className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-8 hover:border-red-500/50 hover:bg-gray-800/50 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-red-500/10 animate-fadeInScale"
               style={{animationDelay: '1.1s'}}
             >

@@ -444,3 +444,372 @@ enum SecuritySeverity {
   HIGH
   CRITICAL
 }
+
+// ================================
+// BUG BOUNTY MODELS
+// ================================
+
+model BugBountyStats {
+  id               String   @id @default(uuid())
+  
+  // Statistics
+  totalBugs        Int      @default(0)
+  criticalBugs     Int      @default(0)
+  highBugs         Int      @default(0)
+  mediumBugs       Int      @default(0)
+  lowBugs          Int      @default(0)
+  informationalBugs Int     @default(0)
+  
+  // Financial
+  totalReward      Float    @default(0.0)
+  totalBounty      Float    @default(0.0)
+  avgRewardPerBug  Float    @default(0.0)
+  
+  // Recognition
+  cveAssigned      Int      @default(0)
+  hallOfFame       Int      @default(0)
+  publicDisclosures Int     @default(0)
+  
+  // Timing
+  avgResolutionDays Float   @default(0.0)
+  fastestResolution Int     @default(0) // in hours
+  
+  // Meta
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  
+  // Relations
+  reports          BugReport[]
+  platforms        Platform[]
+  achievements     Achievement[]
+  
+  @@map("bug_bounty_stats")
+}
+
+model BugReport {
+  id               String   @id @default(uuid())
+  
+  // Basic Info
+  title            String
+  description      String   // Public-safe description
+  privateNotes     String?  // Internal notes (admin only)
+  
+  // Classification
+  severity         BugSeverity
+  category         VulnerabilityCategory
+  cweId            String?   // CWE-79, CWE-89, etc.
+  cveId            String?   // CVE-2024-12345
+  
+  // Program Info
+  program          String    // Company/Program name
+  platform         String    // HackerOne, Bugcrowd, etc.
+  programUrl       String?
+  
+  // Technical Details
+  methodology      String[]  @default([]) // ["SQL Injection", "Manual Testing"]
+  tools            String[]  @default([]) // ["Burp Suite", "SQLMap"]
+  payload          String?   // Safe payload example
+  
+  // Impact & Business
+  impact           String    // Business impact description
+  affectedAssets   String[]  @default([]) // ["api.example.com", "admin panel"]
+  usersAffected    Int?      // Number of users potentially affected
+  
+  // Timeline
+  discoveredAt     DateTime
+  reportedAt       DateTime
+  firstResponseAt  DateTime?
+  resolvedAt       DateTime?
+  disclosedAt      DateTime? // Public disclosure date
+  
+  // Status & Resolution
+  status           BugReportStatus @default(SUBMITTED)
+  resolution       String?   // How it was fixed
+  reproducible     Boolean   @default(true)
+  duplicate        Boolean   @default(false)
+  
+  // Financial
+  reward           Float?    // Bounty amount
+  currency         String?   @default("USD")
+  bonusReward      Float?    // Additional bonus
+  
+  // Media & Links
+  screenshots      String[]  @default([])
+  proofOfConcept   String[]  @default([])
+  reportUrl        String?   // Link to platform report
+  publicUrl        String?   // Public disclosure URL
+  blogPostUrl      String?   // If you wrote about it
+  
+  // Collaboration
+  collaborators    String[]  @default([]) // Other researchers involved
+  credits          String?   // Credit line for disclosure
+  
+  // Meta
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  
+  // Relations
+  statsId          String?
+  stats            BugBountyStats? @relation(fields: [statsId], references: [id])
+  
+  @@map("bug_reports")
+}
+
+model Platform {
+  id               String   @id @default(uuid())
+  
+  // Basic Info
+  name             String   @unique // "HackerOne", "Bugcrowd", "Synack"
+  username         String   // Your username on platform
+  profileUrl       String?
+  
+  // Stats
+  reputation       Int      @default(0)
+  rank             String?  // "7th", "Top 1%", etc.
+  points           Int      @default(0)
+  level            String?  // "Legend", "Master", etc.
+  
+  // Performance
+  bugsSubmitted    Int      @default(0)
+  bugsAccepted     Int      @default(0)
+  bugsDuplicate    Int      @default(0)
+  bugsInformational Int     @default(0)
+  
+  // Financial
+  totalEarnings    Float    @default(0.0)
+  averageReward    Float    @default(0.0)
+  currency         String   @default("USD")
+  
+  // Recognition
+  hallOfFame       Int      @default(0)
+  certificates     String[] @default([])
+  badges           String[] @default([])
+  
+  // Activity
+  joinedAt         DateTime?
+  lastActive       DateTime?
+  activeMonths     Int      @default(0)
+  
+  // Settings
+  active           Boolean  @default(true)
+  featured         Boolean  @default(false)
+  publicProfile    Boolean  @default(true)
+  
+  // Meta
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  
+  // Relations
+  statsId          String?
+  stats            BugBountyStats? @relation(fields: [statsId], references: [id])
+  
+  @@map("platforms")
+}
+
+model Achievement {
+  id               String   @id @default(uuid())
+  
+  // Basic Info
+  title            String
+  description      String
+  category         AchievementCategory
+  
+  // Visual
+  icon             String?  // Icon name or URL
+  badgeUrl         String?  // Badge image URL
+  color            String?  // Hex color for display
+  
+  // Recognition
+  issuedBy         String   // Platform or organization
+  certificateUrl   String?  // Certificate PDF/image
+  verificationUrl  String?  // Verification link
+  
+  // Details
+  criteria         String?  // What you did to earn it
+  difficulty       AchievementDifficulty @default(MEDIUM)
+  rarity           String?  // "Rare", "Epic", "Legendary"
+  
+  // Timing
+  earnedAt         DateTime
+  expiresAt        DateTime?
+  
+  // Value
+  points           Int?     // Points awarded
+  monetaryValue    Float?   // If has monetary value
+  
+  // Meta
+  featured         Boolean  @default(false)
+  publicVisible    Boolean  @default(true)
+  
+  // Meta timestamps
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  
+  // Relations
+  statsId          String?
+  stats            BugBountyStats? @relation(fields: [statsId], references: [id])
+  
+  @@map("achievements")
+}
+
+model Methodology {
+  id               String   @id @default(uuid())
+  
+  // Basic Info
+  name             String   @unique
+  description      String
+  category         MethodologyCategory
+  
+  // Technical Details
+  steps            String[] @default([]) // Step-by-step process
+  tools            String[] @default([]) // Required tools
+  prerequisites    String[] @default([]) // Knowledge/setup needed
+  
+  // Examples
+  exampleTargets   String[] @default([]) // Types of targets
+  examplePayloads  String[] @default([]) // Safe example payloads
+  commonMistakes   String[] @default([]) // What to avoid
+  
+  // Difficulty & Time
+  difficulty       MethodologyDifficulty @default(INTERMEDIATE)
+  estimatedTime    String?  // "2-4 hours", "1 day"
+  successRate      Float?   // Personal success rate %
+  
+  // Resources
+  resources        String[] @default([]) // Links to guides, papers
+  references       String[] @default([]) // CVE references, case studies
+  
+  // Usage Stats
+  timesUsed        Int      @default(0)
+  bugsFound        Int      @default(0)
+  lastUsed         DateTime?
+  
+  // Meta
+  featured         Boolean  @default(false)
+  publicVisible    Boolean  @default(true)
+  
+  // Meta timestamps
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  
+  @@map("methodologies")
+}
+
+// ================================
+// BUG BOUNTY ENUMS
+// ================================
+
+enum BugSeverity {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+  INFORMATIONAL
+}
+
+enum VulnerabilityCategory {
+  // Web Application
+  SQL_INJECTION
+  XSS_REFLECTED
+  XSS_STORED
+  XSS_DOM
+  CSRF
+  IDOR
+  AUTHENTICATION_BYPASS
+  AUTHORIZATION_FLAW
+  SESSION_MANAGEMENT
+  
+  // Infrastructure
+  RCE
+  LFI
+  RFI
+  DIRECTORY_TRAVERSAL
+  COMMAND_INJECTION
+  
+  // Logic Flaws
+  BUSINESS_LOGIC
+  RACE_CONDITION
+  PRICE_MANIPULATION
+  PRIVILEGE_ESCALATION
+  
+  // Information Disclosure
+  SENSITIVE_DATA_EXPOSURE
+  PII_DISCLOSURE
+  DEBUGGING_INFO
+  
+  // API Security
+  API_MISCONFIGURATION
+  BROKEN_AUTHENTICATION
+  EXCESSIVE_DATA_EXPOSURE
+  RATE_LIMITING_BYPASS
+  
+  // Mobile
+  MOBILE_APP_VULN
+  DEEP_LINK_ABUSE
+  
+  // Other
+  SOCIAL_ENGINEERING
+  PHISHING
+  PHYSICAL_SECURITY
+  CRYPTOGRAPHIC_FAILURE
+  MISCONFIGURATION
+  OTHER
+}
+
+enum BugReportStatus {
+  SUBMITTED
+  TRIAGING
+  ACCEPTED
+  RESOLVED
+  FIXED
+  DUPLICATE
+  NOT_APPLICABLE
+  INFORMATIONAL
+  PENDING_DISCLOSURE
+  DISCLOSED
+  REJECTED
+}
+
+enum AchievementCategory {
+  FIRST_BUG
+  SEVERITY_MILESTONE
+  PLATFORM_MILESTONE  
+  FINANCIAL_MILESTONE
+  RECOGNITION
+  COLLABORATION
+  COMMUNITY
+  CERTIFICATION
+  CVE_ASSIGNMENT
+  HALL_OF_FAME
+  SPECIAL_EVENT
+  ANNIVERSARY
+}
+
+enum AchievementDifficulty {
+  EASY
+  MEDIUM
+  HARD
+  LEGENDARY
+}
+
+enum MethodologyCategory {
+  WEB_APPLICATION
+  API_TESTING
+  MOBILE_APPLICATION
+  INFRASTRUCTURE
+  SOCIAL_ENGINEERING
+  PHYSICAL_SECURITY
+  CRYPTOGRAPHY
+  REVERSE_ENGINEERING
+  BUSINESS_LOGIC
+  RECONNAISSANCE
+  AUTOMATION
+  MANUAL_TESTING
+}
+
+enum MethodologyDifficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}

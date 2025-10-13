@@ -56,6 +56,22 @@ const nextConfig = {
         ]
       }
     ];
+  },
+
+  // Redirects per compatibilità URL
+  async redirects() {
+    return [
+      {
+        source: '/bugbounty',
+        destination: '/bug-bounty',
+        permanent: true,
+      },
+      {
+        source: '/bugbounty/:path*',
+        destination: '/bug-bounty/:path*',
+        permanent: true,
+      },
+    ];
   }
 };
 
