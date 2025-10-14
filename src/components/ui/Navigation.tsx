@@ -30,6 +30,7 @@ export default function Navigation({ showBackButton = false, backUrl = '/', back
     { name: 'Home', href: '/', icon: Home },
     { name: 'Progetti', href: '/projects', icon: FolderOpen },
     { name: 'Bug Bounty', href: '/bug-bounty', icon: Shield },
+    { name: 'Servizi', href: '/services', icon: Settings },
     { name: 'Chi Sono', href: '/about', icon: User },
     { name: 'Contatti', href: '/contatti', icon: Mail },
   ];

@@ -58,6 +58,7 @@ model Project {
   categoryId       String
   technologies     ProjectTechnology[]
   skills           ProjectSkill[]
+  testimonials     Testimonial[]
   
   @@map("projects")
 }
@@ -169,24 +170,54 @@ model BlogPost {
 }
 
 model Service {
-  id          String        @id @default(uuid())
-  name        String
-  description String
-  price       Decimal?
-  currency    String        @default("EUR")
-  status      ServiceStatus @default(ACTIVE)
-  featured    Boolean       @default(false)
-  order       Int           @default(0)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  id              String          @id @default(uuid())
+  name            String          // Keep existing field
+  title           String?         // Alternative display name
+  description     String
+  longDescription String?
   
-  // Dettagli
-  features    String[]      @default([])
-  duration    String?       // "1 settimana", "3 mesi", etc.
-  deliverables String[]     @default([])
+  // Service details
+  category        ServiceCategory @default(WEB_DEVELOPMENT)
+  type            ServiceType     @default(CONSULTING)
+  duration        String?         // Existing field
+  pricing         ServicePricing  @default(CUSTOM)
+  price           Decimal?        // Keep existing field
+  basePrice       Float?          // Additional pricing info
+  maxPrice        Float?          // For price ranges
+  currency        String          @default("EUR")
+  
+  // Status and visibility
+  status          ServiceStatus   @default(ACTIVE)
+  featured        Boolean         @default(false)
+  available       Boolean         @default(true)
+  order           Int             @default(0)
+  
+  // Content - keep existing
+  features        String[]        @default([])
+  deliverables    String[]        @default([])
+  requirements    String[]        @default([])
+  
+  // Media
+  icon            String?         // Icon for the service
+  image           String?         // Featured image
+  gallery         String[]        @default([])
+  
+  // SEO
+  slug            String?         @unique
+  tags            String[]        @default([])
+  
+  // Metadata
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  // Relations
+  inquiries       ServiceInquiry[]
+  testimonials    Testimonial[]
   
   @@map("services")
 }
+
+// Modelli già definiti sopra - rimossi duplicati
 
 // ================================
 // ENUMS
@@ -212,11 +243,7 @@ enum PostStatus {
   ARCHIVED
 }
 
-enum ServiceStatus {
-  ACTIVE
-  INACTIVE
-  ARCHIVED
-}
+// ServiceStatus moved to end of file with services enums
 
 // ================================
 // SECURITY & AUTHENTICATION MODELS
@@ -812,4 +839,199 @@ enum MethodologyDifficulty {
   INTERMEDIATE
   ADVANCED
   EXPERT
+}
+
+// ================================
+// SERVICES & CONSULTING MODELS
+// ================================
+
+model ServiceInquiry {
+  id              String              @id @default(uuid())
+  
+  // Contact info
+  name            String
+  email           String
+  company         String?
+  phone           String?
+  
+  // Inquiry details
+  subject         String
+  message         String
+  budget          String?             // "Under 5k", "5k-10k", etc.
+  timeline        String?             // "ASAP", "1-3 months", etc.
+  projectType     String?             // Free text or category
+  
+  // Service reference
+  service         Service?            @relation(fields: [serviceId], references: [id])
+  serviceId       String?
+  
+  // Status
+  status          InquiryStatus       @default(NEW)
+  priority        InquiryPriority     @default(MEDIUM)
+  
+  // Communication
+  notes           String?             // Internal notes
+  response        String?             // Response to client
+  followUpDate    DateTime?
+  
+  // Metadata
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  respondedAt     DateTime?
+  
+  // Relations
+  responses       InquiryResponse[]
+  
+  @@map("service_inquiries")
+}
+
+model InquiryResponse {
+  id          String          @id @default(uuid())
+  content     String
+  isInternal  Boolean         @default(false) // Internal note vs client response
+  author      String?         // Who responded
+  
+  // Metadata
+  createdAt   DateTime        @default(now())
+  
+  // Relations
+  inquiry     ServiceInquiry  @relation(fields: [inquiryId], references: [id])
+  inquiryId   String
+  
+  @@map("inquiry_responses")
+}
+
+model Testimonial {
+  id          String          @id @default(uuid())
+  
+  // Client info
+  clientName  String
+  clientRole  String?         // "CTO", "Founder", etc.
+  company     String?
+  avatar      String?         // Client photo
+  
+  // Testimonial content
+  content     String
+  rating      Int             @default(5) // 1-5 stars
+  
+  // Project context
+  projectType String?         // Type of work done
+  
+  // Status
+  featured    Boolean         @default(false)
+  approved    Boolean         @default(false)
+  
+  // Metadata
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  
+  // Relations
+  service     Service?        @relation(fields: [serviceId], references: [id])
+  serviceId   String?
+  project     Project?        @relation(fields: [projectId], references: [id])
+  projectId   String?
+  
+  @@map("testimonials")
+}
+
+model ServicePackage {
+  id              String          @id @default(uuid())
+  name            String
+  description     String
+  
+  // Package details
+  services        String[]        @default([]) // Service IDs included
+  price           Float
+  currency        String          @default("EUR")
+  duration        String?         // "3 months", "1 year", etc.
+  
+  // Features
+  features        String[]        @default([])
+  limitations     String[]        @default([])
+  
+  // Status
+  active          Boolean         @default(true)
+  popular         Boolean         @default(false)
+  
+  // Metadata
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@map("service_packages")
+}
+
+// Service Categories
+enum ServiceCategory {
+  WEB_DEVELOPMENT
+  SECURITY_CONSULTING
+  PENETRATION_TESTING
+  CODE_AUDIT
+  TRAINING
+  TECHNICAL_WRITING
+  ARCHITECTURE_REVIEW
+  DEVOPS_CONSULTING
+  API_DEVELOPMENT
+  DATABASE_DESIGN
+  PERFORMANCE_OPTIMIZATION
+  COMPLIANCE_AUDIT
+}
+
+// Service Types
+enum ServiceType {
+  CONSULTING      // Advisory services
+  DEVELOPMENT     // Custom development
+  AUDIT          // Security/code audits
+  TRAINING       // Educational services
+  SUPPORT        // Ongoing support
+  PACKAGE        // Bundled services
+}
+
+// Service Pricing Models
+enum ServicePricing {
+  HOURLY         // Hourly rate
+  DAILY          // Daily rate
+  PROJECT        // Fixed project price
+  MONTHLY        // Monthly retainer
+  CUSTOM         // Custom pricing
+  FREE           // Free service
+}
+
+// Service Status
+enum ServiceStatus {
+  DRAFT          // Not published
+  ACTIVE         // Available for booking
+  PAUSED         // Temporarily unavailable
+  ARCHIVED       // No longer offered
+}
+
+// Inquiry Status
+enum InquiryStatus {
+  NEW            // Just received
+  REVIEWED       // Under review
+  RESPONDED      // Response sent
+  IN_DISCUSSION  // Active conversation
+  QUOTED         // Quote provided
+  ACCEPTED       // Client accepted
+  REJECTED       // Client declined
+  COMPLETED      // Project finished
+  CANCELLED      // Cancelled
+}
+
+// Inquiry Priority
+enum InquiryPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+// Inquiry Source
+enum InquirySource {
+  WEBSITE        // Contact form on website
+  EMAIL          // Direct email
+  PHONE          // Phone call
+  REFERRAL       // Word of mouth
+  SOCIAL_MEDIA   // Social media
+  LINKEDIN       // LinkedIn message
+  OTHER          // Other sources
 }
