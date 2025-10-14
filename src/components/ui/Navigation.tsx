@@ -32,7 +32,7 @@ export default function Navigation({ showBackButton = false, backUrl = '/', back
     { name: 'Bug Bounty', href: '/bug-bounty', icon: Shield },
     { name: 'Servizi', href: '/services', icon: Settings },
     { name: 'Chi Sono', href: '/about', icon: User },
-    { name: 'Contatti', href: '/contatti', icon: Mail },
+    { name: 'Contatti', href: '/contact', icon: Mail },
   ];
 
   const handleNavigation = (href: string) => {
