@@ -7,5 +7,11 @@
     }
   },
   "regions": ["fra1"],
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "crons": [
+    {
+      "path": "/api/cron/sync-platforms",
+      "schedule": "0 8 * * *"
+    }
+  ]
 }

@@ -12,7 +12,8 @@ import {
   Settings, 
   LogOut,
   AlertTriangle,
-  CheckCircle 
+  CheckCircle,
+  Target
 } from 'lucide-react';
 
 interface User {
@@ -127,6 +128,14 @@ export default function AdminLayout({
             >
               <Wrench className="w-5 h-5 mr-3" />
               Progetti
+            </Link>
+
+            <Link 
+              href="/admin/bug-bounty" 
+              className="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white transition"
+            >
+              <Target className="w-5 h-5 mr-3" />
+              Bug Bounty
             </Link>
 
             <Link 
