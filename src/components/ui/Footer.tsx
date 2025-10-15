@@ -26,7 +26,7 @@ export default function Footer() {
     { name: 'Home', href: '/' },
     { name: 'Progetti', href: '/projects' },
     { name: 'Chi Sono', href: '/about' },
-    { name: 'Contatti', href: '/contatti' }
+    { name: 'Contatti', href: '/contact' }
   ];
 
   const services = [
@@ -45,13 +45,13 @@ export default function Footer() {
     },
     {
       name: 'LinkedIn',
-      href: 'https://linkedin.com/in/theweb-rooster',
+      href: 'https://www.linkedin.com/in/amedeo-galletta-812835292/',
       icon: Linkedin,
       color: 'hover:text-blue-400'
     },
     {
       name: 'Email',
-      href: 'mailto:contact@theweb-rooster.com',
+      href: 'mailto:contact@webrooster.it',
       icon: Mail,
       color: 'hover:text-yellow-400'
     }
