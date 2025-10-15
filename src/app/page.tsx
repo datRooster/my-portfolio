@@ -1,6 +1,7 @@
 import Link from "next/link";
 import CoinFlip from "@/components/layout/CoinFlip";
 import Navigation from "@/components/ui/Navigation";
+import VisitorCounter from "@/components/ui/VisitorCounter";
 import { 
   Code2, 
   Shield, 
@@ -263,6 +264,12 @@ export default function Home() {
 
 
         </section>
+        
+        {/* Visitor Counter floating */}
+        <VisitorCounter 
+          variant="floating" 
+          position="bottom-right"
+        />
     </div>
     </>
   );

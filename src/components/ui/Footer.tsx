@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import VisitorCounter from './VisitorCounter';
 import { 
   Github, 
   Linkedin, 
@@ -198,23 +199,29 @@ export default function Footer() {
               </div>
             </div>
 
-            {/* Social Links */}
-            <div className="flex items-center gap-4">
-              {socialLinks.map((social) => {
-                const Icon = social.icon;
-                return (
-                  <a
-                    key={social.name}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`w-10 h-10 bg-gray-800/50 border border-gray-700 rounded-lg flex items-center justify-center text-gray-400 ${social.color} transition-all duration-300 hover:border-gray-600 hover:scale-110`}
-                    title={social.name}
-                  >
-                    <Icon className="w-5 h-5" />
-                  </a>
-                );
-              })}
+            {/* Center - Social Links + Visitor Counter */}
+            <div className="flex items-center gap-6">
+              {/* Social Links */}
+              <div className="flex items-center gap-4">
+                {socialLinks.map((social) => {
+                  const Icon = social.icon;
+                  return (
+                    <a
+                      key={social.name}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`w-10 h-10 bg-gray-800/50 border border-gray-700 rounded-lg flex items-center justify-center text-gray-400 ${social.color} transition-all duration-300 hover:border-gray-600 hover:scale-110`}
+                      title={social.name}
+                    >
+                      <Icon className="w-5 h-5" />
+                    </a>
+                  );
+                })}
+              </div>
+              
+              {/* Visitor Counter */}
+              <VisitorCounter variant="minimal" />
             </div>
 
             {/* Scroll to Top */}

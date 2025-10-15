@@ -1035,3 +1035,31 @@ enum InquirySource {
   LINKEDIN       // LinkedIn message
   OTHER          // Other sources
 }
+
+// ================================
+// VISITOR ANALYTICS
+// ================================
+
+model VisitorSession {
+  id           String   @id @default(uuid())
+  fingerprint  String   // Hash anonimo per identificare sessioni uniche
+  
+  // Timing
+  firstSeen    DateTime @default(now())
+  lastSeen     DateTime @default(now())
+  
+  // Attività
+  pageViews    Int      @default(1)
+  currentPage  String?
+  referrer     String?
+  
+  // Informazioni tecniche (anonime)
+  isMobile     Boolean  @default(false)
+  country      String?  // Opzionale per statistiche geografiche
+  
+  // Indici per performance
+  @@index([fingerprint])
+  @@index([lastSeen])
+  @@index([firstSeen])
+  @@map("visitor_sessions")
+}

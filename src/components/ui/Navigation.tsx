@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import VisitorCounter from './VisitorCounter';
 import { 
   Home, 
   FolderOpen, 
@@ -93,6 +94,9 @@ export default function Navigation({ showBackButton = false, backUrl = '/', back
                   </button>
                 );
               })}
+              
+              {/* Visitor Counter - solo su desktop */}
+              <VisitorCounter variant="minimal" />
               
               {/* Admin Link */}
               <button
