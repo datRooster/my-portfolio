@@ -25,6 +25,7 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import ProjectAnalytics from '@/components/admin/ProjectAnalytics';
+import VisitorAnalytics from '@/components/admin/VisitorAnalytics';
 
 interface Stats {
   totalProjects: number;
@@ -68,7 +69,7 @@ export default function AdminDashboard() {
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
   const [projectSummary, setProjectSummary] = useState<ProjectSummary | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'analytics' | 'activity'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'analytics' | 'visitors' | 'activity'>('overview');
   const router = useRouter();
 
   useEffect(() => {
@@ -315,6 +316,17 @@ export default function AdminDashboard() {
             Analytics Progetti
           </button>
           <button
+            onClick={() => setActiveTab('visitors')}
+            className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors ${
+              activeTab === 'visitors'
+                ? 'text-yellow-400 border-b-2 border-yellow-500 bg-gray-700/50'
+                : 'text-gray-400 hover:text-white hover:bg-gray-700/30'
+            }`}
+          >
+            <Eye className="w-5 h-5" />
+            Analytics Visitatori
+          </button>
+          <button
             onClick={() => setActiveTab('activity')}
             className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors ${
               activeTab === 'activity'
@@ -502,6 +514,11 @@ export default function AdminDashboard() {
           {/* Analytics Tab */}
           {activeTab === 'analytics' && (
             <ProjectAnalytics />
+          )}
+
+          {/* Visitor Analytics Tab */}
+          {activeTab === 'visitors' && (
+            <VisitorAnalytics />
           )}
 
           {/* Activity Tab */}

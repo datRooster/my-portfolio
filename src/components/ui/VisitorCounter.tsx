@@ -59,7 +59,10 @@ export default function VisitorCounter({
           page: window.location.pathname,
           referrer: document.referrer,
           userAgent: navigator.userAgent,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          screenResolution: `${screen.width}x${screen.height}`,
+          language: navigator.language,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
         })
       });
     } catch (error) {
