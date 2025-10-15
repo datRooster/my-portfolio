@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database/prisma';
 
+export const runtime = 'nodejs';
+
 export async function GET() {
   try {
     // Ottieni statistiche visitatori

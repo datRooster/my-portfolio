@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database/prisma';
-import crypto from 'crypto';
+
+export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,11 +11,13 @@ export async function POST(request: NextRequest) {
     // Genera fingerprint anonimo basato su IP + User Agent (senza salvare dati personali)
     const forwarded = request.headers.get('x-forwarded-for');
     const ip = forwarded ? forwarded.split(',')[0] : request.headers.get('x-real-ip') || 'unknown';
-    const fingerprint = crypto
-      .createHash('sha256')
-      .update(`${ip}-${userAgent}`)
-      .digest('hex')
-      .substring(0, 16); // Solo i primi 16 caratteri per anonimato
+    
+    // Hash semplice per anonimato (senza usare crypto)
+    const rawFingerprint = `${ip}-${userAgent}`;
+    const fingerprint = Buffer.from(rawFingerprint)
+      .toString('base64')
+      .replace(/[^a-zA-Z0-9]/g, '')
+      .substring(0, 16);
 
     // Estrai informazioni utili dall'user agent (senza salvarlo completamente)
     const isBot = /bot|crawler|spider|crawling/i.test(userAgent || '');
