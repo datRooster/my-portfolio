@@ -88,7 +88,7 @@ export default function ContattiPage() {
                     <Mail className="w-6 h-6 text-yellow-400" />
                     <div>
                       <p className="font-medium text-white">Email</p>
-                      <p className="text-gray-400">contact@theweb-rooster.com</p>
+                      <p className="text-gray-400">contact@webrooster.it</p>
                     </div>
                   </div>
                   

@@ -154,8 +154,8 @@ export default function Footer() {
                 <div className="flex items-start gap-3">
                   <Mail className="w-4 h-4 text-gray-400 mt-1 flex-shrink-0" />
                   <div>
-                    <a href="mailto:contact@theweb-rooster.com" className="text-gray-300 text-sm hover:text-yellow-400 transition-colors">
-                      contact@theweb-rooster.com
+                    <a href="mailto:contact@webrooster.it" className="text-gray-300 text-sm hover:text-yellow-400 transition-colors">
+                      contact@webrooster.it
                     </a>
                     <p className="text-gray-500 text-xs">Rispondo entro 24h</p>
                   </div>
