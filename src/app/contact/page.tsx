@@ -22,8 +22,10 @@ import {
   Send, 
   Sparkles,
   Target,
-  MessageCircle
+  MessageCircle,
+  Zap
 } from 'lucide-react';
+import WebchatEmbed from '@/components/ui/WebchatEmbed';
 
 // Types
 interface Service {
@@ -60,6 +62,7 @@ function ContactPageContent() {
 
   const [services, setServices] = useState<Service[]>([]);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [contactMethod, setContactMethod] = useState<'form' | 'chat'>('form');
   
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -243,7 +246,7 @@ function ContactPageContent() {
             </p>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mb-16">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mb-12">
               <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4">
                 <Clock className="w-8 h-8 text-blue-400 mx-auto mb-2" />
                 <div className="text-2xl font-bold text-white">24h</div>
@@ -260,15 +263,125 @@ function ContactPageContent() {
                 <div className="text-sm text-gray-400">Personalizzato</div>
               </div>
             </div>
+
+            {/* Contact Method Selector */}
+            <div className="max-w-2xl mx-auto mb-16">
+              <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-2 flex gap-2">
+                <button
+                  onClick={() => setContactMethod('form')}
+                  className={`flex-1 px-6 py-4 rounded-xl font-semibold transition-all duration-300 ${
+                    contactMethod === 'form'
+                      ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
+                      : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <Mail className="w-5 h-5" />
+                    <span>Form Tradizionale</span>
+                  </div>
+                  {contactMethod === 'form' && (
+                    <p className="text-xs mt-1 opacity-80">Ricevi risposta via email</p>
+                  )}
+                </button>
+                <button
+                  onClick={() => setContactMethod('chat')}
+                  className={`flex-1 px-6 py-4 rounded-xl font-semibold transition-all duration-300 relative ${
+                    contactMethod === 'chat'
+                      ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg'
+                      : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <Zap className="w-5 h-5" />
+                    <span>Chat in Tempo Reale</span>
+                  </div>
+                  {contactMethod === 'chat' && (
+                    <p className="text-xs mt-1 opacity-80">Risposte immediate</p>
+                  )}
+                  <span className="absolute -top-1 -right-1 px-2 py-0.5 bg-yellow-500 text-xs text-gray-900 font-bold rounded-full">
+                    NUOVO
+                  </span>
+                </button>
+              </div>
+            </div>
           </div>
         </section>
 
         {/* Content Section */}
         <section className="relative py-16 px-4">
           <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Contact Form */}
-              <div className="lg:col-span-2">
+            {contactMethod === 'chat' ? (
+              /* Webchat Integration */
+              <div className="max-w-6xl mx-auto">
+                <div className="mb-8 text-center">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/20 border border-green-500/30 rounded-full text-green-300 text-sm mb-4">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span>Chat Community in Tempo Reale</span>
+                  </div>
+                  <h2 className="text-3xl font-bold text-white mb-2">
+                    Unisciti alla Community Chat
+                  </h2>
+                  <p className="text-gray-400 max-w-2xl mx-auto">
+                    Accedi alla nostra chat IRC per parlare direttamente con me e altri membri della community. 
+                    Devi registrarti per partecipare alla conversazione.
+                  </p>
+                </div>
+
+                <div className="h-[700px]">
+                  <WebchatEmbed 
+                    fullPage={true}
+                    title="IRC Community Chat"
+                    description="Chat in tempo reale - Registrazione richiesta"
+                  />
+                </div>
+
+                <div className="mt-8 bg-blue-500/10 border border-blue-500/20 rounded-xl p-6">
+                  <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-blue-400" />
+                    Come funziona la chat?
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div className="flex gap-3">
+                      <div className="flex-shrink-0 w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center text-blue-400 font-bold">
+                        1
+                      </div>
+                      <div>
+                        <div className="font-medium text-white mb-1">Registrati</div>
+                        <div className="text-gray-400">
+                          Crea un account con username e password o usa GitHub OAuth
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <div className="flex-shrink-0 w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center text-blue-400 font-bold">
+                        2
+                      </div>
+                      <div>
+                        <div className="font-medium text-white mb-1">Accedi</div>
+                        <div className="text-gray-400">
+                          Fai login e accedi ai vari canali della community
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <div className="flex-shrink-0 w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center text-blue-400 font-bold">
+                        3
+                      </div>
+                      <div>
+                        <div className="font-medium text-white mb-1">Chatta</div>
+                        <div className="text-gray-400">
+                          Inizia a conversare in tempo reale con me e la community
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Traditional Contact Form */
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Contact Form */}
+                <div className="lg:col-span-2">
                 <Card className="bg-gray-900/50 backdrop-blur-sm border border-gray-800">
                   <div className="p-8">
                     <h3 className="text-2xl font-semibold text-white mb-2">Richiedi Informazioni</h3>
@@ -582,6 +695,7 @@ function ContactPageContent() {
                 </Card>
               </div>
             </div>
+            )}
           </div>
         </section>
       </div>

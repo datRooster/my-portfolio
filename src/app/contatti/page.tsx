@@ -1,5 +1,6 @@
 import Navigation from "@/components/ui/Navigation";
-import { Mail, Phone, MapPin, Github, Linkedin } from "lucide-react";
+import { Mail, Phone, MapPin, Github, Linkedin, MessageCircle, Zap } from "lucide-react";
+import Link from "next/link";
 
 export default function ContattiPage() {
   return (
@@ -11,9 +12,29 @@ export default function ContattiPage() {
             <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
               Contattami
             </h1>
-            <p className="text-gray-400 text-lg">
+            <p className="text-gray-400 text-lg mb-6">
               Hai un progetto in mente? Parliamone!
             </p>
+            
+            {/* CTA per la nuova chat */}
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl">
+              <MessageCircle className="w-5 h-5 text-green-400" />
+              <div className="text-left">
+                <div className="text-sm font-semibold text-white">
+                  Preferisci parlare in tempo reale?
+                </div>
+                <div className="text-xs text-gray-400">
+                  Prova la nostra nuova chat community
+                </div>
+              </div>
+              <Link 
+                href="/contact"
+                className="ml-2 px-4 py-2 bg-green-500 hover:bg-green-400 text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
+              >
+                <Zap className="w-4 h-4" />
+                Vai alla Chat
+              </Link>
+            </div>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

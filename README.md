@@ -637,6 +637,173 @@ my-portfolio/
 
 ---
 
-**🐓 Sviluppato con ❤️ da theWebRooster** 
+## 💬 Integrazione Webchat IRC Community
 
-**Live**: [www.webrooster.it](https://www.webrooster.it) | **Source**: [GitHub](https://github.com/datRooster/my-portfolio)
+### 🎯 Panoramica
+
+Il portfolio integra una **webchat IRC** deployata su Railway, offrendo comunicazione in tempo reale oltre al form tradizionale.
+
+**URL Webchat Live:** `https://web-production-75688.up.railway.app`
+
+### � Componenti
+
+**File creati:**
+- `src/components/ui/WebchatEmbed.tsx` - Componente iframe embed (full-page + widget)
+- `src/components/ui/WebchatWidget.tsx` - Wrapper floating widget
+- Integrato in `src/app/layout.tsx` per disponibilità globale
+
+### 🔄 Flusso Utente
+
+#### **Pagina Contact (`/contact`)**
+1. **Toggle metodo contatto**: Form tradizionale ⇄ Chat in tempo reale
+2. **Modalità Chat**:
+   - Embed full-page della webchat
+   - Istruzioni registrazione (username/password o GitHub OAuth)
+   - Badge "NUOVO" per evidenziare la feature
+
+#### **Altre Pagine**
+- Widget floating in basso a destra (nascosto su `/contact` e `/admin`)
+- Click per espandere, massimizzare o aprire in nuova finestra
+- Indicatore "online" animato
+
+### 🎨 Design System Webchat
+
+**Colori:**
+- Chat button: Gradient `from-blue-500 to-purple-600`
+- Form button: Gradient `from-blue-500 to-purple-500`
+- Widget badge: Verde con pulse (`bg-green-500`)
+- Badge NUOVO: Giallo (`bg-yellow-500`)
+
+**Features UX:**
+- Loading states con animazioni
+- Responsive su mobile (larghezza adattiva)
+- Transizioni smooth (300ms)
+- Controlli intuitive (massimizza/riduci/apri)
+
+### 🔐 Autenticazione Webchat
+
+**Registrazione obbligatoria** per partecipare:
+
+**Metodi supportati:**
+1. **Credentials**: Username (3+ caratteri) + Password (6+ caratteri)
+2. **GitHub OAuth**: Login rapido con profilo automatico
+
+**Canali disponibili:**
+- `#lobby` - Canale principale (auto-join)
+- `#help` - Supporto tecnico
+- `#guest` - Canale per ospiti
+- Canali custom creati dagli admin
+
+### 📊 Features Webchat
+
+**Messaggistica:**
+- Chat in tempo reale via IRC protocol
+- Bridge bot per sincronizzazione webapp ↔ IRC
+- Cifratura end-to-end opzionale (AES-256-GCM)
+- Polling ogni 2 secondi per nuovi messaggi
+
+**Amministrazione:**
+- Pannello admin per moderatori
+- CRUD canali, ban/kick utenti
+- Gestione permessi per ruolo
+- Topic management
+
+**UX Avanzata:**
+- Echo ottimistico (latenza zero)
+- Selezione multipla messaggi
+- Delete bulk per admin/moderatori
+- Notifiche join/part
+
+### 🚀 Configurazione
+
+#### **Aggiornare URL Webchat**
+```tsx
+// src/app/contact/page.tsx
+<WebchatEmbed 
+  webchatUrl="https://nuovo-url.railway.app"
+  fullPage={true}
+/>
+
+// src/components/ui/WebchatEmbed.tsx (default)
+webchatUrl = 'https://nuovo-url.railway.app'
+```
+
+#### **Nascondere Widget su Pagine Specifiche**
+```tsx
+// src/components/ui/WebchatWidget.tsx
+const hideOnPages = ['/contact', '/admin', '/nuova-pagina'];
+```
+
+### 🐛 Troubleshooting
+
+**Chat non si carica:**
+- Verifica Railway app online
+- Controlla URL in `webchatUrl` prop
+- Verifica CORS settings (deve permettere iframe embed)
+
+**Widget non appare:**
+- Controlla non sia su pagina nascosta (`hideOnPages`)
+- Verifica `WebchatWidget` nel layout
+- Ispeziona console browser
+
+**Registrazione fallisce:**
+- Database PostgreSQL attivo su Railway
+- Variabili ambiente configurate
+- Logs su Railway dashboard
+
+### 📈 Analytics Suggerite
+
+**Eventi da tracciare:**
+```typescript
+analytics.track('webchat_widget_opened')
+analytics.track('contact_method_switched', { method: 'chat' })
+analytics.track('webchat_registration_completed', { source: 'portfolio' })
+```
+
+### 🔮 Sviluppi Futuri
+
+**Roadmap:**
+1. Notifiche Desktop (Web Notifications API)
+2. Presence Indicator (status online/offline)
+3. Quick Replies (risposte predefinite FAQ)
+4. File Sharing (upload immagini/file)
+5. Voice/Video (WebRTC)
+6. PWA/Mobile App
+7. Bot Integrations (ChatGPT, automazioni)
+8. Analytics Dashboard
+
+**SSO Integration:**
+- Single Sign-On portfolio ↔ webchat
+- OAuth provider custom
+- Session sharing via JWT
+
+### 📝 Note Tecniche
+
+**Sicurezza:**
+- iframe con attributi `allow="microphone; camera"` (se necessario)
+- Sandbox policies valutabili per restrizioni
+- Client-side rendering (`use client`)
+
+**Performance:**
+- iframe lazy on-demand (non SSR)
+- Loading states per UX fluida
+- Debounce resize per responsive
+
+**SEO:**
+- Widget non impatta SEO (client-side)
+- Meta tags gestiti da layout principale
+
+---
+
+## 🤝 Supporto
+
+**Issues & Questions:**
+- Portfolio: [GitHub Issues - my-portfolio](https://github.com/datRooster/my-portfolio/issues)
+- Webchat: [GitHub Issues - ircapp](https://github.com/datRooster/ircapp/issues)
+- Chat diretta: Usa la webchat stessa! 😄
+
+---
+
+**�🐓 Sviluppato con ❤️ da theWebRooster** 
+
+**Live**: [www.webrooster.it](https://www.webrooster.it) | **Source**: [GitHub](https://github.com/datRooster/my-portfolio) | **Chat**: [IRC Community](https://web-production-75688.up.railway.app)
