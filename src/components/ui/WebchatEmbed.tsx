@@ -83,6 +83,8 @@ export default function WebchatEmbed({
               className="w-full h-full border-0"
               title="IRC Community Chat"
               allow="microphone; camera"
+              sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
+              referrerPolicy="strict-origin-when-cross-origin"
               onLoad={() => setIsLoading(false)}
             />
           </div>

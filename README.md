@@ -736,10 +736,16 @@ const hideOnPages = ['/contact', '/admin', '/nuova-pagina'];
 
 ### 🐛 Troubleshooting
 
-**Chat non si carica:**
+**Chat non si carica (errore CORS):**
+```
+Blocked a frame with origin "https://web-production-75688.up.railway.app"
+```
+📖 **Soluzione:** Vedi [`IFRAME_CORS_FIX.md`](./IFRAME_CORS_FIX.md) per configurare headers su Railway
+
+**Chat non si carica (altro):**
 - Verifica Railway app online
 - Controlla URL in `webchatUrl` prop
-- Verifica CORS settings (deve permettere iframe embed)
+- Verifica CORS settings configurati correttamente
 
 **Widget non appare:**
 - Controlla non sia su pagina nascosta (`hideOnPages`)

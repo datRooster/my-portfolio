@@ -35,7 +35,8 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/(.*)',
+        // Headers per tutte le pagine TRANNE /contact
+        source: '/((?!contact).*)',
         headers: [
           {
             key: 'X-Frame-Options',
@@ -53,6 +54,25 @@ const nextConfig = {
             key: 'X-XSS-Protection',
             value: '1; mode=block'
           }
+        ]
+      },
+      {
+        // Headers speciali per /contact per permettere iframe
+        source: '/contact',
+        headers: [
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff'
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin'
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block'
+          }
+          // X-Frame-Options rimosso per permettere iframe
         ]
       }
     ];
