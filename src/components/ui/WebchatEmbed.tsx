@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { MessageCircle, X, Maximize2, Minimize2, ExternalLink } from 'lucide-react';
 import { Card } from './card';
-import { Button } from './button';
+import { IframeMessenger } from '@/lib/iframe-communication';
 
 interface WebchatEmbedProps {
   /** URL della webchat deployata su Railway */
@@ -28,6 +28,83 @@ export default function WebchatEmbed({
   const [isOpen, setIsOpen] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [connectionStatus, setConnectionStatus] = useState<'connected' | 'disconnected' | 'reconnecting'>('disconnected');
+  
+  const messengerRef = useRef<IframeMessenger | null>(null);
+
+  // Initialize iframe messenger with callback ref
+  const initializeIframe = useCallback((iframeElement: HTMLIFrameElement | null) => {
+    // Cleanup previous messenger if exists
+    if (messengerRef.current) {
+      messengerRef.current.destroy();
+      messengerRef.current = null;
+    }
+
+    if (!iframeElement) {
+      return;
+    }
+
+    // Extract origin from webchatUrl
+    const iframeOrigin = new URL(webchatUrl).origin;
+    
+    // Create messenger with allowed origins
+    const messenger = new IframeMessenger([iframeOrigin]);
+    messenger.init(iframeElement);
+    messengerRef.current = messenger;
+
+    // Register message handlers
+    messenger.on('iframe_ready', () => {
+      console.log('[WebchatEmbed] Iframe is ready');
+      setIsLoading(false);
+    });
+
+    messenger.on('iframe_loaded', () => {
+      console.log('[WebchatEmbed] Iframe loaded');
+      setIsLoading(false);
+    });
+
+    messenger.on('auth_success', (message) => {
+      console.log('[WebchatEmbed] Auth success:', message.payload);
+    });
+
+    messenger.on('auth_error', (message) => {
+      console.error('[WebchatEmbed] Auth error:', message.payload);
+    });
+
+    messenger.on('connection_status', (message) => {
+      console.log('[WebchatEmbed] Connection status:', message.payload.status);
+      setConnectionStatus(message.payload.status);
+    });
+
+    messenger.on('resize', (message) => {
+      console.log('[WebchatEmbed] Resize requested:', message.payload);
+      // Could implement dynamic resizing here if needed
+    });
+
+    messenger.on('error', (message) => {
+      console.error('[WebchatEmbed] Iframe error:', message.payload);
+    });
+
+    // Send init message to iframe when it loads
+    const handleIframeLoad = () => {
+      messenger.sendToIframe({
+        type: 'init',
+        payload: { config: {} }
+      });
+    };
+
+    iframeElement.addEventListener('load', handleIframeLoad);
+
+    // Note: Cleanup will happen when component unmounts or iframe ref changes
+  }, [webchatUrl]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      messengerRef.current?.destroy();
+      messengerRef.current = null;
+    };
+  }, []);
 
   useEffect(() => {
     if (isOpen || fullPage) {
@@ -79,13 +156,13 @@ export default function WebchatEmbed({
               </div>
             )}
             <iframe
+              ref={initializeIframe}
               src={webchatUrl}
               className="w-full h-full border-0"
               title="IRC Community Chat"
               allow="microphone; camera"
-              sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
+              sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
               referrerPolicy="strict-origin-when-cross-origin"
-              onLoad={() => setIsLoading(false)}
             />
           </div>
 
@@ -93,7 +170,11 @@ export default function WebchatEmbed({
           <div className="bg-gray-900/80 border-t border-gray-800 p-3">
             <div className="flex items-center justify-between text-xs text-gray-400">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <div className={`w-2 h-2 rounded-full ${
+                  connectionStatus === 'connected' ? 'bg-green-500 animate-pulse' : 
+                  connectionStatus === 'reconnecting' ? 'bg-yellow-500 animate-pulse' : 
+                  'bg-gray-500'
+                }`}></div>
                 <span>Chat in tempo reale - Devi registrarti per partecipare</span>
               </div>
               <div className="flex items-center gap-2">
@@ -193,11 +274,13 @@ export default function WebchatEmbed({
               </div>
             )}
             <iframe
+              ref={initializeIframe}
               src={webchatUrl}
               className="w-full h-full border-0 rounded-b-2xl"
               title="IRC Community Chat"
               allow="microphone; camera"
-              onLoad={() => setIsLoading(false)}
+              sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
+              referrerPolicy="strict-origin-when-cross-origin"
             />
           </div>
         </div>
