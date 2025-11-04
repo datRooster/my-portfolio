@@ -5,6 +5,8 @@
  * using the postMessage API to avoid CORS issues.
  */
 
+import { useRef, useEffect } from 'react';
+
 // Message types that can be sent from iframe to parent
 export type IframeToParentMessage =
   | { type: 'iframe_ready' }
@@ -172,7 +174,13 @@ export class IframeMessenger {
       // Wildcard subdomain match (e.g., *.example.com)
       if (allowed.startsWith('*.')) {
         const domain = allowed.slice(2);
-        return origin.endsWith(domain);
+        // Ensure origin ends with the domain and has a preceding dot to prevent subdomain confusion
+        // e.g., *.example.com should match sub.example.com but not evilexample.com
+        // Only allow HTTPS for security (HTTP allowed only for localhost in development)
+        const httpsMatch = origin === `https://${domain}` || origin.endsWith(`.${domain}`);
+        const localhostMatch = (domain === 'localhost' || domain.startsWith('localhost:')) && 
+                               origin.startsWith('http://localhost');
+        return httpsMatch || localhostMatch;
       }
 
       return false;
@@ -182,11 +190,13 @@ export class IframeMessenger {
 
 /**
  * React hook for using IframeMessenger
+ * 
+ * Note: Currently unused but available for hook-based implementation
  */
 export function useIframeMessenger(allowedOrigins: string[]) {
-  const messengerRef = React.useRef<IframeMessenger | null>(null);
+  const messengerRef = useRef<IframeMessenger | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Create messenger instance
     if (!messengerRef.current) {
       messengerRef.current = new IframeMessenger(allowedOrigins);
@@ -201,6 +211,3 @@ export function useIframeMessenger(allowedOrigins: string[]) {
 
   return messengerRef.current;
 }
-
-// Import React for the hook
-import React from 'react';

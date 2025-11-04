@@ -31,14 +31,26 @@ export default function WebchatEmbed({
   const [connectionStatus, setConnectionStatus] = useState<'connected' | 'disconnected' | 'reconnecting'>('disconnected');
   
   const messengerRef = useRef<IframeMessenger | null>(null);
+  const iframeElementRef = useRef<HTMLIFrameElement | null>(null);
+  const loadHandlerRef = useRef<(() => void) | null>(null);
 
   // Initialize iframe messenger with callback ref
   const initializeIframe = useCallback((iframeElement: HTMLIFrameElement | null) => {
+    // Remove previous load handler if exists (using the stored previous element)
+    const previousElement = iframeElementRef.current;
+    if (loadHandlerRef.current && previousElement) {
+      previousElement.removeEventListener('load', loadHandlerRef.current);
+      loadHandlerRef.current = null;
+    }
+
     // Cleanup previous messenger if exists
     if (messengerRef.current) {
       messengerRef.current.destroy();
       messengerRef.current = null;
     }
+
+    // Store the new iframe element reference
+    iframeElementRef.current = iframeElement;
 
     if (!iframeElement) {
       return;
@@ -93,14 +105,20 @@ export default function WebchatEmbed({
       });
     };
 
+    loadHandlerRef.current = handleIframeLoad;
     iframeElement.addEventListener('load', handleIframeLoad);
-
-    // Note: Cleanup will happen when component unmounts or iframe ref changes
   }, [webchatUrl]);
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
+      // Remove event listener
+      if (loadHandlerRef.current && iframeElementRef.current) {
+        iframeElementRef.current.removeEventListener('load', loadHandlerRef.current);
+        loadHandlerRef.current = null;
+      }
+      
+      // Cleanup messenger
       messengerRef.current?.destroy();
       messengerRef.current = null;
     };
