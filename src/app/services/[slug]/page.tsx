@@ -1,24 +1,21 @@
 import { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { ServiceCategory } from '@prisma/client';
 import { prisma } from '@/lib/database/prisma';
+import { normalizeServiceCollections } from '@/lib/database/serializers';
 import Navigation from '@/components/ui/Navigation';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { 
-  ArrowLeft, 
   CheckCircle, 
   Clock, 
   Star, 
   MessageSquare, 
   Calendar, 
   Award,
-  Sparkles,
-  Target,
-  Trophy,
-  Users,
   Code
 } from 'lucide-react';
 
@@ -27,6 +24,20 @@ interface ServicePageProps {
     slug: string;
   }>;
 }
+
+type ServiceTestimonial = {
+  id: string;
+  avatar: string | null;
+  clientName: string;
+  clientRole: string | null;
+  company: string | null;
+  rating: number;
+  content: string;
+  project: {
+    title: string;
+    slug: string;
+  } | null;
+};
 
 async function getService(slug: string) {
   try {
@@ -59,7 +70,7 @@ async function getService(slug: string) {
       }
     });
 
-    return service;
+    return service ? normalizeServiceCollections(service) : null;
   } catch (error) {
     console.error('Error fetching service:', error);
     return null;
@@ -75,7 +86,7 @@ async function getRelatedServices(currentServiceId: string, category?: string) {
         },
         status: 'ACTIVE',
         available: true,
-        ...(category && { category: category as any })
+        ...(category && { category: category as ServiceCategory })
       },
       orderBy: [
         { featured: 'desc' },
@@ -84,7 +95,7 @@ async function getRelatedServices(currentServiceId: string, category?: string) {
       take: 3
     });
 
-    return services;
+    return services.map((service) => normalizeServiceCollections(service));
   } catch (error) {
     console.error('Error fetching related services:', error);
     return [];
@@ -108,16 +119,18 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
   };
 }
 
-function TestimonialCard({ testimonial }: { testimonial: any }) {
+function TestimonialCard({ testimonial }: { testimonial: ServiceTestimonial }) {
   return (
     <Card className="h-full bg-gray-900/50 backdrop-blur-sm border border-gray-800">
       <div className="p-6">
         <div className="flex items-center gap-3 mb-4">
           {testimonial.avatar && (
-            <img 
+            <Image
               src={testimonial.avatar} 
               alt={testimonial.clientName}
               className="w-10 h-10 rounded-full object-cover border-2 border-gray-700"
+              width={40}
+              height={40}
             />
           )}
           <div className="flex-1">
@@ -144,7 +157,7 @@ function TestimonialCard({ testimonial }: { testimonial: any }) {
         </div>
         
         <p className="text-gray-300 text-sm leading-relaxed italic mb-3">
-          "{testimonial.content}"
+          &ldquo;{testimonial.content}&rdquo;
         </p>
         
         {testimonial.project && (
@@ -170,9 +183,20 @@ export default async function ServicePage({ params }: ServicePageProps) {
 
   const relatedServices = await getRelatedServices(service.id, service.category);
 
-  const formatPrice = (price: any) => {
+  const formatPrice = (price: unknown) => {
     if (!price) return null;
-    const numPrice = typeof price === 'string' ? parseFloat(price) : price;
+
+    const numPrice = typeof price === 'string'
+      ? parseFloat(price)
+      : typeof price === 'number'
+        ? price
+        : typeof price === 'object' &&
+            price !== null &&
+            'toNumber' in price &&
+            typeof price.toNumber === 'function'
+          ? price.toNumber()
+          : Number(price);
+
     return `€${numPrice.toLocaleString('it-IT')}`;
   };
 
@@ -327,7 +351,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
                       </p>
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {service.testimonials.map((testimonial: any) => (
+                        {service.testimonials.map((testimonial: ServiceTestimonial) => (
                           <TestimonialCard key={testimonial.id} testimonial={testimonial} />
                         ))}
                       </div>

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
+import { writeStringArray } from '@/lib/database/mysql-json';
+import { normalizePlatformCollections } from '@/lib/database/serializers';
 import { requireAdmin } from '../../../../lib/auth';
 
 const prisma = new PrismaClient();
@@ -8,10 +10,9 @@ const prisma = new PrismaClient();
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const type = searchParams.get('type');
     const active = searchParams.get('active');
 
-    const where: Record<string, any> = {};
+    const where: Prisma.PlatformWhereInput = {};
     
     if (active === 'true') {
       where.active = true;
@@ -55,7 +56,7 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    return NextResponse.json(platforms);
+    return NextResponse.json(platforms.map((platform) => normalizePlatformCollections(platform)));
   } catch (error) {
     console.error('Platforms fetch error:', error);
     return NextResponse.json(
@@ -89,8 +90,8 @@ export async function POST(request: NextRequest) {
         averageReward: body.averageReward || 0.0,
         currency: body.currency || 'USD',
         hallOfFame: body.hallOfFame || 0,
-        certificates: body.certificates || [],
-        badges: body.badges || [],
+        certificates: writeStringArray(body.certificates),
+        badges: writeStringArray(body.badges),
         joinedAt: body.joinedAt ? new Date(body.joinedAt) : null,
         lastActive: body.lastActive ? new Date(body.lastActive) : null,
         activeMonths: body.activeMonths || 0,
@@ -100,7 +101,7 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    return NextResponse.json(platform, { status: 201 });
+    return NextResponse.json(normalizePlatformCollections(platform), { status: 201 });
   } catch (error) {
     console.error('Platform creation error:', error);
     
@@ -135,12 +136,24 @@ export async function PUT(request: NextRequest) {
       updateData.joinedAt = new Date(updateData.joinedAt);
     }
 
+    if (updateData.lastActive) {
+      updateData.lastActive = new Date(updateData.lastActive);
+    }
+
+    if (updateData.certificates !== undefined) {
+      updateData.certificates = writeStringArray(updateData.certificates);
+    }
+
+    if (updateData.badges !== undefined) {
+      updateData.badges = writeStringArray(updateData.badges);
+    }
+
     const platform = await prisma.platform.update({
       where: { id },
       data: updateData
     });
 
-    return NextResponse.json(platform);
+    return NextResponse.json(normalizePlatformCollections(platform));
   } catch (error) {
     console.error('Platform update error:', error);
     

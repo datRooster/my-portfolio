@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { writeStringArray } from '@/lib/database/mysql-json';
 
 const prisma = new PrismaClient();
 
@@ -70,8 +71,8 @@ export async function POST(request: NextRequest) {
             averageReward: 0,
             currency: 'USD',
             hallOfFame: 0,
-            certificates: [],
-            badges: [],
+            certificates: writeStringArray([]),
+            badges: writeStringArray([]),
             joinedAt: new Date().toISOString(),
             lastActive: null,
             activeMonths: 0,

@@ -1,8 +1,98 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database/prisma';
+import { writeStringArray } from '@/lib/database/mysql-json';
+import { normalizeServiceCollections } from '@/lib/database/serializers';
+import {
+  Prisma,
+  ServiceStatus,
+  ServiceCategory,
+  ServiceType,
+} from '@prisma/client';
 
 export const runtime = 'nodejs';
-import { ServiceStatus, ServiceCategory, ServiceType } from '@prisma/client';
+
+type ServiceWithSummary = Awaited<ReturnType<typeof prisma.service.findMany<{
+  include: {
+    testimonials: true;
+    _count: {
+      select: {
+        inquiries: true;
+        testimonials: true;
+      };
+    };
+  };
+}>>>[number];
+
+function toCategorySlug(category: string) {
+  return category.toLowerCase().replace(/_/g, '-');
+}
+
+function toNumericPrice(value: unknown): number | null {
+  if (value === null || value === undefined) {
+    return null;
+  }
+
+  if (typeof value === 'number') {
+    return value;
+  }
+
+  if (typeof value === 'string') {
+    const parsed = Number.parseFloat(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  if (
+    typeof value === 'object' &&
+    value !== null &&
+    'toNumber' in value &&
+    typeof value.toNumber === 'function'
+  ) {
+    return value.toNumber();
+  }
+
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function formatServiceForList(service: ServiceWithSummary) {
+  const normalizedService = normalizeServiceCollections(service);
+  const reviewCount = normalizedService.testimonials.length;
+  const averageRating = reviewCount > 0
+    ? normalizedService.testimonials.reduce(
+        (total: number, testimonial: { rating: number }) => total + testimonial.rating,
+        0
+      ) / reviewCount
+    : 0;
+  const startingPrice = toNumericPrice(
+    normalizedService.basePrice ?? normalizedService.price ?? normalizedService.maxPrice
+  );
+
+  return {
+    ...normalizedService,
+    title: normalizedService.title || normalizedService.name,
+    shortDescription:
+      normalizedService.description.length > 160
+        ? `${normalizedService.description.slice(0, 157)}...`
+        : normalizedService.description,
+    category: toCategorySlug(normalizedService.category),
+    isActive: normalizedService.status === 'ACTIVE' && normalizedService.available,
+    averageRating,
+    reviewCount,
+    completedProjects: normalizedService._count.testimonials,
+    estimatedDelivery: normalizedService.duration || 'Su richiesta',
+    packages: startingPrice
+      ? [
+          {
+            id: `${normalizedService.id}-base`,
+            name: normalizedService.title || normalizedService.name,
+            price: startingPrice,
+            features: normalizedService.features,
+            deliveryTime: normalizedService.duration || 'Su richiesta',
+          },
+        ]
+      : [],
+  };
+}
 
 // GET /api/services - Lista tutti i servizi con filtri e paginazione
 export async function GET(request: NextRequest) {
@@ -22,7 +112,7 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
     
     // Costruisci il where clause
-    const where: any = {
+    const where: Prisma.ServiceWhereInput = {
       available: available,
     };
     
@@ -65,7 +155,7 @@ export async function GET(request: NextRequest) {
     const hasPrev = page > 1;
     
     return NextResponse.json({
-      services,
+      services: services.map((service) => formatServiceForList(service)),
       pagination: {
         page,
         limit,
@@ -137,14 +227,14 @@ export async function POST(request: NextRequest) {
         featured: data.featured || false,
         available: data.available !== false,
         order: data.order || 0,
-        features: data.features || [],
-        deliverables: data.deliverables || [],
-        requirements: data.requirements || [],
+        features: writeStringArray(data.features),
+        deliverables: writeStringArray(data.deliverables),
+        requirements: writeStringArray(data.requirements),
         icon: data.icon,
         image: data.image,
-        gallery: data.gallery || [],
+        gallery: writeStringArray(data.gallery),
         slug: data.slug,
-        tags: data.tags || []
+        tags: writeStringArray(data.tags)
       },
       include: {
         testimonials: true,
@@ -157,7 +247,7 @@ export async function POST(request: NextRequest) {
       }
     });
     
-    return NextResponse.json(service, { status: 201 });
+    return NextResponse.json(normalizeServiceCollections(service), { status: 201 });
     
   } catch (error) {
     console.error('Errore nella creazione servizio:', error);

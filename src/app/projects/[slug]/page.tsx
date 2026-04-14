@@ -3,17 +3,30 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Project } from '@/types/project';
 import ProjectGallery  from '@/components/ui/ProjectGallery';
+import { prisma } from '@/lib/database/prisma';
+import { normalizeProjectCollections } from '@/lib/database/serializers';
 
 interface ProjectPageProps {
   params: Promise<{ slug: string }>;
 }
 
+function mapProjectStatus(
+  status: string
+): Project['status'] {
+  switch (status) {
+    case 'IN_PROGRESS':
+      return 'in-progress';
+    case 'COMPLETED':
+      return 'completed';
+    case 'ARCHIVED':
+      return 'archived';
+    default:
+      return 'draft';
+  }
+}
+
 async function getProject(slug: string): Promise<Project | null> {
   try {
-    // Importa direttamente la logica API invece di fare fetch
-    const { PrismaClient } = await import('@prisma/client');
-    const prisma = new PrismaClient();
-    
     const projectData = await prisma.project.findUnique({
       where: { slug },
       include: {
@@ -30,37 +43,39 @@ async function getProject(slug: string): Promise<Project | null> {
         }
       }
     });
-    
-    await prisma.$disconnect();
-    
+
     if (!projectData) return null;
-    
+
+    const normalizedProject = normalizeProjectCollections(projectData);
+
     // Trasforma i dati Prisma nel formato Project
     const project: Project = {
-      id: projectData.id,
-      title: projectData.title,
-      description: projectData.description,
-      longDescription: projectData.longDescription || undefined,
-      status: projectData.status as 'completed' | 'in-progress' | 'archived' | 'draft',
-      category: projectData.category.name,
-      priority: projectData.priority,
-      startDate: projectData.startDate.toISOString(),
-      endDate: projectData.endDate?.toISOString(),
-      createdAt: projectData.createdAt.toISOString(),
-      updatedAt: projectData.updatedAt.toISOString(),
-      featuredImage: projectData.featuredImage || undefined,
-      gallery: projectData.gallery,
-      screenshots: projectData.screenshots,
-      technologies: projectData.technologies.map(pt => pt.technology.name),
-      skills: projectData.skills.map(ps => ps.skill.name),
-      demoUrl: projectData.demoUrl || undefined,
-      repositoryUrl: projectData.repositoryUrl || undefined,
-      caseStudyUrl: projectData.caseStudyUrl || undefined,
-      slug: projectData.slug,
-      tags: projectData.tags,
-      role: projectData.role || undefined,
-      client: projectData.client || undefined,
-      featured: projectData.featured
+      id: normalizedProject.id,
+      title: normalizedProject.title,
+      description: normalizedProject.description,
+      longDescription: normalizedProject.longDescription || undefined,
+      status: mapProjectStatus(normalizedProject.status),
+      category: normalizedProject.category.name,
+      priority: normalizedProject.priority,
+      startDate: normalizedProject.startDate.toISOString(),
+      endDate: normalizedProject.endDate?.toISOString(),
+      createdAt: normalizedProject.createdAt.toISOString(),
+      updatedAt: normalizedProject.updatedAt.toISOString(),
+      featuredImage: normalizedProject.featuredImage || undefined,
+      gallery: normalizedProject.gallery,
+      screenshots: normalizedProject.screenshots,
+      technologies: normalizedProject.technologies.map(pt => pt.technology.name),
+      skills: normalizedProject.skills.map(ps => ps.skill.name),
+      demoUrl: normalizedProject.demoUrl || undefined,
+      repositoryUrl: normalizedProject.repositoryUrl || undefined,
+      caseStudyUrl: normalizedProject.caseStudyUrl || undefined,
+      slug: normalizedProject.slug,
+      tags: normalizedProject.tags,
+      role: normalizedProject.role || undefined,
+      client: normalizedProject.client || undefined,
+      team: normalizedProject.team,
+      metrics: normalizedProject.metrics as Project['metrics'],
+      featured: normalizedProject.featured
     };
     
     return project;

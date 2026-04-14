@@ -1,11 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import {
+  normalizeBugReportCollections,
+  normalizePlatformCollections,
+} from '@/lib/database/serializers';
 import { requireAdmin } from '../../../../lib/auth';
 
 const prisma = new PrismaClient();
 
+type StatsWithCollections = {
+  reports: Array<Record<string, unknown>>;
+  platforms: Array<Record<string, unknown>>;
+};
+
+function formatStatsResponse<T extends StatsWithCollections>(stats: T) {
+  return {
+    ...stats,
+    reports: stats.reports.map((report) => normalizeBugReportCollections(report)),
+    platforms: stats.platforms.map((platform) => normalizePlatformCollections(platform)),
+  };
+}
+
 // GET /api/bug-bounty/stats - Get bug bounty statistics
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const stats = await prisma.bugBountyStats.findFirst({
       include: {
@@ -45,10 +62,10 @@ export async function GET(request: NextRequest) {
           achievements: true
         }
       });
-      return NextResponse.json(defaultStats);
+      return NextResponse.json(formatStatsResponse(defaultStats));
     }
 
-    return NextResponse.json(stats);
+    return NextResponse.json(formatStatsResponse(stats));
   } catch (error) {
     console.error('Bug bounty stats fetch error:', error);
     return NextResponse.json(
