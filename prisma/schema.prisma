@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -33,8 +33,8 @@ model Project {
   
   // Media
   featuredImage    String?
-  gallery          Json         @default("[]")
-  screenshots      Json         @default("[]")
+  gallery          String[]     @default([])
+  screenshots      String[]     @default([])
   
   // Links
   demoUrl          String?
@@ -43,12 +43,12 @@ model Project {
   
   // SEO e navigazione
   slug             String       @unique
-  tags             Json         @default("[]")
+  tags             String[]     @default([])
   
   // Info progetto
   role             String?
   client           String?
-  team             Json         @default("[]")
+  team             String[]     @default([])
   
   // Metriche
   metrics          Json?        // Flexible metrics storage
@@ -163,7 +163,7 @@ model BlogPost {
   featuredImage   String?
   
   // Categorizzazione
-  tags        Json      @default("[]")
+  tags        String[]  @default([])
   category    String?
   
   @@map("blog_posts")
@@ -193,18 +193,18 @@ model Service {
   order           Int             @default(0)
   
   // Content - keep existing
-  features        Json            @default("[]")
-  deliverables    Json            @default("[]")
-  requirements    Json            @default("[]")
+  features        String[]        @default([])
+  deliverables    String[]        @default([])
+  requirements    String[]        @default([])
   
   // Media
   icon            String?         // Icon for the service
   image           String?         // Featured image
-  gallery         Json            @default("[]")
+  gallery         String[]        @default([])
   
   // SEO
   slug            String?         @unique
-  tags            Json            @default("[]")
+  tags            String[]        @default([])
   
   // Metadata
   createdAt       DateTime        @default(now())
@@ -259,7 +259,7 @@ model User {
   // 2FA Configuration
   twoFactorEnabled  Boolean      @default(false)
   twoFactorSecret   String?      // TOTP secret (encrypted)
-  backupCodes       Json         @default("[]") // Encrypted backup codes
+  backupCodes       String[]     @default([]) // Encrypted backup codes
   
   // Account Security
   role              UserRole     @default(USER)
@@ -533,13 +533,13 @@ model BugReport {
   programUrl       String?
   
   // Technical Details
-  methodology      Json      @default("[]") // ["SQL Injection", "Manual Testing"]
-  tools            Json      @default("[]") // ["Burp Suite", "SQLMap"]
+  methodology      String[]  @default([]) // ["SQL Injection", "Manual Testing"]
+  tools            String[]  @default([]) // ["Burp Suite", "SQLMap"]
   payload          String?   // Safe payload example
   
   // Impact & Business
   impact           String    // Business impact description
-  affectedAssets   Json      @default("[]") // ["api.example.com", "admin panel"]
+  affectedAssets   String[]  @default([]) // ["api.example.com", "admin panel"]
   usersAffected    Int?      // Number of users potentially affected
   
   // Timeline
@@ -561,14 +561,14 @@ model BugReport {
   bonusReward      Float?    // Additional bonus
   
   // Media & Links
-  screenshots      Json      @default("[]")
-  proofOfConcept   Json      @default("[]")
+  screenshots      String[]  @default([])
+  proofOfConcept   String[]  @default([])
   reportUrl        String?   // Link to platform report
   publicUrl        String?   // Public disclosure URL
   blogPostUrl      String?   // If you wrote about it
   
   // Collaboration
-  collaborators    Json      @default("[]") // Other researchers involved
+  collaborators    String[]  @default([]) // Other researchers involved
   credits          String?   // Credit line for disclosure
   
   // Meta
@@ -609,8 +609,8 @@ model Platform {
   
   // Recognition
   hallOfFame       Int      @default(0)
-  certificates     Json     @default("[]")
-  badges           Json     @default("[]")
+  certificates     String[] @default([])
+  badges           String[] @default([])
   
   // Activity
   joinedAt         DateTime?
@@ -688,14 +688,14 @@ model Methodology {
   category         MethodologyCategory
   
   // Technical Details
-  steps            Json     @default("[]") // Step-by-step process
-  tools            Json     @default("[]") // Required tools
-  prerequisites    Json     @default("[]") // Knowledge/setup needed
+  steps            String[] @default([]) // Step-by-step process
+  tools            String[] @default([]) // Required tools
+  prerequisites    String[] @default([]) // Knowledge/setup needed
   
   // Examples
-  exampleTargets   Json     @default("[]") // Types of targets
-  examplePayloads  Json     @default("[]") // Safe example payloads
-  commonMistakes   Json     @default("[]") // What to avoid
+  exampleTargets   String[] @default([]) // Types of targets
+  examplePayloads  String[] @default([]) // Safe example payloads
+  commonMistakes   String[] @default([]) // What to avoid
   
   // Difficulty & Time
   difficulty       MethodologyDifficulty @default(INTERMEDIATE)
@@ -703,8 +703,8 @@ model Methodology {
   successRate      Float?   // Personal success rate %
   
   // Resources
-  resources        Json     @default("[]") // Links to guides, papers
-  references       Json     @default("[]") // CVE references, case studies
+  resources        String[] @default([]) // Links to guides, papers
+  references       String[] @default([]) // CVE references, case studies
   
   // Usage Stats
   timesUsed        Int      @default(0)
@@ -940,14 +940,14 @@ model ServicePackage {
   description     String
   
   // Package details
-  services        Json            @default("[]") // Service IDs included
+  services        String[]        @default([]) // Service IDs included
   price           Float
   currency        String          @default("EUR")
   duration        String?         // "3 months", "1 year", etc.
   
   // Features
-  features        Json            @default("[]")
-  limitations     Json            @default("[]")
+  features        String[]        @default([])
+  limitations     String[]        @default([])
   
   // Status
   active          Boolean         @default(true)

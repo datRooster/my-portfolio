@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { MethodologyCategory, Prisma, PrismaClient } from '@prisma/client';
-import { writeStringArray } from '@/lib/database/mysql-json';
-import { normalizeMethodologyCollections } from '@/lib/database/serializers';
+import { PrismaClient } from '@prisma/client';
 import { requireAdmin } from '../../../../lib/auth';
 
 const prisma = new PrismaClient();
@@ -13,10 +11,10 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category');
     const featured = searchParams.get('featured');
 
-    const where: Prisma.MethodologyWhereInput = {};
+    const where: Record<string, any> = {};
     
     if (category && category !== 'all') {
-      where.category = category as MethodologyCategory;
+      where.category = category;
     }
     
     if (featured === 'true') {
@@ -55,9 +53,7 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    return NextResponse.json(
-      methodologies.map((methodology) => normalizeMethodologyCollections(methodology))
-    );
+    return NextResponse.json(methodologies);
   } catch (error) {
     console.error('Methodologies fetch error:', error);
     return NextResponse.json(
@@ -79,17 +75,17 @@ export async function POST(request: NextRequest) {
         name: body.name,
         description: body.description,
         category: body.category,
-        steps: writeStringArray(body.steps),
-        tools: writeStringArray(body.tools),
-        prerequisites: writeStringArray(body.prerequisites),
-        exampleTargets: writeStringArray(body.exampleTargets),
-        examplePayloads: writeStringArray(body.examplePayloads),
-        commonMistakes: writeStringArray(body.commonMistakes),
+        steps: body.steps || [],
+        tools: body.tools || [],
+        prerequisites: body.prerequisites || [],
+        exampleTargets: body.exampleTargets || [],
+        examplePayloads: body.examplePayloads || [],
+        commonMistakes: body.commonMistakes || [],
         difficulty: body.difficulty || 'INTERMEDIATE',
         estimatedTime: body.estimatedTime,
         successRate: body.successRate,
-        resources: writeStringArray(body.resources),
-        references: writeStringArray(body.references),
+        resources: body.resources || [],
+        references: body.references || [],
         timesUsed: body.timesUsed || 0,
         bugsFound: body.bugsFound || 0,
         lastUsed: body.lastUsed ? new Date(body.lastUsed) : null,
@@ -98,7 +94,7 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    return NextResponse.json(normalizeMethodologyCollections(methodology), { status: 201 });
+    return NextResponse.json(methodology, { status: 201 });
   } catch (error) {
     console.error('Methodology creation error:', error);
     
@@ -133,44 +129,12 @@ export async function PUT(request: NextRequest) {
       updateData.lastUsed = new Date(updateData.lastUsed);
     }
 
-    if (updateData.steps !== undefined) {
-      updateData.steps = writeStringArray(updateData.steps);
-    }
-
-    if (updateData.tools !== undefined) {
-      updateData.tools = writeStringArray(updateData.tools);
-    }
-
-    if (updateData.prerequisites !== undefined) {
-      updateData.prerequisites = writeStringArray(updateData.prerequisites);
-    }
-
-    if (updateData.exampleTargets !== undefined) {
-      updateData.exampleTargets = writeStringArray(updateData.exampleTargets);
-    }
-
-    if (updateData.examplePayloads !== undefined) {
-      updateData.examplePayloads = writeStringArray(updateData.examplePayloads);
-    }
-
-    if (updateData.commonMistakes !== undefined) {
-      updateData.commonMistakes = writeStringArray(updateData.commonMistakes);
-    }
-
-    if (updateData.resources !== undefined) {
-      updateData.resources = writeStringArray(updateData.resources);
-    }
-
-    if (updateData.references !== undefined) {
-      updateData.references = writeStringArray(updateData.references);
-    }
-
     const methodology = await prisma.methodology.update({
       where: { id },
       data: updateData
     });
 
-    return NextResponse.json(normalizeMethodologyCollections(methodology));
+    return NextResponse.json(methodology);
   } catch (error) {
     console.error('Methodology update error:', error);
     

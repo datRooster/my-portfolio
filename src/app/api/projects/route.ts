@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database/prisma';
-import {
-  normalizeProjectCollections,
-} from '@/lib/database/serializers';
-import { writeJsonValue, writeStringArray } from '@/lib/database/mysql-json';
 import { withAdminAuth } from '@/lib/auth';
 import { ProjectStatus } from '@prisma/client';
 
@@ -48,41 +44,39 @@ function mapStatusToFrontend(dbStatus: ProjectStatus): 'draft' | 'active' | 'com
 
 // Funzione per convertire il progetto Prisma nel formato legacy per compatibilità frontend
 function formatProject(project: ProjectWithRelations) {
-  const normalizedProject = normalizeProjectCollections(project);
-
   return {
-    id: normalizedProject.id,
-    title: normalizedProject.title,
-    slug: normalizedProject.slug,
-    description: normalizedProject.description,
-    shortDescription: normalizedProject.description.substring(0, 150) + '...', // Tronca per compatibilità
-    githubUrl: normalizedProject.repositoryUrl, // Mapping campo
-    liveUrl: normalizedProject.demoUrl, // Mapping campo
-    imageUrl: normalizedProject.featuredImage, // Mapping campo
-    featured: normalizedProject.featured,
-    status: mapStatusToFrontend(normalizedProject.status),
-    priority: normalizedProject.priority,
-    createdAt: normalizedProject.createdAt.toISOString(),
-    updatedAt: normalizedProject.updatedAt.toISOString(),
-    categories: [normalizedProject.category.name], // Converte singola categoria in array
-    technologies: normalizedProject.technologies.map((tech) => tech.technology.name),
+    id: project.id,
+    title: project.title,
+    slug: project.slug,
+    description: project.description,
+    shortDescription: project.description.substring(0, 150) + '...', // Tronca per compatibilità
+    githubUrl: project.repositoryUrl, // Mapping campo
+    liveUrl: project.demoUrl, // Mapping campo  
+    imageUrl: project.featuredImage, // Mapping campo
+    featured: project.featured,
+    status: mapStatusToFrontend(project.status),
+    priority: project.priority,
+    createdAt: project.createdAt.toISOString(),
+    updatedAt: project.updatedAt.toISOString(),
+    categories: [project.category.name], // Converte singola categoria in array
+    technologies: project.technologies.map((tech) => tech.technology.name),
     // Nuovi campi per compatibilità futura
-    longDescription: normalizedProject.longDescription,
-    category: normalizedProject.category.name,
-    skills: normalizedProject.skills.map((skill) => skill.skill.name),
-    tags: normalizedProject.tags,
-    role: normalizedProject.role,
-    client: normalizedProject.client,
-    team: normalizedProject.team,
-    metrics: normalizedProject.metrics,
-    demoUrl: normalizedProject.demoUrl,
-    repositoryUrl: normalizedProject.repositoryUrl,
-    caseStudyUrl: normalizedProject.caseStudyUrl,
-    startDate: normalizedProject.startDate.toISOString(),
-    endDate: normalizedProject.endDate?.toISOString(),
-    featuredImage: normalizedProject.featuredImage,
-    gallery: normalizedProject.gallery,
-    screenshots: normalizedProject.screenshots
+    longDescription: project.longDescription,
+    category: project.category.name,
+    skills: project.skills.map((skill) => skill.skill.name),
+    tags: project.tags,
+    role: project.role,
+    client: project.client,
+    team: project.team,
+    metrics: project.metrics,
+    demoUrl: project.demoUrl,
+    repositoryUrl: project.repositoryUrl,
+    caseStudyUrl: project.caseStudyUrl,
+    startDate: project.startDate.toISOString(),
+    endDate: project.endDate?.toISOString(),
+    featuredImage: project.featuredImage,
+    gallery: project.gallery,
+    screenshots: project.screenshots
   };
 }
 
@@ -180,7 +174,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  return withAdminAuth(async () => {
+  return withAdminAuth(async (user) => {
     try {
       const body = await request.json();
       
@@ -268,14 +262,12 @@ export async function POST(request: NextRequest) {
           caseStudyUrl: body.caseStudyUrl,
           role: body.role,
           client: body.client,
-          tags: writeStringArray(body.tags),
-          team: writeStringArray(body.team),
-          ...(body.metrics !== undefined ? { metrics: writeJsonValue(body.metrics) } : {}),
+          tags: body.tags || [],
           startDate: body.startDate ? new Date(body.startDate) : new Date(),
           endDate: body.endDate ? new Date(body.endDate) : null,
           categoryId,
-          gallery: writeStringArray(body.gallery),
-          screenshots: writeStringArray(body.screenshots)
+          gallery: body.gallery || [],
+          screenshots: body.screenshots || []
         },
         include: {
           category: true,

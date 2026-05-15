@@ -1,13 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  BugReportStatus,
-  BugSeverity,
-  Prisma,
-  PrismaClient,
-  VulnerabilityCategory,
-} from '@prisma/client';
-import { writeStringArray } from '@/lib/database/mysql-json';
-import { normalizeBugReportCollections } from '@/lib/database/serializers';
+import { PrismaClient } from '@prisma/client';
 import { requireAdmin } from '../../../../lib/auth';
 
 const prisma = new PrismaClient();
@@ -25,22 +17,22 @@ export async function GET(request: NextRequest) {
     const sortBy = searchParams.get('sortBy') || 'discoveredAt';
     const sortOrder = searchParams.get('sortOrder') || 'desc';
 
-    const where: Prisma.BugReportWhereInput = {};
+    const where: Record<string, any> = {};
     
     if (severity && severity !== 'all') {
-      where.severity = severity as BugSeverity;
+      where.severity = severity;
     }
     
     if (status && status !== 'all') {
-      where.status = status as BugReportStatus;
+      where.status = status;
     }
     
     if (platform && platform !== 'all') {
-      where.platform = { contains: platform };
+      where.platform = { contains: platform, mode: 'insensitive' };
     }
     
     if (category && category !== 'all') {
-      where.category = category as VulnerabilityCategory;
+      where.category = category;
     }
 
     const reports = await prisma.bugReport.findMany({
@@ -76,7 +68,7 @@ export async function GET(request: NextRequest) {
     const totalCount = await prisma.bugReport.count({ where });
 
     return NextResponse.json({
-      reports: reports.map((report) => normalizeBugReportCollections(report)),
+      reports,
       totalCount,
       hasMore: offset + limit < totalCount
     });
@@ -108,11 +100,11 @@ export async function POST(request: NextRequest) {
         program: body.program,
         platform: body.platform,
         programUrl: body.programUrl,
-        methodology: writeStringArray(body.methodology),
-        tools: writeStringArray(body.tools),
+        methodology: body.methodology || [],
+        tools: body.tools || [],
         payload: body.payload,
         impact: body.impact,
-        affectedAssets: writeStringArray(body.affectedAssets),
+        affectedAssets: body.affectedAssets || [],
         usersAffected: body.usersAffected,
         discoveredAt: new Date(body.discoveredAt),
         reportedAt: new Date(body.reportedAt),
@@ -126,12 +118,12 @@ export async function POST(request: NextRequest) {
         reward: body.reward,
         currency: body.currency || 'USD',
         bonusReward: body.bonusReward,
-        screenshots: writeStringArray(body.screenshots),
-        proofOfConcept: writeStringArray(body.proofOfConcept),
+        screenshots: body.screenshots || [],
+        proofOfConcept: body.proofOfConcept || [],
         reportUrl: body.reportUrl,
         publicUrl: body.publicUrl,
         blogPostUrl: body.blogPostUrl,
-        collaborators: writeStringArray(body.collaborators),
+        collaborators: body.collaborators || [],
         credits: body.credits
       }
     });
@@ -139,7 +131,7 @@ export async function POST(request: NextRequest) {
     // Update stats if needed
     await updateBugBountyStats();
 
-    return NextResponse.json(normalizeBugReportCollections(report), { status: 201 });
+    return NextResponse.json(report, { status: 201 });
   } catch (error) {
     console.error('Bug report creation error:', error);
     
@@ -191,7 +183,7 @@ async function updateBugBountyStats() {
     let fastestResolution = 0;
     
     if (resolvedReports.length > 0) {
-      const resolutionTimes = resolvedReports.map((report) => {
+      const resolutionTimes = resolvedReports.map((report: any) => {
         const diffTime = Math.abs(report.resolvedAt!.getTime() - report.reportedAt.getTime());
         return Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Convert to days
       });
@@ -201,14 +193,14 @@ async function updateBugBountyStats() {
     }
 
     // Prepare severity counts
-    const severityMap = severityCounts.reduce<Record<string, number>>((acc, item) => {
+    const severityMap = severityCounts.reduce((acc: Record<string, number>, item: any) => {
       acc[item.severity.toLowerCase() + 'Bugs'] = item._count.severity;
       return acc;
-    }, {});
+    }, {} as Record<string, number>);
 
     const totalReward = (aggregatedStats._sum.reward || 0) + (aggregatedStats._sum.bonusReward || 0);
 
-    const stats = await prisma.bugBountyStats.findFirst();
+    let stats = await prisma.bugBountyStats.findFirst();
     
     const statsData = {
       totalBugs: aggregatedStats._count.id,

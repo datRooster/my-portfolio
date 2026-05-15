@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database/prisma';
-import { writeStringArray } from '@/lib/database/mysql-json';
-import { normalizeServiceCollections } from '@/lib/database/serializers';
 
 export const runtime = 'nodejs';
 
@@ -60,7 +58,7 @@ export async function GET(
       // In futuro qui dovremmo controllare i permessi admin
     }
     
-    return NextResponse.json(normalizeServiceCollections(service));
+    return NextResponse.json(service);
     
   } catch (error) {
     console.error('Errore nel recupero servizio:', error);
@@ -135,18 +133,18 @@ export async function PUT(
         featured: data.featured !== undefined ? data.featured : existingService.featured,
         available: data.available !== undefined ? data.available : existingService.available,
         order: data.order !== undefined ? data.order : existingService.order,
-        ...(data.features !== undefined ? { features: writeStringArray(data.features) } : {}),
-        ...(data.deliverables !== undefined ? { deliverables: writeStringArray(data.deliverables) } : {}),
-        ...(data.requirements !== undefined ? { requirements: writeStringArray(data.requirements) } : {}),
+        features: data.features !== undefined ? data.features : existingService.features,
+        deliverables: data.deliverables !== undefined ? data.deliverables : existingService.deliverables,
+        requirements: data.requirements !== undefined ? data.requirements : existingService.requirements,
         icon: data.icon !== undefined ? data.icon : existingService.icon,
         image: data.image !== undefined ? data.image : existingService.image,
-        ...(data.gallery !== undefined ? { gallery: writeStringArray(data.gallery) } : {}),
+        gallery: data.gallery !== undefined ? data.gallery : existingService.gallery,
         slug: data.slug !== undefined ? data.slug : existingService.slug,
-        ...(data.tags !== undefined ? { tags: writeStringArray(data.tags) } : {})
+        tags: data.tags !== undefined ? data.tags : existingService.tags
       }
     });
     
-    return NextResponse.json(normalizeServiceCollections(updatedService));
+    return NextResponse.json(updatedService);
     
   } catch (error) {
     console.error('Errore nell\'aggiornamento servizio:', error);

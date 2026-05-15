@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database/prisma';
-import { writeJsonValue, writeStringArray } from '@/lib/database/mysql-json';
-import { normalizeProjectCollections } from '@/lib/database/serializers';
 import { withAdminAuth } from '@/lib/auth';
 import { ProjectStatus } from '@prisma/client';
 
@@ -35,35 +33,33 @@ function mapStatusToFrontend(dbStatus: ProjectStatus): 'draft' | 'active' | 'com
 
 // Funzione per convertire il progetto Prisma nel formato legacy
 function formatProject(project: NonNullable<ProjectWithRelations>) {
-  const normalizedProject = normalizeProjectCollections(project);
-
   return {
-    id: normalizedProject.id,
-    title: normalizedProject.title,
-    description: normalizedProject.description,
-    longDescription: normalizedProject.longDescription,
-    status: mapStatusToFrontend(normalizedProject.status),
-    category: normalizedProject.category.name,
-    priority: normalizedProject.priority,
-    startDate: normalizedProject.startDate.toISOString(),
-    endDate: normalizedProject.endDate?.toISOString(),
-    createdAt: normalizedProject.createdAt.toISOString(),
-    updatedAt: normalizedProject.updatedAt.toISOString(),
-    featuredImage: normalizedProject.featuredImage,
-    gallery: normalizedProject.gallery,
-    screenshots: normalizedProject.screenshots,
-    technologies: normalizedProject.technologies.map((tech) => tech.technology.name),
-    skills: normalizedProject.skills.map((skill) => skill.skill.name),
-    demoUrl: normalizedProject.demoUrl,
-    repositoryUrl: normalizedProject.repositoryUrl,
-    caseStudyUrl: normalizedProject.caseStudyUrl,
-    slug: normalizedProject.slug,
-    tags: normalizedProject.tags,
-    featured: normalizedProject.featured,
-    role: normalizedProject.role,
-    client: normalizedProject.client,
-    team: normalizedProject.team,
-    metrics: normalizedProject.metrics
+    id: project.id,
+    title: project.title,
+    description: project.description,
+    longDescription: project.longDescription,
+    status: mapStatusToFrontend(project.status),
+    category: project.category.name,
+    priority: project.priority,
+    startDate: project.startDate.toISOString(),
+    endDate: project.endDate?.toISOString(),
+    createdAt: project.createdAt.toISOString(),
+    updatedAt: project.updatedAt.toISOString(),
+    featuredImage: project.featuredImage,
+    gallery: project.gallery,
+    screenshots: project.screenshots,
+    technologies: project.technologies.map((tech) => tech.technology.name),
+    skills: project.skills.map((skill) => skill.skill.name),
+    demoUrl: project.demoUrl,
+    repositoryUrl: project.repositoryUrl,
+    caseStudyUrl: project.caseStudyUrl,
+    slug: project.slug,
+    tags: project.tags,
+    featured: project.featured,
+    role: project.role,
+    client: project.client,
+    team: project.team,
+    metrics: project.metrics
   };
 }
 export async function GET(
@@ -119,7 +115,7 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
-  return withAdminAuth(async () => {
+  return withAdminAuth(async (user) => {
     const { slug } = await params;
     try {
       
@@ -168,7 +164,7 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
-  return withAdminAuth(async () => {
+  return withAdminAuth(async (user) => {
     const { slug } = await params;
     try {
       const body = await request.json();
@@ -209,14 +205,11 @@ export async function PUT(
           demoUrl: body.liveUrl || body.demoUrl,
           repositoryUrl: body.githubUrl || body.repositoryUrl,
           featuredImage: body.imageUrl || body.featuredImage,
+          gallery: body.gallery || existingProject.gallery,
           caseStudyUrl: body.caseStudyUrl,
           role: body.role,
           client: body.client,
-          ...(body.gallery !== undefined ? { gallery: writeStringArray(body.gallery) } : {}),
-          ...(body.screenshots !== undefined ? { screenshots: writeStringArray(body.screenshots) } : {}),
-          ...(body.tags !== undefined ? { tags: writeStringArray(body.tags) } : {}),
-          ...(body.team !== undefined ? { team: writeStringArray(body.team) } : {}),
-          ...(body.metrics !== undefined ? { metrics: writeJsonValue(body.metrics) } : {}),
+          tags: body.tags || [],
           updatedAt: new Date()
         },
         include: {

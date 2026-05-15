@@ -7,7 +7,7 @@ Portfolio personale professionale sviluppato con Next.js, TypeScript, Tailwind C
 - **Frontend Moderno**: Next.js 15 + TypeScript + Tailwind CSS
 - **Sistema Admin Completo**: CRUD progetti con autenticazione 2FA
 - **Upload Sicuro**: Sistema di upload immagini con validazione magic bytes
-- **Database MySQL**: Prisma ORM type-safe con refactor in corso da PostgreSQL
+- **Database PostgreSQL**: Dockerizzato con Prisma ORM type-safe
 - **Sicurezza Militare**: Crittografia AES-256, JWT, 2FA, rate limiting
 - **Design Responsive**: Dark theme professionale con accenti gialli
 - **Performance Ottimizzate**: Componenti ottimizzati e caching
@@ -22,7 +22,7 @@ Portfolio personale professionale sviluppato con Next.js, TypeScript, Tailwind C
 - **Lucide React** - Libreria icone professionali
 
 ### Backend & Database
-- **MySQL** - Database relazionale con Prisma ORM
+- **PostgreSQL** - Database relazionale con Prisma ORM
 - **Prisma** - ORM moderno e type-safe
 - **Docker** - Containerizzazione servizi
 - **Redis** - Sessioni e rate limiting
@@ -359,7 +359,7 @@ PASSWORD_PEPPER=your-password-pepper-64-bytes
 ENCRYPTION_KEY=your-encryption-key-32-bytes
 
 # Database
-DATABASE_URL=mysql://user:password@localhost:3306/portfolio
+DATABASE_URL=postgresql://user:password@localhost:5432/portfolio
 
 # Redis (per sessioni e rate limiting)
 REDIS_URL=redis://localhost:6379
