@@ -1,20 +1,19 @@
-'use client';
+import { apiFetch as fetch } from '@/lib/http';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { 
-  Shield, 
-  BarChart3, 
-  Wrench, 
-  Lock, 
-  TrendingUp, 
-  Settings, 
-  LogOut,
-  AlertTriangle,
-  CheckCircle,
-  Target
+import Link from '@/components/runtime/Link';
+import { useRouter } from '@/lib/navigation';
+import {
+AlertTriangle,
+BarChart3,
+Lock,
+LogOut,
+Settings,
+Shield,
+Target,
+TrendingUp,
+Wrench
 } from 'lucide-react';
+import { useEffect,useState } from 'react';
 
 interface User {
   id: string;
@@ -104,7 +103,7 @@ export default function AdminLayout({
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100" style={{backgroundColor: '#111827'}}>
       {/* Sidebar */}
-      <div className="fixed inset-y-0 left-0 w-64 bg-gray-900 shadow-xl">
+      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 shadow-xl transition-transform md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-center h-16 bg-gray-800">
@@ -114,6 +113,8 @@ export default function AdminLayout({
 
           {/* Navigation */}
           <nav className="flex-1 px-4 py-4 space-y-2">
+            <Link href="/admin/content" className="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white">Gestione contenuti</Link>
+            <Link href="/admin/messages" className="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white">Messaggi ricevuti</Link>
             <Link 
               href="/admin" 
               className="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white transition"
@@ -188,7 +189,9 @@ export default function AdminLayout({
       </div>
 
       {/* Main Content */}
-      <div className="ml-64 min-h-screen">
+      {sidebarOpen && <button aria-label="Chiudi menu" className="fixed inset-0 z-40 bg-black/50 md:hidden" onClick={()=>setSidebarOpen(false)}/>}
+      <div className="md:ml-64 min-h-screen min-w-0">
+        <button className="md:hidden p-4 text-yellow-400" onClick={()=>setSidebarOpen(true)} aria-label="Apri menu amministrazione">☰ Menu amministrazione</button>
                 {/* Main Content */}
         <main className="min-h-screen overflow-y-auto bg-gray-900">
           {/* 2FA Reminder Banner */}
@@ -216,7 +219,7 @@ export default function AdminLayout({
                         });
                         const data = await response.json();
                         if (data.success) {
-                          window.location.href = '/login/setup-2fa';
+                          router.push('/login/setup-2fa');
                         } else {
                           console.error('Failed to enable 2FA setup:', data.error);
                         }

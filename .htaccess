@@ -1,0 +1,6 @@
+# The checkout is not a public document root. MAMP serves the generated dist/ only.
+Options -Indexes
+RewriteEngine On
+RewriteRule ^dist(?:/|$) - [L]
+RewriteRule ^$ dist/ [R=302,L]
+RewriteRule ^ - [F,L]

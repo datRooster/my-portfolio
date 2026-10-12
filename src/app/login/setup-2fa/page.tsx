@@ -1,14 +1,15 @@
-'use client';
+import { apiFetch as fetch } from '@/lib/http';
+import QRCode from 'qrcode';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import Image from 'next/image';
+import Image from '@/components/runtime/Image';
+import Link from '@/components/runtime/Link';
+import { useEffect,useState } from 'react';
 
 interface SetupResponse {
   success: boolean;
   secret?: string;
   qrCode?: string;
+  otpauthUrl?: string;
   backupCodes?: string[];
   message?: string;
 }
@@ -28,7 +29,6 @@ export default function TwoFactorSetup() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState<string>('');
-  const router = useRouter();
 
   useEffect(() => {
     generateSecret();
@@ -46,9 +46,9 @@ export default function TwoFactorSetup() {
 
       const data: SetupResponse = await response.json();
 
-      if (data.success && data.secret && data.qrCode) {
+      if (data.success && data.secret && data.otpauthUrl) {
         setSecret(data.secret);
-        setQrCode(data.qrCode);
+        setQrCode(await QRCode.toDataURL(data.otpauthUrl));
         setStep('verify');
       } else {
         setError(data.message || 'Errore durante la generazione del secret');
@@ -380,7 +380,7 @@ ${backupCodes.map((code, index) => `${index + 1}. ${code}`).join('\n')}
                   </div>
                   <div className="flex items-center space-x-3">
                     <span className="text-green-400">✅</span>
-                    <span className="text-gray-300">Livello di sicurezza: MILITARE</span>
+                    <span className="text-gray-300">Verifica in due passaggi attiva</span>
                   </div>
                 </div>
               </div>

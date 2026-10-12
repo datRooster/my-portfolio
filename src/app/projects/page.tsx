@@ -1,20 +1,20 @@
-'use client';
+import { assetUrl,apiFetch as fetch } from '@/lib/http';
 
-import { useState, useEffect } from 'react';
-import { Project, ProjectFilters } from '@/types/project';
-import ProjectGrid from '@/components/portfolio/ProjectGrid';
 import ProjectFiltersComponent from '@/components/portfolio/ProjectFilters';
+import ProjectGrid from '@/components/portfolio/ProjectGrid';
 import Navigation from '@/components/ui/Navigation';
-import { 
-  Code2, 
-  Sparkles, 
-  Layers, 
-  Zap, 
-  Target,
-  Trophy,
-  Star,
-  ArrowRight
+import { Project,ProjectFilters } from '@/types/project';
+import {
+ArrowRight,
+Code2,
+Layers,
+Sparkles,
+Star,
+Target,
+Trophy,
+Zap
 } from 'lucide-react';
+import { useEffect,useState } from 'react';
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -41,6 +41,8 @@ export default function ProjectsPage() {
     if (filters.status) {
       filtered = filtered.filter(p => p.status === filters.status);
     }
+    if (filters.featured) filtered = filtered.filter(p => p.featured);
+    if (filters.technologies?.length) filtered = filtered.filter(p => filters.technologies!.every(tech => p.technologies.includes(tech)));
 
     // Filtra per ricerca
     if (filters.search) {
@@ -58,7 +60,7 @@ export default function ProjectsPage() {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/projects');
+      const response = await fetch('/api/projects?sortBy=priority');
       if (!response.ok) throw new Error('Errore nel caricamento progetti');
       
       const data = await response.json();
@@ -96,7 +98,7 @@ export default function ProjectsPage() {
                 Riprova
               </button>
               <button 
-                onClick={() => window.location.href = '/'}
+                onClick={() => window.location.href = assetUrl('/')}
                 className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-800 text-white border border-gray-700 rounded-lg hover:bg-gray-700 transition-colors"
               >
                 Torna alla Home
@@ -144,9 +146,8 @@ export default function ProjectsPage() {
               
               {/* Subtitle */}
               <p className="text-xl md:text-2xl text-gray-400 max-w-4xl mx-auto mb-8 leading-relaxed">
-                Ogni progetto è una storia di innovazione, creatività e problem-solving. 
-                <span className="text-gray-300"> Dalla sicurezza informatica alle app moderne</span>, 
-                scopri le soluzioni che ho creato.
+                Temi WordPress su misura, plugin WooCommerce e applicazioni web.
+                <span className="text-gray-300"> Esplora funzionalità, tecnologie e codice pubblico</span> dei miei lavori.
               </p>
               
               {/* Stats Pills */}
@@ -175,24 +176,24 @@ export default function ProjectsPage() {
                 <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Layers className="w-6 h-6 text-blue-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-2">Architettura Moderna</h3>
-                <p className="text-gray-400 text-sm">Soluzioni scalabili e performanti con le tecnologie più avanzate</p>
+                <h3 className="text-lg font-semibold text-white mb-2">Temi su misura</h3>
+                <p className="text-gray-400 text-sm">Siti aziendali, cataloghi e portfolio con template e contenuti gestibili in WordPress.</p>
               </div>
               
               <div className="group bg-gray-900/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 hover:border-yellow-500/50 hover:bg-gray-800/50 transition-all duration-300 animate-fadeInScale" style={{animationDelay: '0.1s'}}>
                 <div className="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Trophy className="w-6 h-6 text-red-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-2">Sicurezza First</h3>
-                <p className="text-gray-400 text-sm">Ogni progetto è sviluppato con i più alti standard di sicurezza</p>
+                <h3 className="text-lg font-semibold text-white mb-2">Plugin e configuratori</h3>
+                <p className="text-gray-400 text-sm">Acconti, coupon e scelte di prodotto: funzioni dedicate ai flussi WooCommerce.</p>
               </div>
               
               <div className="group bg-gray-900/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 hover:border-yellow-500/50 hover:bg-gray-800/50 transition-all duration-300 animate-fadeInScale" style={{animationDelay: '0.2s'}}>
                 <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Sparkles className="w-6 h-6 text-green-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-2">UX Perfetta</h3>
-                <p className="text-gray-400 text-sm">Design intuitivi e user experience che fanno la differenza</p>
+                <h3 className="text-lg font-semibold text-white mb-2">Codice pubblico</h3>
+                <p className="text-gray-400 text-sm">Repository GitHub e contributi WordPress.org per esplorare il lavoro oltre l'interfaccia.</p>
               </div>
             </div>
           </div>
@@ -223,6 +224,8 @@ export default function ProjectsPage() {
                 onFiltersChange={handleFilterChange}
                 totalProjects={projects.length}
                 filteredCount={filteredProjects.length}
+                categories={[...new Set(projects.map(p => p.category))].sort()}
+                technologies={[...new Set(projects.flatMap(p => p.technologies))].sort()}
               />
             </div>
 

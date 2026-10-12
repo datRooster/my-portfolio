@@ -1,19 +1,20 @@
-'use client';
+import { apiFetch as fetch } from '@/lib/http';
 
-import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { Save, ArrowLeft, Upload, ExternalLink, Github, ImageIcon, FileText, Tag, Calendar, Settings, User, Building, Zap, CheckCircle, Clock, Archive, FileX, Code, Wrench, Hash } from 'lucide-react';
+import Image from '@/components/runtime/Image';
 import FileUpload from '@/components/ui/FileUpload';
 import GalleryUpload from '@/components/ui/GalleryUpload';
+import { useParams,useRouter } from '@/lib/navigation';
+import { Archive,ArrowLeft,Building,CheckCircle,Code,ExternalLink,FileText,FileX,Github,Hash,ImageIcon,Save,Settings,Tag,Upload,User,Wrench,Zap } from 'lucide-react';
+import React,{ useEffect,useState } from 'react';
 
 // Utility function per validare URL
 const isValidUrl = (string: string): boolean => {
   if (!string || string.trim() === '') return true; // Empty is valid
+  if (string.startsWith('/api/media/') || /^\/images\/projects\/[a-z0-9-]+\.(png|jpe?g|webp|svg)$/.test(string)) return true;
   try {
     new URL(string);
     return true;
-  } catch (_) {
+  } catch {
     return false;
   }
 };
@@ -24,8 +25,13 @@ interface Project {
   slug: string;
   description: string;
   longDescription?: string;
+  period?: string;
+  highlights?: string[];
+  projectNotes?: string;
+  imageCaption?: string;
+  publicationUrl?: string;
   category: string;
-  status: 'draft' | 'active' | 'completed' | 'archived';
+  status: 'draft' | 'in-progress' | 'completed' | 'archived';
   priority: number;
   featured: boolean;
   demoUrl?: string;
@@ -64,8 +70,8 @@ export default function EditProject() {
       bg: 'bg-gray-500/10',
       border: 'border-gray-500/20'
     },
-    active: {
-      label: 'Attivo',
+    'in-progress': {
+      label: 'In corso',
       icon: Zap,
       color: 'text-blue-400',
       bg: 'bg-blue-500/10',
@@ -116,7 +122,7 @@ export default function EditProject() {
         console.log('📦 Raw response from API:', responseData);
         
         // L'API restituisce { project: {...} }, quindi estraiamo il progetto
-        const projectData = responseData.project;
+        const projectData = responseData;
         console.log('📦 Extracted project data:', projectData);
         
         // Assicuriamoci che gli array siano sempre inizializzati
@@ -147,7 +153,7 @@ export default function EditProject() {
 
     setSaving(true);
     try {
-      const response = await fetch(`/api/projects/${project.slug}`, {
+      const response = await fetch(`/api/projects/${slug}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -373,6 +379,24 @@ export default function EditProject() {
                 rows={6}
                 className="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg text-white focus:border-yellow-500 focus:outline-none resize-none"
               />
+            </div>
+
+            <div className="mt-6 grid md:grid-cols-2 gap-5">
+              <label className="text-sm text-gray-300">Periodo / fase
+                <input value={project.period || ''} onChange={e=>setProject({...project,period:e.target.value})} className="mt-2 w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg text-white" />
+              </label>
+              <label className="text-sm text-gray-300">Link pubblicazione ufficiale
+                <input type="url" value={project.publicationUrl || ''} onChange={e=>setProject({...project,publicationUrl:e.target.value})} className="mt-2 w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg text-white" />
+              </label>
+              <label className="md:col-span-2 text-sm text-gray-300">Funzionalità sviluppate (una per riga)
+                <textarea rows={4} value={(project.highlights || []).join('\n')} onChange={e=>setProject({...project,highlights:e.target.value.split('\n')})} className="mt-2 w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg text-white" />
+              </label>
+              <label className="md:col-span-2 text-sm text-gray-300">Stato e compatibilità
+                <textarea rows={3} value={project.projectNotes || ''} onChange={e=>setProject({...project,projectNotes:e.target.value})} className="mt-2 w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg text-white" />
+              </label>
+              <label className="md:col-span-2 text-sm text-gray-300">Didascalia immagine
+                <input value={project.imageCaption || ''} onChange={e=>setProject({...project,imageCaption:e.target.value})} className="mt-2 w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg text-white" />
+              </label>
             </div>
 
             <div className="mt-6 flex items-center">

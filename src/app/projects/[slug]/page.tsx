@@ -1,83 +1,15 @@
-import { notFound } from 'next/navigation';
-import Image from 'next/image';
-import Link from 'next/link';
+import Image from '@/components/runtime/Image';
+import Link from '@/components/runtime/Link';
+import ProjectGallery from '@/components/ui/ProjectGallery';
+import { useApi } from '@/lib/http';
+import { useParams } from '@/lib/navigation';
 import { Project } from '@/types/project';
-import ProjectGallery  from '@/components/ui/ProjectGallery';
 
-interface ProjectPageProps {
-  params: Promise<{ slug: string }>;
-}
-
-async function getProject(slug: string): Promise<Project | null> {
-  try {
-    // Importa direttamente la logica API invece di fare fetch
-    const { PrismaClient } = await import('@prisma/client');
-    const prisma = new PrismaClient();
-    
-    const projectData = await prisma.project.findUnique({
-      where: { slug },
-      include: {
-        category: true,
-        technologies: {
-          include: {
-            technology: true
-          }
-        },
-        skills: {
-          include: {
-            skill: true
-          }
-        }
-      }
-    });
-    
-    await prisma.$disconnect();
-    
-    if (!projectData) return null;
-    
-    // Trasforma i dati Prisma nel formato Project
-    const project: Project = {
-      id: projectData.id,
-      title: projectData.title,
-      description: projectData.description,
-      longDescription: projectData.longDescription || undefined,
-      status: projectData.status as 'completed' | 'in-progress' | 'archived' | 'draft',
-      category: projectData.category.name,
-      priority: projectData.priority,
-      startDate: projectData.startDate.toISOString(),
-      endDate: projectData.endDate?.toISOString(),
-      createdAt: projectData.createdAt.toISOString(),
-      updatedAt: projectData.updatedAt.toISOString(),
-      featuredImage: projectData.featuredImage || undefined,
-      gallery: projectData.gallery,
-      screenshots: projectData.screenshots,
-      technologies: projectData.technologies.map(pt => pt.technology.name),
-      skills: projectData.skills.map(ps => ps.skill.name),
-      demoUrl: projectData.demoUrl || undefined,
-      repositoryUrl: projectData.repositoryUrl || undefined,
-      caseStudyUrl: projectData.caseStudyUrl || undefined,
-      slug: projectData.slug,
-      tags: projectData.tags,
-      role: projectData.role || undefined,
-      client: projectData.client || undefined,
-      featured: projectData.featured
-    };
-    
-    return project;
-  } catch (error) {
-    console.error('Errore caricamento progetto:', error);
-    return null;
-  }
-}
-
-export default async function ProjectPage({ params }: ProjectPageProps) {
-  const { slug } = await params;
-  const project = await getProject(slug);
-  
-  if (!project) {
-    notFound();
-  }
-
+export default function ProjectPage() {
+  const { slug } = useParams();
+  const { data: project, loading, error } = useApi<Project>(`/api/projects/${encodeURIComponent(slug || '')}`);
+  if (loading) return <p className="p-12 text-white">Caricamento progetto...</p>;
+  if (!project) return <div className="p-12 text-white"><p>{error || 'Progetto non trovato'}</p><Link href="/projects">Torna ai progetti</Link></div>;
   const statusColors = {
     completed: 'bg-green-500/10 text-green-400',
     'in-progress': 'bg-yellow-500/10 text-yellow-400',
@@ -110,7 +42,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           {/* Hero del progetto */}
           <div className="mb-12">
             <div className="flex flex-wrap items-start gap-4 mb-6">
-              <h1 className="text-4xl md:text-5xl font-extrabold flex-1">
+              <h1 className="text-3xl md:text-5xl font-extrabold min-w-0 w-full md:flex-1 break-words">
                 {project.title}
               </h1>
               <div className="flex gap-3">
@@ -136,14 +68,17 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
           {/* Immagine principale */}
           {project.featuredImage && (
-            <div className="relative h-96 mb-12 rounded-xl overflow-hidden">
+            <figure className="mb-12">
+            <div className="relative h-64 md:h-96 rounded-xl overflow-hidden bg-gray-900">
               <Image
                 src={project.featuredImage}
                 alt={project.title}
                 fill
-                className="object-cover"
+                className="object-cover object-top"
               />
             </div>
+            {project.imageCaption && <figcaption className="text-xs text-gray-400 mt-3 leading-relaxed">{project.imageCaption}</figcaption>}
+            </figure>
           )}
 
           {/* Info e Links */}
@@ -153,11 +88,13 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               <div className="mb-8">
                 <h2 className="text-2xl font-bold mb-4">Descrizione</h2>
                 <div className="prose prose-gray max-w-none">
-                  <p className="text-gray-300 leading-relaxed">
-                    {project.longDescription || project.description}
-                  </p>
+                  {(project.longDescription || project.description).split(/\n\n+/).map((paragraph,index)=><p key={index} className="text-gray-300 leading-relaxed mb-4">{paragraph}</p>)}
                 </div>
               </div>
+
+              {!!project.highlights?.length && <section className="mb-8"><h2 className="text-2xl font-bold mb-4">Funzionalità sviluppate</h2><ul className="space-y-3">{project.highlights.map(item=><li key={item} className="flex gap-3 text-gray-300 leading-relaxed"><span className="text-yellow-400" aria-hidden="true">✓</span><span>{item}</span></li>)}</ul></section>}
+              {project.projectNotes && <section className="mb-8 p-5 rounded-xl bg-gray-900 border border-gray-800"><h2 className="font-semibold text-white mb-2">Stato e compatibilità</h2><p className="text-sm text-gray-400 leading-relaxed">{project.projectNotes}</p></section>}
+              <Link href="/contact" className="inline-block text-yellow-400 hover:text-yellow-200 mb-8">Hai un progetto simile? Parliamone →</Link>
 
               {/* Gallery */}
               {project.gallery && project.gallery.length > 0 && (
@@ -171,9 +108,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Links */}
-              <div className="bg-gray-900 rounded-xl p-6">
+              {(project.demoUrl || project.repositoryUrl || project.publicationUrl || project.caseStudyUrl) && <div className="bg-gray-900 rounded-xl p-6">
                 <h3 className="font-bold mb-4">Links</h3>
                 <div className="space-y-3">
+                  {project.publicationUrl && <a href={project.publicationUrl} target="_blank" rel="noopener noreferrer" className="block p-3 bg-sky-500/20 text-sky-300 rounded-lg hover:bg-sky-500/30 font-medium">Plugin su WordPress.org ↗</a>}
                   {project.demoUrl && (
                     <a
                       href={project.demoUrl}
@@ -211,7 +149,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                     </a>
                   )}
                 </div>
-              </div>
+              </div>}
 
               {/* Tecnologie */}
               <div className="bg-gray-900 rounded-xl p-6">
@@ -232,11 +170,12 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               <div className="bg-gray-900 rounded-xl p-6">
                 <h3 className="font-bold mb-4">Dettagli</h3>
                 <div className="space-y-3 text-sm">
-                  <div>
+                  {project.period && <div><span className="text-gray-400">Periodo / fase:</span><br /><span>{project.period}</span></div>}
+                  {project.startDate && <div>
                     <span className="text-gray-400">Data inizio:</span>
                     <br />
                     <span>{new Date(project.startDate).toLocaleDateString('it-IT')}</span>
-                  </div>
+                  </div>}
                   {project.endDate && (
                     <div>
                       <span className="text-gray-400">Data fine:</span>
@@ -253,7 +192,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                   )}
                   {project.client && (
                     <div>
-                      <span className="text-gray-400">Cliente:</span>
+                    <span className="text-gray-400">Brand / progetto:</span>
                       <br />
                       <span>{project.client}</span>
                     </div>
@@ -262,7 +201,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               </div>
 
               {/* Metriche */}
-              {project.metrics && (
+              {project.metrics && Object.values(project.metrics).some(Boolean) && (
                 <div className="bg-gray-900 rounded-xl p-6">
                   <h3 className="font-bold mb-4">Metriche</h3>
                   <div className="space-y-2 text-sm">

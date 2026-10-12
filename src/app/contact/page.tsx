@@ -1,31 +1,30 @@
-'use client';
+import { apiFetch as fetch } from '@/lib/http';
 
-import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import Link from '@/components/runtime/Link';
 import Navigation from '@/components/ui/Navigation';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { 
-  AlertCircle, 
-  CheckCircle, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Clock, 
-  Send, 
-  Sparkles,
-  Target,
-  MessageCircle,
-  Zap
+import { Textarea } from '@/components/ui/textarea';
+import { useSearchParams } from '@/lib/navigation';
+import {
+AlertCircle,
+CheckCircle,
+Clock,
+Mail,
+MapPin,
+MessageCircle,
+Phone,
+Send,
+Sparkles,
+Target,
+Zap
 } from 'lucide-react';
-import WebchatEmbed from '@/components/ui/WebchatEmbed';
+import { Suspense,useEffect,useState } from 'react';
 
 // Types
 interface Service {
@@ -62,7 +61,7 @@ function ContactPageContent() {
 
   const [services, setServices] = useState<Service[]>([]);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
-  const [contactMethod, setContactMethod] = useState<'form' | 'chat'>('form');
+  const [contactMethod, setContactMethod] = useState<'form' | 'profiles'>('form');
   
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -184,7 +183,7 @@ function ContactPageContent() {
               </h2>
               
               <p className="text-gray-400 mb-8">
-                Grazie per avermi contattato. Ti risponderò entro 24 ore.
+                Grazie per avermi contattato. La tua richiesta è stata ricevuta.
               </p>
               
               <p className="text-gray-300 mb-8">
@@ -241,26 +240,26 @@ function ContactPageContent() {
 
             {/* Subtitle */}
             <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-12 leading-relaxed">
-              Hai un'idea da realizzare? Contattami per una consulenza gratuita e 
-              scopriamo insieme come trasformare la tua visione in realtà.
+              Un tema WordPress, un plugin WooCommerce o un'applicazione web?
+              Raccontami cosa vuoi realizzare, quali contenuti hai già e i tempi che hai in mente.
             </p>
 
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mb-12">
               <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4">
                 <Clock className="w-8 h-8 text-blue-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">24h</div>
-                <div className="text-sm text-gray-400">Tempo di Risposta</div>
+                <div className="text-2xl font-bold text-white">Obiettivi</div>
+                <div className="text-sm text-gray-400">Da cosa vuoi partire</div>
               </div>
               <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4">
                 <Target className="w-8 h-8 text-purple-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">Gratuita</div>
-                <div className="text-sm text-gray-400">Prima Consulenza</div>
+                <div className="text-2xl font-bold text-white">Funzionalità</div>
+                <div className="text-sm text-gray-400">Cosa deve fare il progetto</div>
               </div>
               <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4">
                 <Sparkles className="w-8 h-8 text-pink-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">100%</div>
-                <div className="text-sm text-gray-400">Personalizzato</div>
+                <div className="text-2xl font-bold text-white">Tempi e budget</div>
+                <div className="text-sm text-gray-400">Per definire una proposta</div>
               </div>
             </div>
 
@@ -277,30 +276,27 @@ function ContactPageContent() {
                 >
                   <div className="flex items-center justify-center gap-2">
                     <Mail className="w-5 h-5" />
-                    <span>Form Tradizionale</span>
+                    <span>Scrivimi</span>
                   </div>
                   {contactMethod === 'form' && (
                     <p className="text-xs mt-1 opacity-80">Ricevi risposta via email</p>
                   )}
                 </button>
                 <button
-                  onClick={() => setContactMethod('chat')}
+                  onClick={() => setContactMethod('profiles')}
                   className={`flex-1 px-6 py-4 rounded-xl font-semibold transition-all duration-300 relative ${
-                    contactMethod === 'chat'
+                    contactMethod === 'profiles'
                       ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg'
                       : 'text-gray-400 hover:text-white hover:bg-gray-800'
                   }`}
                 >
                   <div className="flex items-center justify-center gap-2">
                     <Zap className="w-5 h-5" />
-                    <span>Chat in Tempo Reale</span>
+                    <span>Profili pubblici</span>
                   </div>
-                  {contactMethod === 'chat' && (
-                    <p className="text-xs mt-1 opacity-80">Risposte immediate</p>
+                  {contactMethod === 'profiles' && (
+                    <p className="text-xs mt-1 opacity-80">GitHub e WordPress.org</p>
                   )}
-                  <span className="absolute -top-1 -right-1 px-2 py-0.5 bg-yellow-500 text-xs text-gray-900 font-bold rounded-full">
-                    NUOVO
-                  </span>
                 </button>
               </div>
             </div>
@@ -310,72 +306,19 @@ function ContactPageContent() {
         {/* Content Section */}
         <section className="relative py-16 px-4">
           <div className="max-w-7xl mx-auto">
-            {contactMethod === 'chat' ? (
-              /* Webchat Integration */
-              <div className="max-w-6xl mx-auto">
-                <div className="mb-8 text-center">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/20 border border-green-500/30 rounded-full text-green-300 text-sm mb-4">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span>Chat Community in Tempo Reale</span>
-                  </div>
-                  <h2 className="text-3xl font-bold text-white mb-2">
-                    Unisciti alla Community Chat
-                  </h2>
-                  <p className="text-gray-400 max-w-2xl mx-auto">
-                    Accedi alla nostra chat IRC per parlare direttamente con me e altri membri della community. 
-                    Devi registrarti per partecipare alla conversazione.
-                  </p>
+            {contactMethod === 'profiles' ? (
+              <div className="max-w-4xl mx-auto">
+                <h2 className="text-3xl font-bold text-white mb-4">Codice, plugin e contribuzioni</h2>
+                <p className="text-gray-400 mb-8">I miei profili pubblici raccolgono sorgenti, aggiornamenti e contributi alla community.</p>
+                <div className="grid sm:grid-cols-2 gap-5">
+                  {[
+                    {name:'GitHub · datRooster',href:'https://github.com/datRooster',text:'Repository pubbliche di temi, plugin e applicazioni.'},
+                    {name:'WordPress.org · datroooster',href:'https://profiles.wordpress.org/datroooster/',text:'Profilo ufficiale, attività e badge della community.'},
+                    {name:'DatRooster Partial Payments',href:'https://wordpress.org/plugins/datrooster-partial-payments/',text:'Pagina del plugin, documentazione e download ufficiale.'},
+                    {name:'LinkedIn · Amedeo Galletta',href:'https://www.linkedin.com/in/amedeo-galletta-812835292/',text:'Il mio profilo professionale.'}
+                  ].map(profile=><a key={profile.href} href={profile.href} target="_blank" rel="noopener noreferrer" className="p-6 bg-gray-900 border border-gray-700 rounded-xl hover:border-blue-400"><h3 className="text-lg font-semibold text-white mb-2">{profile.name} ↗</h3><p className="text-gray-400 text-sm">{profile.text}</p></a>)}
                 </div>
-
-                <div className="h-[700px]">
-                  <WebchatEmbed 
-                    fullPage={true}
-                    title="IRC Community Chat"
-                    description="Chat in tempo reale - Registrazione richiesta"
-                  />
-                </div>
-
-                <div className="mt-8 bg-blue-500/10 border border-blue-500/20 rounded-xl p-6">
-                  <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-blue-400" />
-                    Come funziona la chat?
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                    <div className="flex gap-3">
-                      <div className="flex-shrink-0 w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center text-blue-400 font-bold">
-                        1
-                      </div>
-                      <div>
-                        <div className="font-medium text-white mb-1">Registrati</div>
-                        <div className="text-gray-400">
-                          Crea un account con username e password o usa GitHub OAuth
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex gap-3">
-                      <div className="flex-shrink-0 w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center text-blue-400 font-bold">
-                        2
-                      </div>
-                      <div>
-                        <div className="font-medium text-white mb-1">Accedi</div>
-                        <div className="text-gray-400">
-                          Fai login e accedi ai vari canali della community
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex gap-3">
-                      <div className="flex-shrink-0 w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center text-blue-400 font-bold">
-                        3
-                      </div>
-                      <div>
-                        <div className="font-medium text-white mb-1">Chatta</div>
-                        <div className="text-gray-400">
-                          Inizia a conversare in tempo reale con me e la community
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <button type="button" onClick={()=>setContactMethod('form')} className="mt-8 text-blue-300 hover:text-white">Vuoi parlarmi di un progetto? Apri il modulo →</button>
               </div>
             ) : (
               /* Traditional Contact Form */
@@ -386,7 +329,7 @@ function ContactPageContent() {
                   <div className="p-8">
                     <h3 className="text-2xl font-semibold text-white mb-2">Richiedi Informazioni</h3>
                     <p className="text-gray-400 mb-8">
-                      Compila il form e ti risponderò entro 24 ore con tutte le informazioni di cui hai bisogno.
+                      Compila il form con obiettivi e funzionalità. Se parti da uno dei miei lavori, indica il progetto che ti interessa.
                     </p>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
@@ -597,7 +540,7 @@ function ContactPageContent() {
                         <Mail className="w-5 h-5 text-blue-400" />
                         <div>
                           <div className="font-medium text-white">Email</div>
-                          <div className="text-sm text-gray-400">hello@tuodominio.com</div>
+                          <a href="mailto:contact@webrooster.it" className="text-sm text-blue-300 hover:underline">contact@webrooster.it</a>
                         </div>
                       </div>
                       
@@ -605,7 +548,7 @@ function ContactPageContent() {
                         <Phone className="w-5 h-5 text-green-400" />
                         <div>
                           <div className="font-medium text-white">Telefono</div>
-                          <div className="text-sm text-gray-400">+39 123 456 7890</div>
+                          <div className="text-sm text-gray-400">Da concordare dopo il primo contatto</div>
                         </div>
                       </div>
                       
@@ -620,8 +563,8 @@ function ContactPageContent() {
                       <div className="flex items-center gap-3">
                         <Clock className="w-5 h-5 text-orange-400" />
                         <div>
-                          <div className="font-medium text-white">Orari di lavoro</div>
-                          <div className="text-sm text-gray-400">Lun-Ven 9:00-18:00</div>
+                          <div className="font-medium text-white">Confronto sul progetto</div>
+                          <div className="text-sm text-gray-400">Appuntamento da concordare via email</div>
                         </div>
                       </div>
                     </div>
@@ -666,28 +609,28 @@ function ContactPageContent() {
                     <div className="space-y-4 text-sm">
                       <div>
                         <div className="font-medium text-white mb-1">
-                          Quanto tempo per una risposta?
+                          Cosa devo includere nella richiesta?
                         </div>
                         <div className="text-gray-400">
-                          Rispondo entro 24 ore a tutte le richieste.
+                          Obiettivi, funzionalità, contenuti disponibili e scadenze. Puoi aggiungere un link al sito esistente.
                         </div>
                       </div>
                       
                       <div>
                         <div className="font-medium text-white mb-1">
-                          La consulenza è gratuita?
+                          Lavori anche su un sito esistente?
                         </div>
                         <div className="text-gray-400">
-                          Sì, la prima consulenza è sempre gratuita.
+                          Possiamo valutare un tema dedicato, un plugin o una nuova integrazione. Indica WordPress, WooCommerce e i plugin già in uso.
                         </div>
                       </div>
                       
                       <div>
                         <div className="font-medium text-white mb-1">
-                          Lavori su progetti internazionali?
+                          Dove posso vedere il tuo codice?
                         </div>
                         <div className="text-gray-400">
-                          Assolutamente sì, lavoro con clienti in tutto il mondo.
+                          <a href="https://github.com/datRooster" target="_blank" rel="noopener noreferrer" className="text-blue-300 hover:underline">Su GitHub</a> e nella <a href="https://wordpress.org/plugins/datrooster-partial-payments/" target="_blank" rel="noopener noreferrer" className="text-blue-300 hover:underline">directory plugin WordPress.org</a>.
                         </div>
                       </div>
                     </div>

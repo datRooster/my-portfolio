@@ -1,7 +1,6 @@
-'use client';
 
-import Image from "next/image";
-import { useState, useEffect } from "react";
+import Image from '@/components/runtime/Image';
+import { useEffect,useState } from "react";
 
 interface CoinFlipProps {
   width?: number;
@@ -51,7 +50,7 @@ export default function CoinFlip({
         </div>
       </div>
       
-      <style jsx>{`
+      <style>{`
         .coin-container {
           perspective: 1000px;
           width: ${width}px;

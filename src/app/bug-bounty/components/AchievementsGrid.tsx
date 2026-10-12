@@ -1,7 +1,8 @@
-'use client';
+import Image from '@/components/runtime/Image';
+import { apiFetch as fetch } from '@/lib/http';
 
-import { useState, useEffect } from 'react';
-import { Trophy, Star, Calendar, ExternalLink, Award, Medal, Crown, Target } from 'lucide-react';
+import { Award,Calendar,Crown,ExternalLink,Medal,Star,Target,Trophy } from 'lucide-react';
+import { useEffect,useState } from 'react';
 import LoadingSpinner from './LoadingSpinner';
 
 interface Achievement {
@@ -200,7 +201,7 @@ export default function AchievementsGrid() {
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-start space-x-3">
                     {achievement.badgeUrl ? (
-                      <img
+                      <Image
                         src={achievement.badgeUrl}
                         alt={achievement.title}
                         className="w-12 h-12 rounded-lg object-cover"

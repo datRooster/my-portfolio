@@ -5,7 +5,7 @@
  * using the postMessage API to avoid CORS issues.
  */
 
-import { useRef, useEffect } from 'react';
+import { useEffect,useRef } from 'react';
 
 // Message types that can be sent from iframe to parent
 export type IframeToParentMessage =

@@ -1,12 +1,11 @@
-'use client';
 
-import { 
-  Shield, 
-  AlertTriangle, 
-  DollarSign, 
-  Trophy,
-  Clock,
-  Lightbulb
+import {
+AlertTriangle,
+Clock,
+DollarSign,
+Lightbulb,
+Shield,
+Trophy
 } from 'lucide-react';
 
 interface BugBountyStats {

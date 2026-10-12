@@ -1,112 +1,22 @@
-import { Metadata } from 'next';
-import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { prisma } from '@/lib/database/prisma';
+import Image from '@/components/runtime/Image';
+import Link from '@/components/runtime/Link';
+import { useApi } from '@/lib/http';
+import { useParams } from '@/lib/navigation';
+import type { ServiceDetail } from '@/types/service';
+
 import Navigation from '@/components/ui/Navigation';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { 
-  ArrowLeft, 
-  CheckCircle, 
-  Clock, 
-  Star, 
-  MessageSquare, 
-  Calendar, 
-  Award,
-  Sparkles,
-  Target,
-  Trophy,
-  Users,
-  Code
+import {
+Award,
+Calendar,
+CheckCircle,
+Clock,
+Code,
+MessageSquare,
+Star
 } from 'lucide-react';
-
-interface ServicePageProps {
-  params: Promise<{
-    slug: string;
-  }>;
-}
-
-async function getService(slug: string) {
-  try {
-    const service = await prisma.service.findFirst({
-      where: {
-        OR: [
-          { slug: slug },
-          { id: slug }
-        ],
-        status: 'ACTIVE'
-      },
-      include: {
-        testimonials: {
-          where: {
-            approved: true
-          },
-          orderBy: {
-            rating: 'desc'
-          },
-          take: 6,
-          include: {
-            project: {
-              select: {
-                title: true,
-                slug: true
-              }
-            }
-          }
-        }
-      }
-    });
-
-    return service;
-  } catch (error) {
-    console.error('Error fetching service:', error);
-    return null;
-  }
-}
-
-async function getRelatedServices(currentServiceId: string, category?: string) {
-  try {
-    const services = await prisma.service.findMany({
-      where: {
-        NOT: {
-          id: currentServiceId
-        },
-        status: 'ACTIVE',
-        available: true,
-        ...(category && { category: category as any })
-      },
-      orderBy: [
-        { featured: 'desc' },
-        { createdAt: 'desc' }
-      ],
-      take: 3
-    });
-
-    return services;
-  } catch (error) {
-    console.error('Error fetching related services:', error);
-    return [];
-  }
-}
-
-export async function generateMetadata({ params }: ServicePageProps): Promise<Metadata> {
-  const resolvedParams = await params;
-  const service = await getService(resolvedParams.slug);
-
-  if (!service) {
-    return {
-      title: 'Servizio non trovato',
-    };
-  }
-
-  return {
-    title: `${service.title || service.name} | Servizi | Il mio Portfolio`,
-    description: service.description,
-    keywords: service.tags?.join(', '),
-  };
-}
 
 function TestimonialCard({ testimonial }: { testimonial: any }) {
   return (
@@ -114,7 +24,7 @@ function TestimonialCard({ testimonial }: { testimonial: any }) {
       <div className="p-6">
         <div className="flex items-center gap-3 mb-4">
           {testimonial.avatar && (
-            <img 
+            <Image
               src={testimonial.avatar} 
               alt={testimonial.clientName}
               className="w-10 h-10 rounded-full object-cover border-2 border-gray-700"
@@ -160,16 +70,13 @@ function TestimonialCard({ testimonial }: { testimonial: any }) {
   );
 }
 
-export default async function ServicePage({ params }: ServicePageProps) {
-  const resolvedParams = await params;
-  const service = await getService(resolvedParams.slug);
-
-  if (!service) {
-    notFound();
-  }
-
-  const relatedServices = await getRelatedServices(service.id, service.category);
-
+export default function ServicePage() {
+  const { slug } = useParams();
+  const { data: service, loading, error } = useApi<ServiceDetail>(`/api/services/${encodeURIComponent(slug || '')}`);
+  const { data: related } = useApi<{services: ServiceDetail[]}>('/api/services');
+  if (loading) return <p className="p-12 text-white">Caricamento servizio...</p>;
+  if (!service) return <div className="p-12 text-white"><p>{error || 'Servizio non trovato'}</p><Link href="/services">Torna ai servizi</Link></div>;
+  const relatedServices = (related?.services || []).filter(item => item.id !== service.id && item.category === service.category).slice(0, 3);
   const formatPrice = (price: any) => {
     if (!price) return null;
     const numPrice = typeof price === 'string' ? parseFloat(price) : price;
@@ -216,10 +123,10 @@ export default async function ServicePage({ params }: ServicePageProps) {
               {/* Badges */}
               <div className="flex flex-wrap gap-3 justify-center mb-8">
                 <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
-                  {service.category?.replace('_', ' ')}
+                  {service.category === 'WEB_DEVELOPMENT' ? 'Sviluppo web' : service.category?.replace(/[-_]/g, ' ')}
                 </Badge>
                 <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">
-                  {service.type}
+                  {service.type === 'CONSULTING' ? 'Sviluppo e consulenza' : service.type}
                 </Badge>
                 {service.featured && (
                   <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-gray-900">
@@ -263,7 +170,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
                       <div className="mb-8">
                         <h3 className="text-2xl font-semibold text-white mb-4">Descrizione Completa</h3>
                         <p className="text-gray-300 leading-relaxed whitespace-pre-line">
-                          {service.longDescription}
+                          <span className="whitespace-pre-line">{service.longDescription}</span>
                         </p>
                       </div>
                     )}

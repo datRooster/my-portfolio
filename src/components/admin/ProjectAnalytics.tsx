@@ -1,25 +1,21 @@
-'use client';
+import { apiFetch as fetch } from '@/lib/http';
 
-import { useState, useEffect } from 'react';
-import { 
-  BarChart3, 
-  PieChart, 
-  TrendingUp, 
-  Calendar,
-  Filter,
-  Download,
-  RefreshCw,
-  Target,
-  Zap,
-  CheckCircle,
-  FileText,
-  Archive,
-  Settings,
-  Star,
-  Users,
-  Code,
-  Wrench
+import {
+Archive,
+BarChart3,
+Calendar,
+CheckCircle,
+Code,
+Download,
+FileText,
+PieChart,
+RefreshCw,
+Star,
+Target,
+Wrench,
+Zap
 } from 'lucide-react';
+import { useEffect,useState } from 'react';
 
 interface ProjectAnalyticsData {
   summary: {

@@ -1,0 +1,85 @@
+import {chromium} from '@playwright/test';
+import assert from 'node:assert/strict';
+import {readFile,mkdir} from 'node:fs/promises';
+const base=process.env.PORTFOLIO_BROWSER_URL || 'http://localhost/my-portfolio/dist';
+const access=await readFile('.tools/local-access.txt','utf8');
+const email=access.match(/Email: (.+)/)[1].trim();
+const password=access.match(/Password: (.+)/)[1].trim();
+const browser=await chromium.launch({channel:'chrome',headless:true});
+const context=await browser.newContext({viewport:{width:1440,height:1000}});
+const page=await context.newPage();
+const errors=[];const external=new Set();
+page.on('pageerror',error=>errors.push(error.message));
+page.on('request',request=>{if(/^https?:/.test(request.url()) && new URL(request.url()).origin!==new URL(base).origin)external.add(request.url());});
+await mkdir('.tools/screenshots',{recursive:true});
+try {
+  const catalog=await (await context.request.get(base+'/api/projects')).json();
+  const sampleProject=catalog.projects.find(p=>p.status==='in-progress') || catalog.projects[0];
+  const services=await (await context.request.get(base+'/api/services')).json();
+  const sampleService=services.services[0];
+  assert.ok(sampleProject && sampleService,'Portfolio contents installed');
+  const projectRoute='/projects/'+sampleProject.slug;
+  const serviceRoute='/services/'+sampleService.slug;
+  const editRoute='/admin/projects/edit/'+sampleProject.slug;
+  for(const route of ['/','/about','/projects',projectRoute,'/services',serviceRoute,'/bug-bounty','/bug-bounty/reports','/bug-bounty/achievements','/bug-bounty/methodology','/contact']){
+    console.log('Pagina',route);
+    const response=await page.goto(base+route);assert.equal(response.status(),200,route);
+    await page.waitForLoadState('networkidle');
+    assert.ok((await page.locator('h1').count())>0,`Heading: ${route}`);
+    if(route===projectRoute)assert.equal(await page.locator('h1').innerText(),sampleProject.title);
+    if(route===serviceRoute)assert.match(await page.locator('h1').innerText(),new RegExp(sampleService.title));
+    if(route==='/')await page.screenshot({path:'.tools/screenshots/home-desktop.png',fullPage:true});
+  }
+  const contactSubject=`Collaudo contatti ${Date.now()}`;
+  await page.getByPlaceholder('Il tuo nome',{exact:true}).fill('Visitatore di collaudo');
+  await page.getByPlaceholder('la.tua@email.com',{exact:true}).fill('collaudo@example.com');
+  await page.getByPlaceholder('Di cosa vuoi parlare?').fill(contactSubject);
+  await page.getByPlaceholder('Raccontami del tuo progetto, delle tue esigenze e dei tuoi obiettivi...').fill('Messaggio creato dal test del modulo contatti.');
+  await page.locator('select').nth(1).selectOption('tbd');
+  await page.locator('select').nth(2).selectOption('flexible');
+  await page.locator('button[type=submit]').click();
+  await page.getByRole('heading',{name:'Messaggio Inviato!'}).waitFor();
+  await page.goto(base+'/admin');await page.waitForURL(base+'/login');
+  await page.locator('input[type=email]').fill(email);await page.locator('input[type=password]').fill(password);
+  await page.locator('button[type=submit]').click();await page.waitForURL(base+'/admin');await page.waitForLoadState('networkidle');
+  for(const route of ['/admin/projects',editRoute,'/admin/content','/admin/messages','/admin/analytics','/admin/bug-bounty','/admin/security','/admin/settings']){
+    await page.goto(base+route);await page.waitForLoadState('networkidle');assert.ok((await page.locator('h1').count())>0,route);
+    assert.ok(!page.url().endsWith('/login'),`Admin session: ${route}`);
+    if(route===editRoute)assert.equal(await page.locator('input').first().inputValue(),sampleProject.title);
+    if(route==='/admin/analytics'){await page.getByRole('button',{name:'Progetti',exact:true}).click();await page.waitForLoadState('networkidle');}
+  }
+  const inbox=await context.request.get(base+'/api/services/inquiries');const messages=(await inbox.json()).inquiries;
+  const sent=messages.find(row=>row.subject===contactSubject);assert.ok(sent,'Contact appears in inbox');assert.equal(sent.budget,'tbd');
+  await context.request.delete(base+'/api/services/inquiries/'+sent.id,{headers:{'X-Requested-With':'Portfolio'}});
+  await page.goto(base+'/admin/projects');await page.waitForLoadState('networkidle');
+  await page.getByRole('button',{name:'Nuovo Progetto',exact:true}).click();
+  const projectName=`Collaudo progetto ${Date.now()}`;
+  await page.getByPlaceholder('Nome del progetto',{exact:true}).fill(projectName);
+  await page.getByPlaceholder('Breve descrizione del progetto (max 2-3 righe)').fill('Descrizione breve di collaudo.');
+  await page.getByPlaceholder('Descrizione dettagliata del progetto, obiettivi, sfide e soluzioni implementate').fill('Descrizione completa di collaudo.');
+  await page.getByRole('button',{name:'Crea Progetto',exact:true}).click();
+  await page.getByRole('heading',{name:projectName,exact:true}).waitFor();
+  const projectsResponse=await context.request.get(base+'/api/projects');const created=(await projectsResponse.json()).projects.find(p=>p.title===projectName);assert.ok(created,'Project form persists');
+  await page.goto(base+'/admin/projects/edit/'+created.slug);await page.waitForLoadState('networkidle');
+  await page.locator('input').first().fill(projectName+' modificato');await page.locator('button[type=submit]').click();await page.waitForURL(base+'/admin/projects');
+  const changed=await context.request.get(base+'/api/projects/'+created.id);assert.equal((await changed.json()).title,projectName+' modificato');
+  await context.request.delete(base+'/api/projects/'+created.id,{headers:{'X-Requested-With':'Portfolio'}});
+  await page.goto(base+'/admin/content');await page.waitForLoadState('networkidle');
+  await page.getByRole('button',{name:'Nuovo contenuto'}).click();
+  const name=`Servizio collaudo ${Date.now()}`;
+  await page.getByLabel('Nome',{exact:true}).fill(name);
+  await page.getByLabel('Descrizione',{exact:true}).fill('Creato durante il collaudo automatico.');
+  await page.getByLabel('Indirizzo pagina').fill('collaudo-browser');
+  await page.getByRole('button',{name:'Salva',exact:true}).click();
+  await page.getByText(name,{exact:true}).waitFor();
+  const r=await context.request.get(base+'/api/services/collaudo-browser');assert.equal(r.status(),200);
+  const remove=await context.request.delete(base+'/api/services/collaudo-browser',{headers:{'X-Requested-With':'Portfolio'}});assert.equal(remove.status(),200);
+  await page.goto(base+'/admin/messages');await page.waitForLoadState('networkidle');await page.screenshot({path:'.tools/screenshots/admin.png',fullPage:true});
+  await page.goto(base+'/');await page.setViewportSize({width:390,height:844});await page.waitForLoadState('networkidle');
+  await page.screenshot({path:'.tools/screenshots/home-mobile.png',fullPage:true});
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1),false,'No horizontal overflow on mobile');
+  assert.deepEqual(errors,[],'No browser JavaScript errors');
+  assert.deepEqual([...external].filter(url=>/railway|vercel/i.test(url)),[],'No legacy hosting requests');
+  console.log('Browser: 20 pagine, login, redirect protetti, creazione/modifica progetto, creazione servizio, invio contatti e layout mobile verificati. Nessun errore JavaScript.');
+  console.log('Richieste esterne:',external.size);
+} finally {await browser.close();}

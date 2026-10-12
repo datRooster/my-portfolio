@@ -1,9 +1,9 @@
-'use client';
+import { apiFetch as fetch } from '@/lib/http';
 
-import { useState, useEffect } from 'react';
-import { Clock, ExternalLink, Shield, AlertTriangle, AlertCircle, Info, Calendar, DollarSign, Eye, FileText } from 'lucide-react';
+import { AlertCircle,AlertTriangle,Calendar,Eye,FileText,Info,Shield } from 'lucide-react';
+import { useEffect,useState } from 'react';
 import LoadingSpinner from './LoadingSpinner';
-import ReportsFilters, { FilterState } from './ReportsFilters';
+import ReportsFilters,{ FilterState } from './ReportsFilters';
 
 interface BugReport {
   id: string;

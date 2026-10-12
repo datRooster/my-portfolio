@@ -1,20 +1,19 @@
-'use client';
 
-import { useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import VisitorCounter from './VisitorCounter';
-import { 
-  Home, 
-  FolderOpen, 
-  User, 
-  Mail, 
-  Settings, 
-  Menu, 
-  X,
-  ChevronLeft,
-  ExternalLink,
-  Shield
+import { usePathname,useRouter } from '@/lib/navigation';
+import {
+ChevronLeft,
+ExternalLink,
+FolderOpen,
+Home,
+Mail,
+Menu,
+Settings,
+Shield,
+User,
+X
 } from 'lucide-react';
+import { useState } from 'react';
+import VisitorCounter from './VisitorCounter';
 
 interface NavigationProps {
   showBackButton?: boolean;

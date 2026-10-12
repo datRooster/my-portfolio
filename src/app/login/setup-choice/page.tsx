@@ -1,19 +1,19 @@
-'use client';
+import { apiFetch as fetch } from '@/lib/http';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { 
-  Shield, 
-  AlertTriangle, 
-  CheckCircle, 
-  Zap, 
-  ArrowRight, 
-  ArrowLeft,
-  Smartphone,
-  Key,
-  Settings
+import Link from '@/components/runtime/Link';
+import { useRouter } from '@/lib/navigation';
+import {
+AlertTriangle,
+ArrowLeft,
+ArrowRight,
+CheckCircle,
+Key,
+Settings,
+Shield,
+Smartphone,
+Zap
 } from 'lucide-react';
+import { useState } from 'react';
 
 export default function Setup2FAChoice() {
   const [loading, setLoading] = useState(false);
@@ -76,7 +76,7 @@ export default function Setup2FAChoice() {
               <div className="text-xs text-gray-400 space-y-1">
                 <div className="flex items-center space-x-2">
                   <span className="w-2 h-2 bg-green-400 rounded-full"></span>
-                  <span>Con 2FA: Sicurezza Militare</span>
+                  <span>Con 2FA: verifica in due passaggi</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
@@ -104,7 +104,7 @@ export default function Setup2FAChoice() {
                   Massima sicurezza con autenticazione a due fattori
                 </p>
                 <div className="flex items-center space-x-4 mt-2 text-xs text-green-200">
-                  <span className="flex items-center"><CheckCircle className="w-3 h-3 mr-1" />Sicurezza Militare</span>
+                  <span className="flex items-center"><CheckCircle className="w-3 h-3 mr-1" />Verifica in due passaggi</span>
                   <span className="flex items-center"><Smartphone className="w-3 h-3 mr-1" />App Authenticator</span>
                   <span className="flex items-center"><Key className="w-3 h-3 mr-1" />Codici Backup</span>
                 </div>

@@ -1,5 +1,5 @@
-import React from 'react';
 import { cn } from '@/lib/utils';
+import React from 'react';
 
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   value?: string;
@@ -34,8 +34,11 @@ const SelectContext = React.createContext<{
   setOpen: () => {}
 });
 
-const Select: React.FC<SelectProps> = ({ value, onValueChange, children, className, ...props }) => {
+const Select: React.FC<SelectProps> = ({ value, onValueChange, children, className, onChange, ...props }) => {
   const [open, setOpen] = React.useState(false);
+  if (React.Children.toArray(children).some(child=>React.isValidElement(child) && child.type==='option')) {
+    return <select {...props} value={value} className={className} onChange={event=>{onValueChange?.(event.target.value);onChange?.(event);}}>{children}</select>;
+  }
   
   return (
     <SelectContext.Provider value={{ value, onValueChange, open, setOpen }}>
@@ -119,4 +122,4 @@ const SelectValue: React.FC<SelectValueProps> = ({ placeholder }) => {
   );
 };
 
-export { Select, SelectContent, SelectItem, SelectTrigger, SelectValue };
+export { Select,SelectContent,SelectItem,SelectTrigger,SelectValue };

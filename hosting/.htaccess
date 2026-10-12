@@ -1,0 +1,23 @@
+Options -Indexes -MultiViews
+DirectoryIndex index.php
+RewriteEngine On
+
+# Private backend files are not HTTP endpoints.
+RewriteRule ^api/(?:storage|lib)(?:/|$) - [F,L,NC]
+RewriteRule ^api/(?:config[^/]*|schema\.sql|seed\.php|install\.php|router\.php)(?:/|$) - [F,L,NC]
+RewriteRule (^|/)\. - [F,L]
+RewriteRule ^api(?:/.*)?$ api/index.php [QSA,L]
+RewriteRule ^bugbounty(?:/(.*))?$ bug-bounty/$1 [R=301,L]
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+RewriteRule ^ index.php [L]
+
+<IfModule mod_headers.c>
+  Header onsuccess unset X-Content-Type-Options
+  Header onsuccess unset X-Frame-Options
+  Header onsuccess unset Referrer-Policy
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

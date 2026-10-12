@@ -1,23 +1,22 @@
-'use client';
 
-import Link from 'next/link';
-import VisitorCounter from './VisitorCounter';
-import { 
-  Github, 
-  Linkedin, 
-  Mail, 
-  MapPin, 
-  Phone,
-  Heart,
-  Code,
-  Shield,
-  Zap,
-  ArrowUp,
-  ExternalLink,
-  Coffee,
-  Star,
-  Globe
+import Link from '@/components/runtime/Link';
+import {
+ArrowUp,
+Code,
+Coffee,
+ExternalLink,
+Github,
+Globe,
+Heart,
+Linkedin,
+Mail,
+MapPin,
+Phone,
+Shield,
+Star,
+Zap
 } from 'lucide-react';
+import VisitorCounter from './VisitorCounter';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -37,6 +36,7 @@ export default function Footer() {
   ];
 
   const socialLinks = [
+    {name: 'WordPress.org',href:'https://profiles.wordpress.org/datroooster/',icon:Globe,color:'hover:text-sky-400'},
     {
       name: 'GitHub',
       href: 'https://github.com/datRooster',
@@ -62,7 +62,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative bg-gray-950 border-t border-gray-800">
+    <footer className="relative overflow-hidden bg-gray-950 border-t border-gray-800">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-yellow-500/5 rounded-full blur-3xl"></div>
@@ -85,9 +85,8 @@ export default function Footer() {
                   </h3>
                 </div>
                 <p className="text-gray-400 leading-relaxed mb-6 max-w-lg">
-                  Architect, Security Researcher e Web Developer. Creo soluzioni innovative 
-                  che uniscono performance, sicurezza e design elegante. 
-                  Sempre alla ricerca della prossima sfida tecnologica.
+                  Sviluppo temi WordPress su misura, plugin WooCommerce e applicazioni web.
+                  Autore di DatRooster Partial Payments, pubblicato su WordPress.org.
                 </p>
                 
                 {/* Services Grid */}
@@ -157,7 +156,7 @@ export default function Footer() {
                     <a href="mailto:contact@webrooster.it" className="text-gray-300 text-sm hover:text-yellow-400 transition-colors">
                       contact@webrooster.it
                     </a>
-                    <p className="text-gray-500 text-xs">Rispondo entro 24h</p>
+                    <p className="text-gray-500 text-xs">Scrivimi del tuo progetto</p>
                   </div>
                 </div>
 
@@ -165,7 +164,7 @@ export default function Footer() {
                   <Phone className="w-4 h-4 text-gray-400 mt-1 flex-shrink-0" />
                   <div>
                     <p className="text-gray-300 text-sm">Su richiesta</p>
-                    <p className="text-gray-500 text-xs">Solo progetti seri</p>
+                    <p className="text-gray-500 text-xs">Confronto da concordare</p>
                   </div>
                 </div>
               </div>
@@ -241,7 +240,7 @@ export default function Footer() {
             <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-gray-500">
               <span className="flex items-center gap-1">
                 <Zap className="w-3 h-3" />
-                Powered by Next.js
+                Powered by React &amp; PHP
               </span>
               <span className="w-1 h-1 bg-gray-600 rounded-full"></span>
               <span className="flex items-center gap-1">

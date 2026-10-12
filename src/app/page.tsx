@@ -1,17 +1,19 @@
-import Link from "next/link";
 import CoinFlip from "@/components/layout/CoinFlip";
+import FeaturedProjects from '@/components/portfolio/FeaturedProjects';
+import WordPressContributions from '@/components/portfolio/WordPressContributions';
+import Link from '@/components/runtime/Link';
 import Navigation from "@/components/ui/Navigation";
 import VisitorCounter from "@/components/ui/VisitorCounter";
-import { 
-  Code2, 
-  Shield, 
-  Zap, 
-  ArrowRight, 
-  Mail,
-  Sparkles,
-  Trophy,
-  Globe,
-  User
+import {
+ArrowRight,
+Code2,
+Globe,
+Mail,
+Shield,
+Sparkles,
+Trophy,
+User,
+Zap
 } from "lucide-react";
 
 export default function Home() {
@@ -20,7 +22,7 @@ export default function Home() {
       <Navigation />
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-950 text-gray-100 px-4">
         {/* Hero Section Moderna */}
-        <section className="relative text-center mt-20 mb-20 max-w-6xl mx-auto">
+        <section className="relative text-center mt-20 mb-20 max-w-6xl mx-auto overflow-hidden">
           {/* Background Effects */}
           <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 via-transparent to-orange-500/5 rounded-3xl"></div>
           <div className="absolute top-20 -left-20 w-40 h-40 bg-yellow-500/10 rounded-full blur-3xl animate-pulse"></div>
@@ -54,12 +56,11 @@ export default function Home() {
               {/* Animated subtitle */}
               <div className="space-y-3 mb-8">
                 <p className="text-2xl md:text-3xl text-gray-300 font-light">
-                  <span className="text-yellow-400">Architect</span> • <span className="text-orange-400">Security Researcher</span> • <span className="text-blue-400">Developer</span>
+                  <span className="text-yellow-400">Web Developer</span> • <span className="text-orange-400">WordPress</span> • <span className="text-blue-400">WooCommerce</span>
                 </p>
                 <p className="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
-                  Creo soluzioni digitali innovative che uniscono <span className="text-yellow-400">performance</span>, 
-                  <span className="text-red-400"> sicurezza</span> e <span className="text-green-400">design elegante</span>.
-                  Dalla ricerca di vulnerabilità alle architetture scalabili.
+                  Sviluppo <span className="text-yellow-400">temi WordPress su misura</span>, plugin WooCommerce e applicazioni web.
+                  Dal sito aziendale al configuratore di prodotto, curo interfaccia, logica e gestione dei contenuti.
                 </p>
               </div>
             </div>
@@ -88,7 +89,7 @@ export default function Home() {
             <div className="flex flex-wrap justify-center gap-6 mb-16 animate-fadeInUp" style={{animationDelay: '0.6s'}}>
               <div className="flex items-center gap-2 px-4 py-2 bg-gray-800/30 border border-gray-700 rounded-full">
                 <Code2 className="w-4 h-4 text-blue-400" />
-                <span className="text-sm text-gray-300">10+ Progetti</span>
+                <span className="text-sm text-gray-300">Progetti e codice su GitHub</span>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 bg-gray-800/30 border border-gray-700 rounded-full">
                 <Shield className="w-4 h-4 text-red-400" />
@@ -109,6 +110,9 @@ export default function Home() {
           </div>
         </section>
 
+        <FeaturedProjects />
+        <div className="w-full max-w-6xl mb-20"><WordPressContributions /></div>
+
         {/* Services Section Moderna */}
         <section className="w-full max-w-6xl mb-20">
           {/* Section Header */}
@@ -117,7 +121,7 @@ export default function Home() {
               Cosa Posso Fare Per Te
             </h2>
             <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              Dalla concezione all'implementazione, creo soluzioni digitali complete e sicure
+              Siti WordPress, e-commerce, plugin e applicazioni costruiti intorno ai tuoi contenuti e processi.
             </p>
           </div>
 
@@ -143,13 +147,13 @@ export default function Home() {
                   Portfolio Progetti
                 </h3>
                 <p className="text-gray-400 text-sm leading-relaxed mb-4">
-                  Esplora i progetti più significativi che ho sviluppato, dalle web app alle ricerche di sicurezza.
+                  Dai temi Morgante al plugin Partial Payments: scopri cosa ho sviluppato, come funziona e quale problema affronta.
                 </p>
                 
                 {/* Tags */}
                 <div className="flex flex-wrap gap-2 mb-4">
                   <span className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded-md text-xs">React</span>
-                  <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded-md text-xs">Next.js</span>
+                  <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded-md text-xs">WordPress</span>
                   <span className="px-2 py-1 bg-purple-500/20 text-purple-400 rounded-md text-xs">TypeScript</span>
                 </div>
                 
@@ -200,7 +204,7 @@ export default function Home() {
             </Link>
 
             {/* Services Card */}
-            <a 
+            <Link 
               href="/services" 
               className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-8 hover:border-green-500/50 hover:bg-gray-800/50 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-green-500/10 animate-fadeInScale"
               style={{animationDelay: '1.2s'}}
@@ -219,7 +223,7 @@ export default function Home() {
                   Servizi & Consulenze
                 </h3>
                 <p className="text-gray-400 text-sm leading-relaxed mb-4">
-                  Consulenze tecniche, sviluppo custom, audit di sicurezza e formazione specializzata.
+                  Temi dedicati, estensioni WooCommerce, configuratori e pannelli di gestione. Definiamo insieme flussi e funzionalità.
                 </p>
                 
                 {/* Tags */}
@@ -234,7 +238,7 @@ export default function Home() {
                   <ArrowRight className="w-4 h-4 text-green-500 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
-            </a>
+            </Link>
           </div>
         </section>
 
@@ -258,7 +262,7 @@ export default function Home() {
                 Iniziamo a Parlare
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
-              <span className="text-gray-500 text-sm">Rispondo entro 24 ore</span>
+              <span className="text-gray-500 text-sm">Raccontami obiettivi, tempi e funzionalità</span>
             </div>
           </div>
 

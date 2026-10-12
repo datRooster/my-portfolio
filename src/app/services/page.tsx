@@ -1,29 +1,28 @@
-'use client';
+import { apiFetch as fetch } from '@/lib/http';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
+import Link from '@/components/runtime/Link';
 import Navigation from '@/components/ui/Navigation';
-import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { 
-  Code, 
-  Globe, 
-  Smartphone, 
-  Database, 
-  Search, 
-  Shield,
-  Zap,
-  ArrowRight,
-  Star,
-  CheckCircle,
-  Clock,
-  Users,
-  Sparkles,
-  Target,
-  Trophy,
-  Euro
+import {
+ArrowRight,
+CheckCircle,
+Clock,
+Code,
+Database,
+Globe,
+Search,
+Shield,
+Smartphone,
+Sparkles,
+Star,
+Target,
+Trophy,
+Users,
+Zap
 } from 'lucide-react';
+import { useEffect,useState } from 'react';
 
 interface Service {
   id: string;
@@ -79,7 +78,7 @@ export default function ServicesPage() {
   const fetchServices = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/services');
+      const response = await fetch('/api/services?sortBy=order&sortOrder=asc');
       if (!response.ok) throw new Error('Errore nel caricamento servizi');
       
       const data = await response.json();
@@ -168,26 +167,26 @@ export default function ServicesPage() {
 
             {/* Subtitle */}
             <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-12 leading-relaxed">
-              Servizi di sviluppo di alta qualità personalizzati per le tue esigenze. 
-              Dalle applicazioni web alle soluzioni mobile, aiuto a dare vita alle tue idee.
+              Temi WordPress, e-commerce WooCommerce, plugin e applicazioni web.
+              Competenze applicate nei miei progetti, per costruire il prossimo insieme.
             </p>
 
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mb-16">
               <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4">
                 <Trophy className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">50+</div>
-                <div className="text-sm text-gray-400">Progetti Completati</div>
+                <div className="text-2xl font-bold text-white">Su misura</div>
+                <div className="text-sm text-gray-400">Funzioni definite sul tuo progetto</div>
               </div>
               <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4">
                 <Star className="w-8 h-8 text-orange-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">4.9/5</div>
-                <div className="text-sm text-gray-400">Rating Medio</div>
+                <div className="text-2xl font-bold text-white">Codice e contenuti</div>
+                <div className="text-sm text-gray-400">Sviluppo e gestione del sito</div>
               </div>
               <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4">
                 <Clock className="w-8 h-8 text-green-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">7 giorni</div>
-                <div className="text-sm text-gray-400">Consegna Media</div>
+                <div className="text-2xl font-bold text-white">Tempi concordati</div>
+                <div className="text-sm text-gray-400">Dopo aver definito il lavoro</div>
               </div>
             </div>
           </div>
@@ -237,7 +236,7 @@ export default function ServicesPage() {
                               </h3>
                               <div className="flex items-center gap-2 mt-1">
                                 <Badge className={categoryColorClass}>
-                                  {service.category.replace('-', ' ')}
+                                  {service.category === 'WEB_DEVELOPMENT' ? 'Sviluppo web' : service.category.replace(/[-_]/g, ' ')}
                                 </Badge>
                               </div>
                             </div>
@@ -251,7 +250,7 @@ export default function ServicesPage() {
 
                         {/* Stats */}
                         <div className="flex items-center gap-4 mb-4">
-                          <div className="flex items-center gap-1">
+                          {service.reviewCount > 0 && <div className="flex items-center gap-1">
                             <Star className="w-4 h-4 text-yellow-400 fill-current" />
                             <span className="text-sm font-medium text-white">
                               {service.averageRating.toFixed(1)}
@@ -259,16 +258,18 @@ export default function ServicesPage() {
                             <span className="text-sm text-gray-400">
                               ({service.reviewCount})
                             </span>
-                          </div>
+                          </div>}
                           <div className="flex items-center gap-1">
                             <CheckCircle className="w-4 h-4 text-green-400" />
                             <span className="text-sm text-gray-400">
-                              {service.completedProjects} completati
+                              {service.isActive ? 'Disponibile' : 'Non disponibile'}
                             </span>
                           </div>
                         </div>
 
                         <Separator className="my-4 bg-gray-800" />
+                        <ul className="space-y-2 mb-5 text-sm text-gray-300">{service.features.slice(0,3).map(feature=><li key={feature} className="flex gap-2"><CheckCircle className="w-4 h-4 text-yellow-400 shrink-0 mt-0.5"/><span>{feature}</span></li>)}</ul>
+                        {!basePackage && <p className="text-sm text-yellow-400 mb-4">Preventivo su progetto</p>}
 
                         {/* Pricing */}
                         {basePackage && (
@@ -323,7 +324,7 @@ export default function ServicesPage() {
                   <ArrowRight className="w-5 h-5" />
                 </Link>
                 <Link 
-                  href="/"
+                  href="/projects"
                   className="inline-flex items-center gap-2 px-8 py-4 bg-gray-800 text-white border border-gray-700 font-semibold rounded-lg hover:bg-gray-700 transition-colors"
                 >
                   Vedi Portfolio

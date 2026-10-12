@@ -1,8 +1,7 @@
-'use client';
 
-import React, { useState } from 'react';
-import Image from 'next/image';
-import { Eye, Images } from 'lucide-react';
+import Image from '@/components/runtime/Image';
+import { Eye,Images } from 'lucide-react';
+import { useState } from 'react';
 import ImageViewer from './ImageViewer';
 
 interface ProjectGalleryProps {
@@ -36,7 +35,9 @@ export default function ProjectGallery({ images, projectTitle }: ProjectGalleryP
         
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {images.map((image, index) => (
-            <div 
+            <button
+              type="button"
+              aria-label={`Apri immagine ${index + 1} di ${projectTitle}`}
               key={index} 
               className="group relative h-48 rounded-xl overflow-hidden cursor-pointer bg-gray-800"
               onClick={() => openViewer(index)}
@@ -46,7 +47,7 @@ export default function ProjectGallery({ images, projectTitle }: ProjectGalleryP
                 alt={`${projectTitle} - Screenshot ${index + 1}`}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="object-cover transition-all duration-300 group-hover:scale-110"
+                className="object-cover object-top transition-all duration-300 group-hover:scale-110"
               />
               
               {/* Overlay */}
@@ -65,7 +66,7 @@ export default function ProjectGallery({ images, projectTitle }: ProjectGalleryP
               
               {/* Hover Effect Border */}
               <div className="absolute inset-0 border-2 border-transparent group-hover:border-yellow-500/50 rounded-xl transition-colors duration-300" />
-            </div>
+            </button>
           ))}
         </div>
         

@@ -1,8 +1,8 @@
-'use client';
+import { apiFetch as fetch } from '@/lib/http';
 
-import React, { useState, useRef } from 'react';
-import Image from 'next/image';
-import { Upload, X, Plus, ImageIcon } from 'lucide-react';
+import Image from '@/components/runtime/Image';
+import { ImageIcon,Plus,X } from 'lucide-react';
+import React,{ useRef,useState } from 'react';
 
 interface GalleryUploadProps {
   value: string[];

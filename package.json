@@ -1,58 +1,46 @@
 {
   "name": "my-portfolio",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint",
-    "lint:fix": "eslint --fix",
-    "clean": "find . -name '.DS_Store' -delete && find . -name 'test-*.mjs' -delete",
-    "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate dev",
-    "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio",
-    "db:reset": "prisma migrate reset --force",
-    "db:migrate:deploy": "prisma migrate deploy",
-    "db:status": "prisma db push --accept-data-loss --force-reset && prisma db seed",
-    "generate-secrets": "./scripts/generate-secrets.sh"
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
   },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
+  "scripts": {
+    "dev": "vite",
+    "build": "node scripts/clean-assets.mjs && tsc --noEmit && vite build && node scripts/package-hosting.mjs",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "test:api": "node tests/api-smoke.mjs",
+    "setup:mamp": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/setup-mamp.ps1",
+    "test:browser": "node tests/browser-smoke.mjs",
+    "test:portfolio": "node tests/portfolio-browser.mjs",
+    "package:aruba": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/package-aruba.ps1"
   },
   "dependencies": {
-    "@prisma/client": "^6.19.3",
-    "@types/bcryptjs": "^2.4.6",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/qrcode": "^1.5.5",
-    "@types/speakeasy": "^2.0.10",
-    "@vercel/blob": "^2.3.3",
-    "bcryptjs": "^3.0.2",
     "clsx": "^2.1.1",
-    "crypto-js": "^4.2.0",
-    "express-rate-limit": "^8.5.2",
-    "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.545.0",
-    "next": "15.5.18",
-    "otplib": "^12.0.1",
-    "prisma": "^6.19.3",
     "qrcode": "^1.5.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "speakeasy": "^2.0.0",
+    "react-router-dom": "^7.0.0",
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
+    "@eslint/js": "^9",
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^22",
+    "@types/qrcode": "^1.5.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6.1.2",
     "eslint": "^9",
-    "eslint-config-next": "15.5.18",
+    "globals": "^16",
     "tailwindcss": "^4",
-    "tsx": "^4.20.6",
-    "typescript": "^5"
+    "typescript": "^5",
+    "typescript-eslint": "^8",
+    "vite": "^8.3.3"
   }
 }

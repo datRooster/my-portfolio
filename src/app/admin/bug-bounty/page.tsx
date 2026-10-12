@@ -1,25 +1,24 @@
-'use client';
+import Link from '@/components/runtime/Link';
+import { apiFetch as fetch } from '@/lib/http';
 
-import { useState, useEffect } from 'react';
-import { 
-  Target, 
-  Shield, 
-  TrendingUp, 
-  AlertTriangle, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Eye,
-  FileText,
-  Trophy,
-  BookOpen,
-  Monitor,
-  RefreshCw,
-  Download,
-  Upload,
-  ExternalLink,
-  Settings
+import {
+AlertTriangle,
+Edit,
+ExternalLink,
+Eye,
+FileText,
+Monitor,
+Plus,
+RefreshCw,
+Settings,
+Shield,
+Target,
+Trash2,
+TrendingUp,
+Trophy,
+Upload
 } from 'lucide-react';
+import { useEffect,useState } from 'react';
 
 interface BugBountyStats {
   totalBugs: number;
@@ -120,7 +119,6 @@ export default function AdminBugBountyPage() {
     setSyncing(true);
     try {
       // TODO: Implement platform sync API call
-      await fetch('/api/bug-bounty/sync-platforms', { method: 'POST' });
       await loadDashboardData();
     } catch (error) {
       console.error('Error syncing platforms:', error);
@@ -189,15 +187,15 @@ export default function AdminBugBountyPage() {
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50"
             >
               <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
-              {syncing ? 'Sincronizzando...' : 'Sync Platforms'}
+              {syncing ? 'Aggiornamento...' : 'Aggiorna dati'}
             </button>
-            <a
+            <Link
               href="/admin/bug-bounty/settings"
               className="flex items-center gap-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
             >
               <Settings className="w-4 h-4" />
               Impostazioni
-            </a>
+            </Link>
             <button className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
               <Plus className="w-4 h-4" />
               Nuovo Report
@@ -423,7 +421,7 @@ export default function AdminBugBountyPage() {
                 className="flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm disabled:opacity-50"
               >
                 <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
-                Sync All
+                Aggiorna dati
               </button>
               <button className="flex items-center gap-2 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm">
                 <Plus className="w-4 h-4" />

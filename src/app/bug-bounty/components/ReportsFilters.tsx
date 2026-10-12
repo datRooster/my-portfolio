@@ -1,7 +1,6 @@
-'use client';
 
+import { Filter,Search,SortAsc,SortDesc } from 'lucide-react';
 import { useState } from 'react';
-import { Filter, Search, SortAsc, SortDesc } from 'lucide-react';
 
 interface ReportsFiltersProps {
   onFiltersChange?: (filters: FilterState) => void;

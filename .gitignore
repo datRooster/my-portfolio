@@ -33,15 +33,9 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
-# vercel
-.vercel
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-# database
-/src/generated/prisma
 
 # macOS
 .DS_Store
@@ -51,3 +45,12 @@ next-env.d.ts
 *.tmp
 *.temp
 test-*.mjs
+
+# Local tools, private configuration and generated hosting package
+.tools/
+dist/
+api/config.local.php
+api/storage/
+api/uploads/
+*.log
+!tests/*.mjs

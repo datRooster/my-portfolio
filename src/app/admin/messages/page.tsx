@@ -1,0 +1,10 @@
+import { apiFetch } from '@/lib/http';
+import { useEffect,useState } from 'react';
+interface Inquiry{id:string;name:string;email:string;subject:string;message:string;status:string;createdAt:string;company?:string;phone?:string;budget?:string;timeline?:string;projectType?:string;serviceId?:string}
+export default function MessagesPage(){
+  const [rows,setRows]=useState<Inquiry[]>([]);const [error,setError]=useState('');
+  async function load(){try{const r=await apiFetch('/api/services/inquiries');const d=await r.json();if(!r.ok)throw new Error(d.error);setRows(d.inquiries);}catch(e){setError(e instanceof Error?e.message:'Errore di caricamento');}}
+  useEffect(()=>{void load();},[]);
+  async function mark(row:Inquiry){try{const r=await apiFetch(`/api/services/inquiries/${row.id}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'READ'})});if(!r.ok)throw new Error((await r.json()).error);await load();}catch(e){setError(e instanceof Error?e.message:'Errore');}}
+  return <div className="space-y-6"><h1 className="text-3xl font-bold">Messaggi ricevuti</h1><p className="text-gray-400">Le richieste inviate dal modulo contatti sono conservate qui. Per rispondere, apri il tuo programma di posta.</p>{error&&<p role="alert" className="text-red-400">{error}</p>}{!rows.length&&<p>Nessun messaggio ricevuto.</p>}{rows.map(row=><article className="bg-gray-800 rounded-xl p-6 space-y-3" key={row.id}><h2 className="text-xl font-semibold">{row.subject||'Richiesta di contatto'}</h2><p>{row.name} — <a className="text-yellow-400" href={`mailto:${row.email}`}>{row.email}</a></p><p className="text-gray-400">{new Date(row.createdAt).toLocaleString('it-IT')} · {row.status}</p><p className="whitespace-pre-wrap">{row.message}</p><div className="text-gray-400">{[row.company,row.phone,row.budget,row.timeline,row.projectType].filter(Boolean).join(' · ')}</div>{row.status==='NEW'&&<button onClick={()=>mark(row)} className="text-yellow-400">Segna come letto</button>}</article>)}</div>;
+}

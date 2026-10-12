@@ -1,36 +1,24 @@
-'use client';
 
-import { useState } from 'react';
 import { ProjectFilters } from '@/types/project';
+import { useState } from 'react';
 
 interface ProjectFiltersComponentProps {
   onFiltersChange: (filters: ProjectFilters) => void;
   totalProjects: number;
   filteredCount: number;
+  categories: string[];
+  technologies: string[];
 }
 
 export default function ProjectFiltersComponent({ 
   onFiltersChange, 
   totalProjects, 
-  filteredCount 
+  filteredCount,
+  categories,
+  technologies
 }: ProjectFiltersComponentProps) {
   const [activeFilters, setActiveFilters] = useState<ProjectFilters>({});
   const [showFilters, setShowFilters] = useState(false);
-
-  const categories = [
-    'Web Development',
-    'Security Research', 
-    'Mobile App',
-    'Desktop App',
-    'DevOps',
-    'Machine Learning',
-    'Blockchain'
-  ];
-
-  const technologies = [
-    'React', 'Next.js', 'TypeScript', 'Node.js', 'Python', 
-    'PHP', 'MySQL', 'MongoDB', 'Docker', 'AWS', 'Vercel'
-  ];
 
   const statuses = [
     { value: 'completed', label: 'Completato' },
@@ -61,8 +49,8 @@ export default function ProjectFiltersComponent({
   return (
     <div className="mb-8">
       {/* Header filtri */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-wrap gap-4 items-center justify-between mb-6">
+        <div className="flex flex-wrap items-center gap-4">
           <h2 className="text-lg font-semibold">
             {filteredCount} di {totalProjects} progetti
           </h2>

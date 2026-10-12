@@ -1,11 +1,11 @@
-'use client';
+import { apiFetch as fetch } from '@/lib/http';
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Edit, Trash2, Search, Filter, Plus, ExternalLink, Github, FileX, Zap, CheckCircle, Archive, Settings, Tag, Calendar, Eye, Code, Building, FileText, User, Wrench, Hash, Upload, ImageIcon, Save, X } from 'lucide-react';
+import Image from '@/components/runtime/Image';
+import Link from '@/components/runtime/Link';
 import FileUpload from '@/components/ui/FileUpload';
 import GalleryUpload from '@/components/ui/GalleryUpload';
+import { Archive,Building,Calendar,CheckCircle,Code,Edit,ExternalLink,Eye,FileText,FileX,Filter,Github,Hash,ImageIcon,Plus,Save,Search,Settings,Tag,Trash2,Upload,User,Wrench,X,Zap } from 'lucide-react';
+import React,{ useEffect,useState } from 'react';
 
 interface Project {
   id: string;
@@ -24,7 +24,7 @@ interface Project {
   featuredImage?: string;
   imageUrl?: string;
   featured: boolean;
-  status: 'draft' | 'active' | 'completed' | 'archived';
+  status: 'draft' | 'in-progress' | 'completed' | 'archived';
   priority: number;
   startDate: string;
   endDate?: string;
@@ -57,7 +57,7 @@ interface NewProject {
   imageUrl: string;
   gallery: string[];
   featured: boolean;
-  status: 'draft' | 'active' | 'completed' | 'archived' | 'in_development';
+  status: 'draft' | 'in-progress' | 'completed' | 'archived' | 'in_development';
   priority: number;
   technologies: string[];
   skills: string[];
@@ -68,21 +68,21 @@ interface NewProject {
 
 const statusColors = {
   draft: 'bg-gray-500/20 border-gray-500/30 text-gray-300',
-  active: 'bg-blue-500/20 border-blue-500/30 text-blue-300',
+  'in-progress': 'bg-blue-500/20 border-blue-500/30 text-blue-300',
   completed: 'bg-green-500/20 border-green-500/30 text-green-300',
   archived: 'bg-orange-500/20 border-orange-500/30 text-orange-300'
 };
 
 const statusLabels = {
   draft: 'Bozza',
-  active: 'Attivo',
+  'in-progress': 'Attivo',
   completed: 'Completato',
   archived: 'Archiviato'
 };
 
 const statusIcons = {
   draft: FileX,
-  active: Zap,
+  'in-progress': Zap,
   completed: CheckCircle,
   archived: Archive
 };
@@ -367,7 +367,7 @@ export default function ProjectsManagement() {
               >
                 <option value="all" className="bg-gray-800 text-white">Tutti gli stati</option>
                 <option value="draft" className="bg-gray-800 text-white">• Bozza</option>
-                <option value="active" className="bg-gray-800 text-white">• Attivo</option>
+                <option value="in-progress" className="bg-gray-800 text-white">• Attivo</option>
                 <option value="completed" className="bg-gray-800 text-white">• Completato</option>
                 <option value="archived" className="bg-gray-800 text-white">• Archiviato</option>
               </select>

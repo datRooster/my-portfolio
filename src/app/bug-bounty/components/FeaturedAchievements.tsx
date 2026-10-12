@@ -1,7 +1,7 @@
-'use client';
+import Image from '@/components/runtime/Image';
 
-import { Trophy, Star, Calendar, ExternalLink } from 'lucide-react';
-import Link from 'next/link';
+import Link from '@/components/runtime/Link';
+import { Calendar,ExternalLink,Star,Trophy } from 'lucide-react';
 
 interface Achievement {
   id: string;
@@ -90,7 +90,7 @@ export default function FeaturedAchievements({ achievements }: FeaturedAchieveme
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-start space-x-3">
                     {achievement.badgeUrl ? (
-                      <img
+                      <Image
                         src={achievement.badgeUrl}
                         alt={achievement.title}
                         className="w-10 h-10 rounded-lg object-cover"

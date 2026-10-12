@@ -1,15 +1,9 @@
-import { Suspense } from 'react';
-import { Metadata } from 'next';
 import Navigation from '@/components/ui/Navigation';
+import { FileText } from 'lucide-react';
+import { Suspense } from 'react';
 import BugReportsGrid from '../components/BugReportsGrid';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { FileText, Search, Filter } from 'lucide-react';
 
-export const metadata: Metadata = {
-  title: 'Bug Reports - Bug Bounty Portfolio',
-  description: 'Detailed view of all bug bounty reports, vulnerabilities found, and security research.',
-  keywords: ['bug reports', 'vulnerabilities', 'security research', 'CVE', 'responsible disclosure'],
-};
 
 export default function BugReportsPage() {
   return (

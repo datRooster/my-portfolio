@@ -1,15 +1,9 @@
-import { Suspense } from 'react';
-import { Metadata } from 'next';
 import Navigation from '@/components/ui/Navigation';
+import { Trophy } from 'lucide-react';
+import { Suspense } from 'react';
 import AchievementsGrid from '../components/AchievementsGrid';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { Trophy } from 'lucide-react';
 
-export const metadata: Metadata = {
-  title: 'Achievements - Bug Bounty Portfolio',
-  description: 'Bug bounty achievements, recognitions, certifications, and milestones in cybersecurity.',
-  keywords: ['bug bounty achievements', 'cybersecurity certifications', 'security awards', 'hall of fame'],
-};
 
 export default function AchievementsPage() {
   return (

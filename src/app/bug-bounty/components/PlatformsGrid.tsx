@@ -1,6 +1,5 @@
-'use client';
 
-import { ExternalLink, Trophy, TrendingUp, Clock, Target, Users } from 'lucide-react';
+import { Clock,ExternalLink,Target,TrendingUp,Trophy,Users } from 'lucide-react';
 
 interface Platform {
   id: string;

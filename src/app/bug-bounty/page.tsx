@@ -1,15 +1,9 @@
-import { Suspense } from 'react';
-import { Metadata } from 'next';
 import Navigation from '@/components/ui/Navigation';
+import { Award,Bug,Shield,Target } from 'lucide-react';
+import { Suspense } from 'react';
 import BugBountyDashboard from './components/BugBountyDashboard';
 import LoadingSpinner from './components/LoadingSpinner';
-import { Shield, Bug, Target, Award } from 'lucide-react';
 
-export const metadata: Metadata = {
-  title: 'Bug Bounty - Portfolio',
-  description: 'My bug bounty hunting achievements, reports, and methodologies.',
-  keywords: ['bug bounty', 'cybersecurity', 'vulnerability research', 'ethical hacking'],
-};
 
 export default function BugBountyPage() {
   return (

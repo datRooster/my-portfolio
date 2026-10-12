@@ -1,6 +1,6 @@
+import Link from '@/components/runtime/Link';
 import Navigation from "@/components/ui/Navigation";
-import { Mail, Phone, MapPin, Github, Linkedin, MessageCircle, Zap } from "lucide-react";
-import Link from "next/link";
+import { Github,Linkedin,Mail,MapPin,MessageCircle,Phone,Zap } from "lucide-react";
 
 export default function ContattiPage() {
   return (

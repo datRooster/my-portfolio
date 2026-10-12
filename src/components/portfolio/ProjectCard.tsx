@@ -1,26 +1,24 @@
-'use client';
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { Project } from '@/types/project';
-import { useEffect, useState } from 'react';
+import Image from '@/components/runtime/Image';
+import Link from '@/components/runtime/Link';
 import { isUserAdmin } from '@/lib/auth-client';
-import { 
-  Edit, 
-  ExternalLink, 
-  Github, 
-  Star, 
-  Calendar, 
-  Tag, 
-  Zap, 
-  Award,
-  Eye,
-  ArrowRight,
-  Sparkles,
-  Shield,
-  Code,
-  Layers
+import { Project } from '@/types/project';
+import {
+ArrowRight,
+Award,
+Calendar,
+Code,
+Edit,
+ExternalLink,
+Eye,
+Github,
+Layers,
+Shield,
+Star,
+Tag,
+Zap
 } from 'lucide-react';
+import { useEffect,useState } from 'react';
 
 interface ProjectCardProps {
   project: Project;
@@ -64,7 +62,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             src={project.featuredImage}
             alt={project.title}
             fill
-            className="object-cover group-hover:scale-110 transition-transform duration-700"
+            className="object-cover object-top group-hover:scale-105 transition-transform duration-700"
           />
           {/* Overlay sfumato */}
           <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent"></div>
@@ -128,13 +126,6 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             <h3 className="font-bold text-xl text-white group-hover:text-yellow-400 transition-colors duration-300 line-clamp-2">
               {project.title}
             </h3>
-            {project.priority > 3 && (
-              <div className="flex items-center gap-1 ml-2 flex-shrink-0">
-                {[...Array(project.priority)].map((_, i) => (
-                  <Star key={i} className="w-3 h-3 text-yellow-500" fill="currentColor" />
-                ))}
-              </div>
-            )}
           </div>
           
           {/* Categoria con icona */}
@@ -178,6 +169,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         {/* Links Azioni con Design Moderno */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex gap-2">
+            {project.publicationUrl && <a href={project.publicationUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-9 h-9 text-sky-400 rounded-lg bg-sky-500/15" title="Plugin su WordPress.org"><ExternalLink className="w-4 h-4" /></a>}
             {project.demoUrl && (
               <a
                 href={project.demoUrl}
@@ -218,7 +210,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           <div className="flex items-center gap-2 text-gray-500">
             <Calendar className="w-3 h-3" />
             <span className="text-xs">
-              {new Date(project.createdAt).toLocaleDateString('it-IT', {
+              {project.period || new Date(project.createdAt).toLocaleDateString('it-IT', {
                 year: 'numeric',
                 month: 'short'
               })}

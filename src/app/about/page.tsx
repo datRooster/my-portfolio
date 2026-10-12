@@ -1,21 +1,20 @@
+import Link from '@/components/runtime/Link';
+import WordPressContributions from '@/components/portfolio/WordPressContributions';
 import Navigation from "@/components/ui/Navigation";
-import Link from "next/link";
-import { 
-  Code, 
-  Shield, 
-  Globe, 
-  Award, 
-  User,
-  Sparkles,
-  Trophy,
-  Target,
-  ArrowRight,
-  Mail,
-  Coffee,
-  Heart,
-  Zap,
-  CheckCircle,
-  Star
+import {
+ArrowRight,
+Award,
+CheckCircle,
+Code,
+Coffee,
+Globe,
+Mail,
+Shield,
+Sparkles,
+Star,
+Target,
+Trophy,
+User
 } from "lucide-react";
 
 export default function AboutPage() {
@@ -47,26 +46,26 @@ export default function AboutPage() {
 
             {/* Subtitle */}
             <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-12 leading-relaxed">
-              Developer appassionato di sicurezza informatica e architettura software. 
-              La mia esperienza spazia dal web development alla ricerca di vulnerabilità.
+              Sviluppo temi WordPress, estensioni WooCommerce e applicazioni web.
+              Qui trovi i progetti, il mio contributo tecnico e il codice che condivido.
             </p>
 
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mb-16">
               <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4">
                 <Trophy className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">5+</div>
-                <div className="text-sm text-gray-400">Anni di Esperienza</div>
+                <div className="text-2xl font-bold text-white">WordPress</div>
+                <div className="text-sm text-gray-400">Temi su misura e plugin</div>
               </div>
               <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4">
                 <Star className="w-8 h-8 text-orange-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">50+</div>
-                <div className="text-sm text-gray-400">Progetti Completati</div>
+                <div className="text-2xl font-bold text-white">WooCommerce</div>
+                <div className="text-sm text-gray-400">Cataloghi e flussi personalizzati</div>
               </div>
               <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4">
                 <Shield className="w-8 h-8 text-red-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">20+</div>
-                <div className="text-sm text-gray-400">Bug Trovati</div>
+                <div className="text-2xl font-bold text-white">Open source</div>
+                <div className="text-sm text-gray-400">GitHub e WordPress.org</div>
               </div>
             </div>
           </div>
@@ -86,17 +85,13 @@ export default function AboutPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
                 <div className="space-y-4">
                   <p className="text-gray-300 leading-relaxed">
-                    Sono un <span className="text-blue-400 font-semibold">developer full-stack</span> appassionato di sicurezza informatica e architettura software. 
-                    La mia esperienza spazia dal web development alla ricerca di vulnerabilità, 
-                    passando per la consulenza tecnica e l'ottimizzazione di sistemi complessi.
+                    Sono <span className="text-blue-400 font-semibold">Amedeo Galletta, theWebRooster</span>. Sviluppo siti e applicazioni web, con un lavoro che unisce interfaccia, logica applicativa e strumenti per gestire i contenuti.
                   </p>
                   <p className="text-gray-300 leading-relaxed">
-                    Amo risolvere <span className="text-purple-400 font-semibold">problemi complessi</span> e creare soluzioni innovative che uniscano 
-                    funzionalità, sicurezza e design elegante.
+                    Nei miei lavori recenti ho realizzato i temi <span className="text-purple-400 font-semibold">Morgante Group, Morgante Costruzioni, Morgante Home Solution e Forno Atelier</span>: dalla comunicazione aziendale al catalogo e-commerce, fino a mappe e configuratori personalizzati.
                   </p>
                   <p className="text-gray-300 leading-relaxed">
-                    Nel tempo libero, partecipo a <span className="text-red-400 font-semibold">programmi bug bounty</span> e contribuisco 
-                    a progetti open source, sempre alla ricerca di nuove sfide tecniche.
+                    Con <span className="text-blue-400 font-semibold">DatRooster Partial Payments</span> ho portato un mio plugin nella directory WordPress.org. Su GitHub condivido anche Treasure Coupons, il tema Marcello Scavo Tattoo, IRC Community e il codice di questo portfolio.
                   </p>
                 </div>
                 
@@ -143,15 +138,15 @@ export default function AboutPage() {
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                    Node.js, Python, PHP
+                    WordPress, WooCommerce, PHP
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                    PostgreSQL, MongoDB
+                    MySQL, PostgreSQL, Prisma
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                    Docker, AWS, CI/CD
+                    JavaScript, CSS, Tailwind
                   </li>
                 </ul>
               </div>
@@ -193,19 +188,19 @@ export default function AboutPage() {
                 <ul className="space-y-2 text-gray-300 text-sm">
                   <li className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
-                    System Design
+                    API e strutture dati
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
-                    Microservices
+                    Temi e plugin modulari
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
-                    API Development
+                    Configuratori e flussi ordine
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
-                    Performance Optimization
+                    Hosting PHP e build frontend
                   </li>
                 </ul>
               </div>
@@ -228,7 +223,7 @@ export default function AboutPage() {
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full"></div>
-                    Team Mentoring
+                    Documentazione e consegna
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full"></div>
@@ -238,6 +233,12 @@ export default function AboutPage() {
               </div>
             </div>
             
+            <WordPressContributions />
+
+            <section className="mt-12 grid md:grid-cols-3 gap-6" aria-label="Come lavoro">
+              {[['01 · Definire','Parto dai contenuti, dalle persone che useranno il sito e dalle operazioni che devono svolgere.'],['02 · Sviluppare','Organizzo template e funzioni in componenti e moduli, così che il progetto possa essere aggiornato nel tempo.'],['03 · Verificare','Controllo flussi, pannello e layout sui diversi schermi, documentando configurazione e limiti del progetto.']].map(([title,text])=><div key={title} className="rounded-xl p-6 bg-gray-900/50 border border-gray-800"><h2 className="text-lg text-yellow-400 font-semibold mb-3">{title}</h2><p className="text-gray-300 leading-relaxed text-sm">{text}</p></div>)}
+            </section>
+
             {/* Call to Action */}
             <div className="mt-16 text-center bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-12">
               <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">

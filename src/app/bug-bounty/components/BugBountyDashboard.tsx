@@ -1,11 +1,11 @@
-'use client';
+import { apiFetch as fetch } from '@/lib/http';
 
-import { useState, useEffect } from 'react';
-import StatsOverview from './StatsOverview';
-import RecentReports from './RecentReports';
-import PlatformsGrid from './PlatformsGrid';
+import { useEffect,useState } from 'react';
 import FeaturedAchievements from './FeaturedAchievements';
 import LoadingSpinner from './LoadingSpinner';
+import PlatformsGrid from './PlatformsGrid';
+import RecentReports from './RecentReports';
+import StatsOverview from './StatsOverview';
 
 interface BugBountyStats {
   totalBugs: number;

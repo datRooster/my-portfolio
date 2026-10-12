@@ -1,23 +1,22 @@
-'use client';
+import { apiFetch as fetch } from '@/lib/http';
 
-import { useState, useEffect } from 'react';
-import { 
-  Users, 
-  Eye, 
-  Globe, 
-  Clock, 
-  TrendingUp, 
-  BarChart3,
-  PieChart,
-  RefreshCw,
-  Download,
-  Calendar,
-  MapPin,
-  ExternalLink,
-  Smartphone,
-  Monitor,
-  Activity
+import {
+Activity,
+BarChart3,
+Calendar,
+Clock,
+Download,
+ExternalLink,
+Eye,
+Globe,
+MapPin,
+Monitor,
+PieChart,
+RefreshCw,
+Smartphone,
+Users
 } from 'lucide-react';
+import { useEffect,useState } from 'react';
 
 interface VisitorAnalytics {
   overview: {

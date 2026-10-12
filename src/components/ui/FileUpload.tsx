@@ -1,8 +1,8 @@
-'use client';
+import { apiFetch as fetch } from '@/lib/http';
 
-import { useState, useRef } from 'react';
-import { Upload, X, ImageIcon, AlertCircle } from 'lucide-react';
-import Image from 'next/image';
+import Image from '@/components/runtime/Image';
+import { AlertCircle,ImageIcon,Upload,X } from 'lucide-react';
+import { useRef,useState } from 'react';
 
 interface FileUploadProps {
   value?: string;
@@ -149,7 +149,6 @@ export default function FileUpload({
                 alt="Preview"
                 fill
                 className="object-cover"
-                unoptimized={value.includes('blob.vercel-storage.com')}
                 onError={(e) => {
                   console.error('Image load error:', value);
                   // Fallback: prova a caricare come immagine normale

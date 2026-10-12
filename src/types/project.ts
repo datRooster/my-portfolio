@@ -4,6 +4,11 @@ export interface Project {
   title: string;
   description: string;
   longDescription?: string; // Descrizione dettagliata per la pagina del singolo progetto
+  period?: string;
+  highlights?: string[];
+  projectNotes?: string;
+  imageCaption?: string;
+  publicationUrl?: string;
   
   // Metadati
   status: 'completed' | 'in-progress' | 'archived' | 'draft';

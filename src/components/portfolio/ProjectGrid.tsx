@@ -1,6 +1,6 @@
 import { Project } from '@/types/project';
+import { Layers,Sparkles } from 'lucide-react';
 import ProjectCard from './ProjectCard';
-import { Sparkles, Layers } from 'lucide-react';
 
 interface ProjectGridProps {
   projects: Project[];

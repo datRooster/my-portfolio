@@ -1,13 +1,9 @@
-'use client';
+import { useVisitorStats } from '@/lib/visitors';
 
-import { useState, useEffect } from 'react';
-import { Eye, Users, TrendingUp } from 'lucide-react';
+import { useState } from 'react';
 
-interface VisitorStats {
-  totalVisitors: number;
-  currentOnline: number;
-  todayVisitors: number;
-}
+import { Eye,TrendingUp,Users } from 'lucide-react';
+
 
 interface VisitorCounterProps {
   className?: string;
@@ -20,57 +16,10 @@ export default function VisitorCounter({
   variant = 'minimal',
   position = 'bottom-right' 
 }: VisitorCounterProps) {
-  const [stats, setStats] = useState<VisitorStats | null>(null);
-  const [loading, setLoading] = useState(true);
+  const stats = useVisitorStats();
   const [isVisible, setIsVisible] = useState(true);
 
-  useEffect(() => {
-    fetchStats();
-    
-    // Aggiorna ogni 30 secondi
-    const interval = setInterval(fetchStats, 30000);
-    
-    // Track visitor on mount
-    trackVisitor();
-    
-    return () => clearInterval(interval);
-  }, []);
-
-  const fetchStats = async () => {
-    try {
-      const response = await fetch('/api/visitors/stats');
-      if (response.ok) {
-        const data = await response.json();
-        setStats(data);
-      }
-    } catch (error) {
-      console.error('Error fetching visitor stats:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const trackVisitor = async () => {
-    try {
-      await fetch('/api/visitors/track', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          page: window.location.pathname,
-          referrer: document.referrer,
-          userAgent: navigator.userAgent,
-          timestamp: new Date().toISOString(),
-          screenResolution: `${screen.width}x${screen.height}`,
-          language: navigator.language,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
-        })
-      });
-    } catch (error) {
-      console.error('Error tracking visitor:', error);
-    }
-  };
-
-  if (loading || !stats) {
+  if (!stats) {
     return null; // Caricamento silenzioso
   }
 

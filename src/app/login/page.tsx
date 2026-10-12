@@ -1,9 +1,9 @@
-'use client';
+import { apiFetch as fetch } from '@/lib/http';
 
+import Link from '@/components/runtime/Link';
+import { useRouter } from '@/lib/navigation';
+import { ArrowLeft,Eye,EyeOff,Lock,Shield } from 'lucide-react';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { Shield, Eye, EyeOff, Lock, Mail, AlertCircle, CheckCircle, ArrowLeft } from 'lucide-react';
 
 interface LoginResponse {
   success: boolean;
@@ -84,9 +84,9 @@ export default function LoginPage() {
               <span className="text-yellow-400">🔒</span>
             </div>
             <div>
-              <p className="text-yellow-400 font-semibold text-sm">Sicurezza Militare Attiva</p>
+              <p className="text-yellow-400 font-semibold text-sm">Accesso protetto</p>
               <p className="text-gray-400 text-xs">
-                Crittografia AES-256 • 2FA • Rate Limiting
+                Verifica in due passaggi disponibile • Tentativi di accesso limitati
               </p>
             </div>
           </div>
@@ -168,13 +168,8 @@ export default function LoginPage() {
                 <div className="flex items-start space-x-3">
                   <span className="text-blue-400 mt-0.5">ℹ️</span>
                   <div className="text-sm text-gray-300">
-                    <p className="font-medium mb-1">Credenziali Demo:</p>
-                    <ul className="text-xs text-gray-400 space-y-1">
-                      <li>• Email: <span className="text-yellow-400">admin@example.com</span></li>
-                      <li>• Password: <span className="text-yellow-400">admin123</span></li>
-                      <li>• Codice 2FA: <span className="text-yellow-400">123456</span></li>
-                      <li>• Sistema di sicurezza militare attivo</li>
-                    </ul>
+                    <p className="font-medium mb-1">Accesso riservato</p>
+                    <p className="text-xs text-gray-400">Usa le credenziali dell’amministratore create durante l’installazione.</p>
                   </div>
                 </div>
               </div>

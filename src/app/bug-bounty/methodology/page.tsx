@@ -1,15 +1,9 @@
-import { Suspense } from 'react';
-import { Metadata } from 'next';
 import Navigation from '@/components/ui/Navigation';
-import MethodologyGrid from '../components/MethodologyGrid';
-import LoadingSpinner from '../components/LoadingSpinner';
 import { BookOpen } from 'lucide-react';
+import { Suspense } from 'react';
+import LoadingSpinner from '../components/LoadingSpinner';
+import MethodologyGrid from '../components/MethodologyGrid';
 
-export const metadata: Metadata = {
-  title: 'Methodologies - Bug Bounty Portfolio',
-  description: 'Detailed methodologies, techniques, and approaches used in bug bounty hunting and security research.',
-  keywords: ['bug bounty methodology', 'security testing', 'penetration testing', 'vulnerability assessment'],
-};
 
 export default function MethodologyPage() {
   return (

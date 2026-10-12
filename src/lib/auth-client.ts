@@ -1,4 +1,4 @@
-'use client';
+import { apiFetch as fetch } from '@/lib/http';
 
 export async function isUserAdmin(): Promise<boolean> {
   try {

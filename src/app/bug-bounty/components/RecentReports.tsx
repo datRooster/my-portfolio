@@ -1,7 +1,6 @@
-'use client';
 
-import { Clock, ExternalLink, Shield, AlertTriangle, AlertCircle, Info } from 'lucide-react';
-import Link from 'next/link';
+import Link from '@/components/runtime/Link';
+import { AlertCircle,AlertTriangle,Clock,ExternalLink,Info,Shield } from 'lucide-react';
 
 interface BugReport {
   id: string;

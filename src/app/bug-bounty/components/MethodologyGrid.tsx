@@ -1,7 +1,7 @@
-'use client';
+import { apiFetch as fetch } from '@/lib/http';
 
-import { useState, useEffect } from 'react';
-import { Code, Clock, Target, Users, BookOpen, ExternalLink, Star, Zap } from 'lucide-react';
+import { BookOpen,Clock,Code,ExternalLink,Star,Target,Users,Zap } from 'lucide-react';
+import { useEffect,useState } from 'react';
 import LoadingSpinner from './LoadingSpinner';
 
 interface Methodology {

@@ -1,39 +1,38 @@
-'use client';
+import { apiFetch as fetch } from '@/lib/http';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { 
-  Wrench, 
-  TrendingUp, 
-  Eye, 
-  Shield, 
-  AlertTriangle, 
-  Info, 
-  FileText, 
-  Plus, 
-  BarChart3, 
-  Lock, 
-  Settings,
-  Zap,
-  CheckCircle,
-  User,
-  PieChart,
-  Activity,
-  Star,
-  Archive,
-  Target,
-  ArrowLeft
-} from 'lucide-react';
 import ProjectAnalytics from '@/components/admin/ProjectAnalytics';
 import VisitorAnalytics from '@/components/admin/VisitorAnalytics';
+import { useRouter } from '@/lib/navigation';
+import {
+Activity,
+AlertTriangle,
+ArrowLeft,
+BarChart3,
+CheckCircle,
+Eye,
+FileText,
+Info,
+Lock,
+PieChart,
+Plus,
+Settings,
+Shield,
+Star,
+Target,
+TrendingUp,
+User,
+Wrench,
+Zap
+} from 'lucide-react';
+import { useEffect,useState } from 'react';
 
 interface Stats {
   totalProjects: number;
   activeProjects: number;
   completedProjects: number;
   totalViews: number;
-  securityEvents: number;
-  loginAttempts: number;
+  securityEvents: number | null;
+  loginAttempts: number | null;
 }
 
 interface RecentActivity {
@@ -62,8 +61,8 @@ export default function AdminDashboard() {
     activeProjects: 0,
     completedProjects: 0,
     totalViews: 0,
-    securityEvents: 0,
-    loginAttempts: 0
+    securityEvents: null,
+    loginAttempts: null
   });
 
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
@@ -96,7 +95,7 @@ export default function AdminDashboard() {
         }));
 
         // Genera attività recenti basate sui progetti reali
-        const recentProjectActivities = analytics.timeline.recentProjects.slice(0, 2).map((project: any, index: number) => ({
+        const recentProjectActivities = analytics.timeline.recentProjects.slice(0, 2).map((project: any) => ({
           id: `project-${project.id}`,
           type: 'project_created' as const,
           message: `Progetto "${project.title}" creato`,
@@ -104,23 +103,7 @@ export default function AdminDashboard() {
           severity: 'info' as const
         }));
 
-        setRecentActivity([
-          ...recentProjectActivities,
-          {
-            id: '2',
-            type: 'login',
-            message: 'Login amministratore completato con successo',
-            timestamp: new Date(Date.now() - 3600000).toISOString(),
-            severity: 'info'
-          },
-          {
-            id: '3',
-            type: 'security_event',
-            message: 'Sistema di sicurezza attivo e monitoraggio abilitato',
-            timestamp: new Date(Date.now() - 7200000).toISOString(),
-            severity: 'info'
-          }
-        ]);
+        setRecentActivity(recentProjectActivities);
         
       } else {
         console.warn('Failed to load project analytics, using default data');
@@ -130,8 +113,8 @@ export default function AdminDashboard() {
           activeProjects: 0,
           completedProjects: 0,
           totalViews: 0,
-          securityEvents: 0,
-          loginAttempts: 0
+          securityEvents: null,
+          loginAttempts: null
         });
         
         setRecentActivity([
@@ -145,14 +128,11 @@ export default function AdminDashboard() {
         ]);
       }
 
-      // Simula altri dati di sistema
-      setStats(prevStats => ({
-        ...prevStats,
-        totalViews: 1547 + Math.floor(Math.random() * 100),
-        securityEvents: Math.floor(Math.random() * 5),
-        loginAttempts: 15 + Math.floor(Math.random() * 10)
-      }));
-
+      const visitorResponse = await fetch('/api/admin/visitor-analytics');
+      if (visitorResponse.ok) {
+        const visitorData = await visitorResponse.json();
+        setStats(prevStats => ({...prevStats, totalViews: visitorData.overview.pageViews, securityEvents: null, loginAttempts: null}));
+      }
       setLoading(false);
     } catch (error) {
       console.error('Error loading dashboard data:', error);
@@ -161,8 +141,8 @@ export default function AdminDashboard() {
         activeProjects: 0,
         completedProjects: 0,
         totalViews: 0,
-        securityEvents: 0,
-        loginAttempts: 0
+        securityEvents: null,
+        loginAttempts: null
       });
       setLoading(false);
     }
@@ -446,8 +426,8 @@ export default function AdminDashboard() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-gray-400 text-sm font-medium">Sicurezza</p>
-                      <p className="text-3xl font-bold text-red-500">{stats.securityEvents}</p>
-                      <p className="text-xs text-red-400 mt-1">Eventi rilevati</p>
+                      <p className="text-3xl font-bold text-red-500">{stats.securityEvents ?? '�'}</p>
+                      <p className="text-xs text-red-400 mt-1">Statistiche non raccolte</p>
                     </div>
                     <div className="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center">
                       <Shield className="w-6 h-6 text-red-400" />
@@ -460,8 +440,8 @@ export default function AdminDashboard() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-gray-400 text-sm font-medium">Accessi</p>
-                      <p className="text-3xl font-bold text-orange-500">{stats.loginAttempts}</p>
-                      <p className="text-xs text-orange-400 mt-1">Tentativi login</p>
+                      <p className="text-3xl font-bold text-orange-500">{stats.loginAttempts ?? '�'}</p>
+                      <p className="text-xs text-orange-400 mt-1">Statistiche non raccolte</p>
                     </div>
                     <div className="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center">
                       <User className="w-6 h-6 text-orange-400" />

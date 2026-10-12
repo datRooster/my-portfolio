@@ -1,8 +1,8 @@
-'use client';
+import { apiFetch as fetch } from '@/lib/http';
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCw, Download } from 'lucide-react';
+import Image from '@/components/runtime/Image';
+import { ChevronLeft,ChevronRight,Download,RotateCw,X,ZoomIn,ZoomOut } from 'lucide-react';
+import { useEffect,useState } from 'react';
 
 interface ImageViewerProps {
   images: string[];
