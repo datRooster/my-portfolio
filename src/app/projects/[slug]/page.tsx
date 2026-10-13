@@ -1,3 +1,5 @@
+import CinematicHero from '@/components/home/CinematicHero';
+import Navigation from '@/components/ui/Navigation';
 import Image from '@/components/runtime/Image';
 import Link from '@/components/runtime/Link';
 import ProjectGallery from '@/components/ui/ProjectGallery';
@@ -25,46 +27,10 @@ export default function ProjectPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100">
-      {/* Header */}
-      <section className="py-12 px-4">
-        <div className="max-w-4xl mx-auto">
-          {/* Breadcrumb */}
-          <nav className="mb-8">
-            <Link 
-              href="/projects" 
-              className="text-yellow-500 hover:text-yellow-400 transition-colors"
-            >
-              ← Torna ai progetti
-            </Link>
-          </nav>
-
-          {/* Hero del progetto */}
-          <div className="mb-12">
-            <div className="flex flex-wrap items-start gap-4 mb-6">
-              <h1 className="text-3xl md:text-5xl font-extrabold min-w-0 w-full md:flex-1 break-words">
-                {project.title}
-              </h1>
-              <div className="flex gap-3">
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${statusColors[project.status]}`}>
-                  {statusLabels[project.status]}
-                </span>
-                {project.featured && (
-                  <span className="bg-yellow-500 text-gray-900 px-3 py-1 rounded-full text-sm font-semibold">
-                    ⭐ In Evidenza
-                  </span>
-                )}
-              </div>
-            </div>
-            
-            <p className="text-lg text-yellow-500 font-medium mb-4">
-              {project.category}
-            </p>
-            
-            <p className="text-xl text-gray-300 leading-relaxed">
-              {project.description}
-            </p>
-          </div>
+    <div className="min-h-screen bg-gray-950 text-gray-100"><Navigation overlay /><CinematicHero sceneKey="projects" compact title={project.title} description={project.description} eyebrow={project.category} targetId="project-content" />
+      <section id="project-content" tabIndex={-1} className="noir-detail-content">
+        <div>
+          <div className="noir-detail-meta"><Link href="/projects">← Tutti i progetti</Link><div><span>{project.category}</span><span className={statusColors[project.status]}>{statusLabels[project.status]}</span>{project.featured && <span>In evidenza</span>}</div></div>
 
           {/* Immagine principale */}
           {project.featuredImage && (

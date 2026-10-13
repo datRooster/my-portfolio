@@ -1,19 +1,11 @@
+import CinematicHero from '@/components/home/CinematicHero';
 import { assetUrl,apiFetch as fetch } from '@/lib/http';
 
 import ProjectFiltersComponent from '@/components/portfolio/ProjectFilters';
 import ProjectGrid from '@/components/portfolio/ProjectGrid';
 import Navigation from '@/components/ui/Navigation';
 import { Project,ProjectFilters } from '@/types/project';
-import {
-ArrowRight,
-Code2,
-Layers,
-Sparkles,
-Star,
-Target,
-Trophy,
-Zap
-} from 'lucide-react';
+import { Code2, Sparkles, Target, Zap } from 'lucide-react';
 import { useEffect,useState } from 'react';
 
 export default function ProjectsPage() {
@@ -81,7 +73,7 @@ export default function ProjectsPage() {
   if (error) {
     return (
       <>
-        <Navigation showBackButton={true} backUrl="/" backLabel="Home" />
+        <Navigation overlay />
         <div className="min-h-screen bg-gray-950 text-gray-100 flex items-center justify-center">
           <div className="text-center max-w-lg mx-auto p-8">
             <div className="w-20 h-20 bg-red-500/20 border border-red-500/30 rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -112,111 +104,13 @@ export default function ProjectsPage() {
 
   return (
     <>
-      <Navigation showBackButton={true} backUrl="/" backLabel="Home" />
+      <Navigation overlay />
       <div className="bg-gray-950 text-gray-100">
         {/* Hero Section */}
-        <section className="relative py-20 px-4 overflow-hidden">
-          {/* Background Effects */}
-          <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 via-transparent to-orange-500/5"></div>
-          <div className="absolute top-20 left-10 w-72 h-72 bg-yellow-500/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl"></div>
-          
-          <div className="relative max-w-6xl mx-auto">
-            {/* Header Content */}
-            <div className="text-center mb-16 animate-fadeInUp">
-              {/* Icon Hero */}
-              <div className="flex justify-center mb-8">
-                <div className="relative animate-float">
-                  <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-2xl shadow-yellow-500/25">
-                    <Code2 className="w-10 h-10 text-gray-900" />
-                  </div>
-                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center animate-pulse">
-                    <Sparkles className="w-3 h-3 text-white" />
-                  </div>
-                </div>
-              </div>
-              
-              {/* Title */}
-              <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
-                I Miei
-                <span className="block bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-                  Progetti
-                </span>
-              </h1>
-              
-              {/* Subtitle */}
-              <p className="text-xl md:text-2xl text-gray-400 max-w-4xl mx-auto mb-8 leading-relaxed">
-                Temi WordPress su misura, plugin WooCommerce e applicazioni web.
-                <span className="text-gray-300"> Esplora funzionalità, tecnologie e codice pubblico</span> dei miei lavori.
-              </p>
-              
-              {/* Stats Pills */}
-              <div className="flex flex-wrap justify-center gap-4 mb-12">
-                <div className="flex items-center gap-2 px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-full backdrop-blur-sm">
-                  <Target className="w-4 h-4 text-blue-400" />
-                  <span className="text-sm text-gray-300">Progetti Completati</span>
-                  <span className="text-sm font-semibold text-white">{projects.filter(p => p.status === 'completed').length}</span>
-                </div>
-                <div className="flex items-center gap-2 px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-full backdrop-blur-sm">
-                  <Zap className="w-4 h-4 text-yellow-400" />
-                  <span className="text-sm text-gray-300">In Sviluppo</span>
-                  <span className="text-sm font-semibold text-white">{projects.filter(p => p.status === 'in-progress').length}</span>
-                </div>
-                <div className="flex items-center gap-2 px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-full backdrop-blur-sm">
-                  <Star className="w-4 h-4 text-purple-400" />
-                  <span className="text-sm text-gray-300">In Evidenza</span>
-                  <span className="text-sm font-semibold text-white">{projects.filter(p => p.featured).length}</span>
-                </div>
-              </div>
-            </div>
-            
-            {/* Feature Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-              <div className="group bg-gray-900/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 hover:border-yellow-500/50 hover:bg-gray-800/50 transition-all duration-300 animate-fadeInScale">
-                <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <Layers className="w-6 h-6 text-blue-400" />
-                </div>
-                <h3 className="text-lg font-semibold text-white mb-2">Temi su misura</h3>
-                <p className="text-gray-400 text-sm">Siti aziendali, cataloghi e portfolio con template e contenuti gestibili in WordPress.</p>
-              </div>
-              
-              <div className="group bg-gray-900/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 hover:border-yellow-500/50 hover:bg-gray-800/50 transition-all duration-300 animate-fadeInScale" style={{animationDelay: '0.1s'}}>
-                <div className="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <Trophy className="w-6 h-6 text-red-400" />
-                </div>
-                <h3 className="text-lg font-semibold text-white mb-2">Plugin e configuratori</h3>
-                <p className="text-gray-400 text-sm">Acconti, coupon e scelte di prodotto: funzioni dedicate ai flussi WooCommerce.</p>
-              </div>
-              
-              <div className="group bg-gray-900/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 hover:border-yellow-500/50 hover:bg-gray-800/50 transition-all duration-300 animate-fadeInScale" style={{animationDelay: '0.2s'}}>
-                <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <Sparkles className="w-6 h-6 text-green-400" />
-                </div>
-                <h3 className="text-lg font-semibold text-white mb-2">Codice pubblico</h3>
-                <p className="text-gray-400 text-sm">Repository GitHub e contributi WordPress.org per esplorare il lavoro oltre l'interfaccia.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Divider Section */}
-        <section className="px-4 py-8">
-          <div className="max-w-6xl mx-auto">
-            <div className="flex items-center justify-center">
-              <div className="flex items-center gap-4">
-                <div className="h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent w-24"></div>
-                <div className="flex items-center gap-2 px-4 py-2 bg-gray-800/30 border border-gray-700 rounded-full">
-                  <ArrowRight className="w-4 h-4 text-yellow-400" />
-                  <span className="text-sm text-gray-300 font-medium">Esplora i Progetti</span>
-                </div>
-                <div className="h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent w-24"></div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <CinematicHero sceneKey="projects" />
 
         {/* Filters e contenuto */}
-        <section className="px-4 pb-20">
+        <section id="projects-content" tabIndex={-1} className="noir-content-section px-4 pb-20">
           <div className="max-w-6xl mx-auto">
             {/* Filtri con stile migliorato */}
             <div className="mb-12">

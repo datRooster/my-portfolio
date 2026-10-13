@@ -1,0 +1,21 @@
+NOIR HOME — original visual asset
+Date: 2026-10-13
+Mode: built-in image_gen (no CLI or external image runtime)
+Output: public/images/hero/noir-sequence-v1.png
+Actual dimensions: 1536 x 1024; 4 columns x 2 rows; 384 x 512 per pose.
+The requested 3072 x 2048 size was not returned. The original output is preserved.
+Reference for interaction only: https://blackhat.pw/
+No artwork, logo, text, scripts or styles from that website are shipped.
+
+Prompt:
+Use case: stylized-concept. Asset type: ONE animation sprite atlas for a premium web portfolio, 8 ordered photographic keyframes of an anonymous noir man removing a black fedora. Generate a SINGLE high-resolution 3072x2048 landscape image arranged in an EXACT uniform 4-column by 2-row grid, no gaps, no gutters, no borders, no labels. Each cell is exactly 768x1024 portrait aspect ratio. Reading order left-to-right then second row. Identical locked frontal camera, identical man's head and torso position, identical black trench coat with raised collar, shoulders and head centered, waist-up crop, complete hat and lifting hand fit within each cell. Entire backdrop pure black #050505; near-black silhouette face with no discernible features, thin silver rim light plus very subtle warm amber edge light, refined photographic fabric detail, very faint smoke behind shoulders, dramatic low-key cinema, sophisticated black-on-black, NOT cartoon, NOT vector, NOT a drawing. Static body stays perfectly aligned across all 8 frames. Motion sequence: frame 1 fedora worn low, both hands below frame; frame 2 right hand (on viewer's left) rises toward hat brim; frame 3 hand grips viewer-left side of brim, hat still on head; frame 4 hand tips brim upward slightly revealing shadowed forehead; frame 5 hat lifted completely above head, visible air gap and dark slicked-back hair; frame 6 arm moves hat to viewer's left side away from head; frame 7 hand and hat lower diagonally toward bottom left, face still all in shadow; frame 8 no hat on head, arm lowered off image, bare dark slicked-back hair silhouette, same shoulders and head position. The gesture must read as a coherent consecutive animation, not eight different portraits. Maintain same subject scale, position, clothing, lighting, black background in all 8 cells, centered lower at y=58% with spare headroom for lifting hat. No lettering, logo, watermark, typography, words or symbols anywhere. Eight equal cells only. Create an original character, no branding.
+
+Font:
+Bebas Neue Regular, self-hosted under SIL Open Font License.
+Source: https://github.com/google/fonts/tree/main/ofl/bebasneue
+License: public/fonts/OFL-BebasNeue.txt
+
+Implementation:
+Native CSS sticky scene and requestAnimationFrame; 8 crossfaded poses.
+450svh desktop / 340svh mobile; reduced motion and short landscape use a static final pose.
+All visual resources served locally. This is an original reinterpretation, not a pixel-identical copy or a continuous filmed/3D performance.

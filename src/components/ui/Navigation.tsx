@@ -16,12 +16,14 @@ import { useState } from 'react';
 import VisitorCounter from './VisitorCounter';
 
 interface NavigationProps {
+  overlay?: boolean;
+  cinematic?: boolean;
   showBackButton?: boolean;
   backUrl?: string;
   backLabel?: string;
 }
 
-export default function Navigation({ showBackButton = false, backUrl = '/', backLabel = 'Home' }: NavigationProps) {
+export default function Navigation({ showBackButton = false, backUrl = '/', backLabel = 'Home', cinematic = true, overlay = false }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
@@ -51,12 +53,12 @@ export default function Navigation({ showBackButton = false, backUrl = '/', back
   return (
     <>
       {/* Navigation Bar */}
-      <nav className="fixed top-0 left-0 right-0 z-40 bg-black/90 backdrop-blur-sm border-b border-gray-800">
+      <nav aria-label="Navigazione principale" className={`${cinematic ? 'noir-navigation ' : ''}fixed top-0 left-0 right-0 z-40 bg-black/90 backdrop-blur-sm border-b border-gray-800`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Left side - Back button or Logo */}
             <div className="flex items-center gap-4">
-              {showBackButton ? (
+              {showBackButton && !cinematic ? (
                 <button
                   onClick={handleBack}
                   className="flex items-center gap-2 px-3 py-2 text-gray-300 hover:text-white bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors"
@@ -65,11 +67,11 @@ export default function Navigation({ showBackButton = false, backUrl = '/', back
                   <span className="hidden sm:inline">{backLabel}</span>
                 </button>
               ) : (
-                <div className="flex items-center">
+                <button onClick={() => handleNavigation('/')} aria-label="theWebRooster, home" className="flex items-center noir-brand">
                   <span className="text-xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
                     theWebRooster
                   </span>
-                </div>
+                </button>
               )}
             </div>
 
@@ -77,10 +79,11 @@ export default function Navigation({ showBackButton = false, backUrl = '/', back
             <div className="hidden md:flex items-center space-x-8">
               {navigationItems.map((item) => {
                 const Icon = item.icon;
-                const isActive = pathname === item.href;
+                const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href + '/'));
                 return (
                   <button
                     key={item.name}
+                    aria-current={isActive ? 'page' : undefined}
                     onClick={() => handleNavigation(item.href)}
                     className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
                       isActive
@@ -95,13 +98,14 @@ export default function Navigation({ showBackButton = false, backUrl = '/', back
               })}
               
               {/* Visitor Counter - solo su desktop */}
-              <VisitorCounter variant="minimal" />
+              {!cinematic && <VisitorCounter variant="minimal" />}
               
               {/* Admin Link */}
               <button
                 onClick={() => handleNavigation('/admin')}
                 className="flex items-center gap-2 px-3 py-2 text-gray-400 hover:text-white bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors"
                 title="Pannello Admin"
+                aria-label="Pannello Admin"
               >
                 <Settings className="w-4 h-4" />
                 <ExternalLink className="w-3 h-3" />
@@ -112,6 +116,9 @@ export default function Navigation({ showBackButton = false, backUrl = '/', back
             <div className="md:hidden">
               <button
                 onClick={() => setIsOpen(!isOpen)}
+                aria-expanded={isOpen}
+                aria-controls="mobile-navigation"
+                aria-label={isOpen ? 'Chiudi menu' : 'Apri menu'}
                 className="p-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
               >
                 {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -122,14 +129,15 @@ export default function Navigation({ showBackButton = false, backUrl = '/', back
 
         {/* Mobile Navigation Menu */}
         {isOpen && (
-          <div className="md:hidden bg-black/95 backdrop-blur-sm border-t border-gray-800">
+          <div id="mobile-navigation" className="md:hidden bg-black/95 backdrop-blur-sm border-t border-gray-800">
             <div className="px-4 py-4 space-y-2">
               {navigationItems.map((item) => {
                 const Icon = item.icon;
-                const isActive = pathname === item.href;
+                const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href + '/'));
                 return (
                   <button
                     key={item.name}
+                    aria-current={isActive ? 'page' : undefined}
                     onClick={() => handleNavigation(item.href)}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                       isActive
@@ -158,7 +166,7 @@ export default function Navigation({ showBackButton = false, backUrl = '/', back
       </nav>
 
       {/* Spacer to prevent content from being hidden under fixed nav */}
-      <div className="h-16"></div>
+      {!overlay && <div className={cinematic ? 'noir-nav-spacer' : 'h-16'}></div>}
     </>
   );
 }

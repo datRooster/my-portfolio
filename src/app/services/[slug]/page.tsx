@@ -1,3 +1,4 @@
+import CinematicHero from '@/components/home/CinematicHero';
 import Image from '@/components/runtime/Image';
 import Link from '@/components/runtime/Link';
 import { useApi } from '@/lib/http';
@@ -5,18 +6,10 @@ import { useParams } from '@/lib/navigation';
 import type { ServiceDetail } from '@/types/service';
 
 import Navigation from '@/components/ui/Navigation';
-import { Badge } from '@/components/ui/badge';
+
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import {
-Award,
-Calendar,
-CheckCircle,
-Clock,
-Code,
-MessageSquare,
-Star
-} from 'lucide-react';
+import { Calendar, CheckCircle, Clock, Star } from 'lucide-react';
 
 function TestimonialCard({ testimonial }: { testimonial: any }) {
   return (
@@ -85,80 +78,14 @@ export default function ServicePage() {
 
   return (
     <>
-      <Navigation showBackButton={true} backUrl="/services" backLabel="Servizi" />
+      <Navigation overlay />
       <div className="bg-gray-950 text-gray-100">
         {/* Hero Section */}
-        <section className="relative py-16 px-4 overflow-hidden">
-          {/* Background Effects */}
-          <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 via-transparent to-orange-500/5"></div>
-          <div className="absolute top-10 left-10 w-72 h-72 bg-yellow-500/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 right-10 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl"></div>
-
-          <div className="relative max-w-7xl mx-auto">
-            {/* Breadcrumb */}
-            <div className="flex items-center gap-2 text-sm text-gray-400 mb-8">
-              <Link href="/" className="hover:text-yellow-400 transition-colors">Home</Link>
-              <span>/</span>
-              <Link href="/services" className="hover:text-yellow-400 transition-colors">Servizi</Link>
-              <span>/</span>
-              <span className="text-white">{service.title || service.name}</span>
-            </div>
-
-            {/* Service Header */}
-            <div className="text-center mb-12">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl mb-6">
-                <Code className="w-8 h-8 text-white" />
-              </div>
-              
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                <span className="bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text text-transparent">
-                  {service.title || service.name}
-                </span>
-              </h1>
-              
-              <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-8">
-                {service.description}
-              </p>
-
-              {/* Badges */}
-              <div className="flex flex-wrap gap-3 justify-center mb-8">
-                <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
-                  {service.category === 'WEB_DEVELOPMENT' ? 'Sviluppo web' : service.category?.replace(/[-_]/g, ' ')}
-                </Badge>
-                <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">
-                  {service.type === 'CONSULTING' ? 'Sviluppo e consulenza' : service.type}
-                </Badge>
-                {service.featured && (
-                  <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-gray-900">
-                    <Award className="w-4 h-4 mr-1" />
-                    In evidenza
-                  </Badge>
-                )}
-              </div>
-
-              {/* Quick Actions */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link 
-                  href={`/contact?service=${service.id}`}
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-gray-900 font-semibold rounded-lg hover:from-yellow-400 hover:to-orange-400 transition-colors"
-                >
-                  <MessageSquare className="w-5 h-5" />
-                  Richiedi Preventivo
-                </Link>
-                <Link 
-                  href="/contact"
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-gray-800 text-white border border-gray-700 font-semibold rounded-lg hover:bg-gray-700 transition-colors"
-                >
-                  Consulenza Gratuita
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
+        <CinematicHero sceneKey="services" compact title={service.title || service.name} description={service.description} targetId="service-content" secondary={{ href: '/contact?service=' + service.id, label: 'Richiedi preventivo' }} />
 
         {/* Content Section */}
-        <section className="relative py-16 px-4">
-          <div className="max-w-7xl mx-auto">
+        <section id="service-content" tabIndex={-1} className="noir-content-section relative py-16 px-4">
+          <div className="max-w-7xl mx-auto"><div className="noir-detail-meta"><Link href="/services">← Tutti i servizi</Link><span>{service.category?.replace(/[-_]/g, " ")}</span></div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Main Content */}
               <div className="lg:col-span-2 space-y-8">

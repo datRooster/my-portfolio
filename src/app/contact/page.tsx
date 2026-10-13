@@ -1,3 +1,4 @@
+import CinematicHero from '@/components/home/CinematicHero';
 import { apiFetch as fetch } from '@/lib/http';
 
 import Link from '@/components/runtime/Link';
@@ -11,19 +12,7 @@ import { Select } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { useSearchParams } from '@/lib/navigation';
-import {
-AlertCircle,
-CheckCircle,
-Clock,
-Mail,
-MapPin,
-MessageCircle,
-Phone,
-Send,
-Sparkles,
-Target,
-Zap
-} from 'lucide-react';
+import { AlertCircle, CheckCircle, Clock, Mail, MapPin, MessageCircle, Phone, Send, Zap } from 'lucide-react';
 import { Suspense,useEffect,useState } from 'react';
 
 // Types
@@ -170,7 +159,7 @@ function ContactPageContent() {
   if (formState.isSuccess) {
     return (
       <>
-        <Navigation showBackButton={true} backUrl="/" backLabel="Home" />
+        <Navigation overlay />
         <div className="min-h-screen bg-gray-950 text-gray-100 flex items-center justify-center px-4">
           <Card className="max-w-md w-full bg-gray-900/50 backdrop-blur-sm border border-gray-800">
             <div className="p-8 text-center">
@@ -214,56 +203,15 @@ function ContactPageContent() {
 
   return (
     <>
-      <Navigation showBackButton={true} backUrl="/" backLabel="Home" />
+      <Navigation overlay />
       <div className="bg-gray-950 text-gray-100">
         {/* Hero Section */}
-        <section className="relative py-20 px-4 overflow-hidden">
-          {/* Background Effects */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5"></div>
-          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+        <CinematicHero sceneKey="contact" />
 
-          <div className="relative max-w-7xl mx-auto text-center">
-            {/* Icon */}
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl mb-8 animate-pulse">
-              <MessageCircle className="w-10 h-10 text-white" />
-            </div>
-
-            {/* Title */}
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Parliamo del
-              </span>
-              <br />
-              <span className="text-white">Tuo Progetto</span>
-            </h1>
-
-            {/* Subtitle */}
-            <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-12 leading-relaxed">
-              Un tema WordPress, un plugin WooCommerce o un'applicazione web?
-              Raccontami cosa vuoi realizzare, quali contenuti hai già e i tempi che hai in mente.
-            </p>
-
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mb-12">
-              <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4">
-                <Clock className="w-8 h-8 text-blue-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">Obiettivi</div>
-                <div className="text-sm text-gray-400">Da cosa vuoi partire</div>
-              </div>
-              <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4">
-                <Target className="w-8 h-8 text-purple-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">Funzionalità</div>
-                <div className="text-sm text-gray-400">Cosa deve fare il progetto</div>
-              </div>
-              <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4">
-                <Sparkles className="w-8 h-8 text-pink-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">Tempi e budget</div>
-                <div className="text-sm text-gray-400">Per definire una proposta</div>
-              </div>
-            </div>
-
-            {/* Contact Method Selector */}
+        {/* Content Section */}
+        <section id="contact-content" tabIndex={-1} className="noir-content-section relative py-16 px-4">
+          <div className="max-w-7xl mx-auto">
+{/* Contact Method Selector */}
             <div className="max-w-2xl mx-auto mb-16">
               <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-2 flex gap-2">
                 <button
@@ -300,12 +248,7 @@ function ContactPageContent() {
                 </button>
               </div>
             </div>
-          </div>
-        </section>
 
-        {/* Content Section */}
-        <section className="relative py-16 px-4">
-          <div className="max-w-7xl mx-auto">
             {contactMethod === 'profiles' ? (
               <div className="max-w-4xl mx-auto">
                 <h2 className="text-3xl font-bold text-white mb-4">Codice, plugin e contribuzioni</h2>

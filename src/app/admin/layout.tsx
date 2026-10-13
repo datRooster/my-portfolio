@@ -39,7 +39,7 @@ export default function AdminLayout({
     checkAuth();
     
     // Override body background for admin pages
-    document.body.style.backgroundColor = '#111827'; // bg-gray-900
+    document.body.style.backgroundColor = '#080808';
     
     return () => {
       // Restore original background on cleanup
@@ -101,7 +101,7 @@ export default function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100" style={{backgroundColor: '#111827'}}>
+    <div className="min-h-screen bg-gray-900 text-gray-100">
       {/* Sidebar */}
       <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 shadow-xl transition-transform md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex flex-col h-full">

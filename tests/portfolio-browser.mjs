@@ -23,7 +23,7 @@ try {
       assert.ok(!(await page.locator('body').innerText()).includes('Invalid Date'),'Dates '+route);
       if(route.startsWith('/projects/')) {
         const project=catalog.projects.find(p=>route.endsWith('/'+p.slug));
-        assert.equal(await page.locator('h1').innerText(),project.title);
+        assert.equal((await page.locator('h1').textContent()).trim(),project.title);
         await page.getByRole('heading',{name:'Funzionalità sviluppate'}).waitFor();
         await page.getByRole('heading',{name:'Stato e compatibilità'}).waitFor();
       }

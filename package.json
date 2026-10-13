@@ -16,6 +16,8 @@
     "setup:mamp": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/setup-mamp.ps1",
     "test:browser": "node tests/browser-smoke.mjs",
     "test:portfolio": "node tests/portfolio-browser.mjs",
+    "test:home": "node tests/home-browser.mjs",
+    "test:site": "node tests/site-noir-browser.mjs",
     "package:aruba": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/package-aruba.ps1"
   },
   "dependencies": {

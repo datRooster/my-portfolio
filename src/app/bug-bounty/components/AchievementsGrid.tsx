@@ -210,8 +210,8 @@ export default function AchievementsGrid() {
                       <div 
                         className="p-3 rounded-xl"
                         style={{ 
-                          backgroundColor: achievement.color || '#f3f4f6',
-                          color: achievement.color ? '#ffffff' : '#374151'
+                          backgroundColor: '#e9b66018',
+                          color: '#e9b660'
                         }}
                       >
                         <CategoryIcon className="h-6 w-6" />

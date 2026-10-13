@@ -2,7 +2,7 @@ import { apiFetch as fetch } from '@/lib/http';
 
 import Link from '@/components/runtime/Link';
 import { useRouter } from '@/lib/navigation';
-import { ArrowLeft,Eye,EyeOff,Lock,Shield } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Eye, EyeOff, KeyRound, Lock, Mail, Shield } from 'lucide-react';
 import { useState } from 'react';
 
 interface LoginResponse {
@@ -81,7 +81,7 @@ export default function LoginPage() {
         <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-lg p-4">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-yellow-500/20 rounded-full flex items-center justify-center">
-              <span className="text-yellow-400">🔒</span>
+              <Shield className="w-5 h-5 text-yellow-400" aria-hidden="true" />
             </div>
             <div>
               <p className="text-yellow-400 font-semibold text-sm">Accesso protetto</p>
@@ -100,7 +100,7 @@ export default function LoginPage() {
               {error && (
                 <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
                   <div className="flex items-center space-x-2">
-                    <span className="text-red-400">⚠️</span>
+                    <AlertTriangle className="w-4 h-4 text-red-400" aria-hidden="true" />
                     <p className="text-red-400 text-sm">{error}</p>
                   </div>
                 </div>
@@ -113,7 +113,7 @@ export default function LoginPage() {
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-gray-400">📧</span>
+                    <Mail className="w-4 h-4 text-gray-400" aria-hidden="true" />
                   </div>
                   <input
                     id="email"
@@ -136,7 +136,7 @@ export default function LoginPage() {
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-gray-400">🔑</span>
+                    <KeyRound className="w-4 h-4 text-gray-400" aria-hidden="true" />
                   </div>
                   <input
                     id="password"

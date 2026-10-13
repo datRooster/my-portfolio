@@ -1,78 +1,19 @@
+import CinematicHero from '@/components/home/CinematicHero';
 import Link from '@/components/runtime/Link';
 import WordPressContributions from '@/components/portfolio/WordPressContributions';
 import Navigation from "@/components/ui/Navigation";
-import {
-ArrowRight,
-Award,
-CheckCircle,
-Code,
-Coffee,
-Globe,
-Mail,
-Shield,
-Sparkles,
-Star,
-Target,
-Trophy,
-User
-} from "lucide-react";
+import { ArrowRight, Award, CheckCircle, Code, Coffee, Globe, Mail, Shield, Sparkles, Target, Trophy } from "lucide-react";
 
 export default function AboutPage() {
   return (
     <>
-      <Navigation showBackButton={true} backUrl="/" backLabel="Home" />
+      <Navigation overlay />
       <div className="bg-gray-950 text-gray-100">
         {/* Hero Section */}
-        <section className="relative py-20 px-4 overflow-hidden">
-          {/* Background Effects */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5"></div>
-          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
-
-          <div className="relative max-w-7xl mx-auto text-center">
-            {/* Icon */}
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl mb-8 animate-pulse">
-              <User className="w-10 h-10 text-white" />
-            </div>
-
-            {/* Title */}
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
-                Chi Sono
-              </span>
-              <br />
-              <span className="text-white">theWebRooster</span>
-            </h1>
-
-            {/* Subtitle */}
-            <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-12 leading-relaxed">
-              Sviluppo temi WordPress, estensioni WooCommerce e applicazioni web.
-              Qui trovi i progetti, il mio contributo tecnico e il codice che condivido.
-            </p>
-
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mb-16">
-              <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4">
-                <Trophy className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">WordPress</div>
-                <div className="text-sm text-gray-400">Temi su misura e plugin</div>
-              </div>
-              <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4">
-                <Star className="w-8 h-8 text-orange-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">WooCommerce</div>
-                <div className="text-sm text-gray-400">Cataloghi e flussi personalizzati</div>
-              </div>
-              <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4">
-                <Shield className="w-8 h-8 text-red-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">Open source</div>
-                <div className="text-sm text-gray-400">GitHub e WordPress.org</div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <CinematicHero sceneKey="about" />
 
         {/* About Content */}
-        <section className="relative py-16 px-4">
+        <section id="about-content" tabIndex={-1} className="noir-content-section relative py-16 px-4">
           <div className="max-w-7xl mx-auto">
             
             {/* Bio Section */}

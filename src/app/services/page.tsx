@@ -1,3 +1,4 @@
+import CinematicHero from '@/components/home/CinematicHero';
 import { apiFetch as fetch } from '@/lib/http';
 
 import Link from '@/components/runtime/Link';
@@ -5,23 +6,7 @@ import Navigation from '@/components/ui/Navigation';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import {
-ArrowRight,
-CheckCircle,
-Clock,
-Code,
-Database,
-Globe,
-Search,
-Shield,
-Smartphone,
-Sparkles,
-Star,
-Target,
-Trophy,
-Users,
-Zap
-} from 'lucide-react';
+import { ArrowRight, CheckCircle, Clock, Code, Database, Globe, Search, Shield, Smartphone, Sparkles, Star, Target, Users, Zap } from 'lucide-react';
 import { useEffect,useState } from 'react';
 
 interface Service {
@@ -93,7 +78,7 @@ export default function ServicesPage() {
   if (loading) {
     return (
       <>
-        <Navigation showBackButton={true} backUrl="/" backLabel="Home" />
+        <Navigation overlay />
         <div className="min-h-screen bg-gray-950 text-gray-100 flex items-center justify-center">
           <div className="text-center">
             <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-6 animate-pulse">
@@ -110,7 +95,7 @@ export default function ServicesPage() {
   if (error) {
     return (
       <>
-        <Navigation showBackButton={true} backUrl="/" backLabel="Home" />
+        <Navigation overlay />
         <div className="min-h-screen bg-gray-950 text-gray-100 flex items-center justify-center">
           <div className="text-center max-w-lg mx-auto p-8">
             <div className="w-20 h-20 bg-red-500/20 border border-red-500/30 rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -141,59 +126,13 @@ export default function ServicesPage() {
 
   return (
     <>
-      <Navigation showBackButton={true} backUrl="/" backLabel="Home" />
+      <Navigation overlay />
       <div className="bg-gray-950 text-gray-100">
         {/* Hero Section */}
-        <section className="relative py-20 px-4 overflow-hidden">
-          {/* Background Effects */}
-          <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 via-transparent to-orange-500/5"></div>
-          <div className="absolute top-20 left-10 w-72 h-72 bg-yellow-500/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl"></div>
-
-          <div className="relative max-w-7xl mx-auto text-center">
-            {/* Icon */}
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl mb-8 animate-pulse">
-              <Code className="w-10 h-10 text-white" />
-            </div>
-
-            {/* Title */}
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text text-transparent">
-                Servizi
-              </span>
-              <br />
-              <span className="text-white">Professionali</span>
-            </h1>
-
-            {/* Subtitle */}
-            <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-12 leading-relaxed">
-              Temi WordPress, e-commerce WooCommerce, plugin e applicazioni web.
-              Competenze applicate nei miei progetti, per costruire il prossimo insieme.
-            </p>
-
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mb-16">
-              <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4">
-                <Trophy className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">Su misura</div>
-                <div className="text-sm text-gray-400">Funzioni definite sul tuo progetto</div>
-              </div>
-              <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4">
-                <Star className="w-8 h-8 text-orange-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">Codice e contenuti</div>
-                <div className="text-sm text-gray-400">Sviluppo e gestione del sito</div>
-              </div>
-              <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4">
-                <Clock className="w-8 h-8 text-green-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">Tempi concordati</div>
-                <div className="text-sm text-gray-400">Dopo aver definito il lavoro</div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <CinematicHero sceneKey="services" />
 
         {/* Services Section */}
-        <section className="relative py-16 px-4">
+        <section id="services-content" tabIndex={-1} className="noir-content-section relative py-16 px-4">
           <div className="max-w-7xl mx-auto">
             {/* Services Grid */}
             {services.length === 0 ? (
